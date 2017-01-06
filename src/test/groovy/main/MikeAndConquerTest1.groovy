@@ -6,6 +6,22 @@ import spock.lang.Specification
 
 class MikeAndConquerTest1 extends Specification {
 
+
+
+    def "Should place GDI minigunner"() {
+        given:
+        MikeAndConquerGameClient gameClient = new MikeAndConquerGameClient()
+
+        when:
+        gameClient.addGDIMinigunner(200,200)
+
+        then:
+        GDIMinigunner gdiMinigunner = gameClient.getGDIMinigunner()
+        assert gdiMinigunner.x == 200
+        assert gdiMinigunner.y == 200
+
+    }
+
     def "should be able to move to and attack target" () {
         given:
         int i = 3
