@@ -4,12 +4,16 @@ import groovyx.net.http.RESTClient
 import main.GDIMinigunner
 
 class MikeAndConquerGameClient {
-    void addGDIMinigunner(int x, int y) {
+    void addGDIMinigunner(int minigunnerX, int minigunnerY) {
 
         RESTClient  restClient = new RESTClient( 'http://localhost:11369/' )
+        def resp = restClient.post(
+                path: '/gdiMinigunner',
+                body: [ x: minigunnerX, y: minigunnerY ],
+                requestContentType: 'application/json' )
 
-        def resp = restClient.get( path : '/gdiMinigunner' ) // ACME boomerang
         assert resp.status == 200  // HTTP response code; 404 means not found, etc.
+
     }
 
     GDIMinigunner getGDIMinigunner() {

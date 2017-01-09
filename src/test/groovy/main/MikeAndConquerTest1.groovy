@@ -13,12 +13,12 @@ class MikeAndConquerTest1 extends Specification {
         MikeAndConquerGameClient gameClient = new MikeAndConquerGameClient()
 
         when:
-        gameClient.addGDIMinigunner(200,200)
+        gameClient.addGDIMinigunner(300,700)
 
         then:
         GDIMinigunner gdiMinigunner = gameClient.getGDIMinigunner()
-        assert gdiMinigunner.x == 200
-        assert gdiMinigunner.y == 200
+        assert gdiMinigunner.x == 300
+        assert gdiMinigunner.y == 700
 
     }
 
