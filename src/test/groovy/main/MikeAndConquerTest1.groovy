@@ -24,22 +24,36 @@ class MikeAndConquerTest1 extends Specification {
 
     def "should be able to move to and attack target" () {
         given:
-        int i = 3
-        // Gdi minigunner exists at 200,200
         MikeAndConquerGameClient gameClient = new MikeAndConquerGameClient()
-        gameClient.addGDIMinigunner(200,200)
+
+
+        when:
+        gameClient.addGDIMinigunner(300,700)
+        gameClient.addNODMinigunner(1000,300)
+
+        then:
+        GDIMinigunner gdiMinigunner = gameClient.getGDIMinigunner()
+        assert gdiMinigunner.x == 300
+        assert gdiMinigunner.y == 700
+
+
+        and:
+        GDIMinigunner nodMinigunner = gameClient.getNODMinigunner()
+        assert nodMinigunner.x == 1000
+        assert nodMinigunner.y == 300
+
 
 
 //        and:
         // Nod minigunner exists at 500, 500
 
-        when:
-        // GDI minigunner is commanded to attack nod minigunner
-        i = 3
-
-        then:
-        // The GDI minigunner moves into range
-        i == 3
+//        when:
+//        // GDI minigunner is commanded to attack nod minigunner
+//        i = 3
+//
+//        then:
+//        // The GDI minigunner moves into range
+//        i == 3
 
 
 //        and:
