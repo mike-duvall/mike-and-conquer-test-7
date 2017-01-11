@@ -43,6 +43,11 @@ class MikeAndConquerTest1 extends Specification {
         assert nodMinigunner.y == 300
 
 
+        when:
+        gameClient.leftClick(300,700)
+
+        then:
+        5 == 5
 
 //        and:
         // Nod minigunner exists at 500, 500

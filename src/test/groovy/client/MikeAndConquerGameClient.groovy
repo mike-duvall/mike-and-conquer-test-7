@@ -47,4 +47,14 @@ class MikeAndConquerGameClient {
         return minigunner
     }
 
+    void leftClick(int mouseX, int mouseY) {
+        RESTClient  restClient = new RESTClient( 'http://localhost:11369/' )
+        def resp = restClient.post(
+                path: '/leftClick',
+                body: [ x: mouseX, y: mouseY ],
+                requestContentType: 'application/json' )
+
+        assert resp.status == 200  // HTTP response code; 404 means not found, etc.
+
+    }
 }
