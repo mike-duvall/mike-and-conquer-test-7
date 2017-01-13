@@ -7,10 +7,16 @@ import spock.lang.Specification
 class MikeAndConquerTest1 extends Specification {
 
 
+    MikeAndConquerGameClient gameClient
+
+
+    def setup() {
+        //gameClient = new MikeAndConquerGameClient("localhost", 11369)
+        gameClient = new MikeAndConquerGameClient("192.168.0.179", 11369)
+        ///gameClient = new MikeAndConquerGameClient("192.168.0.195", 11369)
+    }
 
     def "Should place GDI minigunner"() {
-        given:
-        MikeAndConquerGameClient gameClient = new MikeAndConquerGameClient()
 
         when:
         gameClient.addGDIMinigunner(300,700)
@@ -23,9 +29,6 @@ class MikeAndConquerTest1 extends Specification {
     }
 
     def "should be able to move to and attack target" () {
-        given:
-        MikeAndConquerGameClient gameClient = new MikeAndConquerGameClient()
-
 
         when:
         gameClient.addGDIMinigunner(300,700)
