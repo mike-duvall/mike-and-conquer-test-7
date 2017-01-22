@@ -54,17 +54,19 @@ class MikeAndConquerTest1 extends Specification {
         and:
         gameClient.leftClick(1000,300)
 
-        and:
-        sleep(8000)
-
-        and:
-        nodMinigunner = gameClient.getNODMinigunner()
+//        and:
+//        sleep(8000)
+//
+//        and:
 
         then:
-//        PollingConditions
-//        def conditions = new PollingConditions(timeout: 10, initialDelay: 1.5, factor: 1.25)
+        def conditions = new PollingConditions(timeout: 10, initialDelay: 1.5, factor: 1.25)
+        conditions.eventually {
+            def expectedDeadMinigunner = gameClient.getNODMinigunner()
+            assert expectedDeadMinigunner.health == 0
+        }
 
-        nodMinigunner.health <= 0
+//        nodMinigunner.health <= 0
 //        5 == 5
 
 //        and:
