@@ -54,6 +54,7 @@ class MikeAndConquerGameClient {
         GDIMinigunner minigunner = new GDIMinigunner()
         minigunner.x = resp.responseData.x
         minigunner.y = resp.responseData.y
+        minigunner.health = resp.responseData.health
         return minigunner
     }
 

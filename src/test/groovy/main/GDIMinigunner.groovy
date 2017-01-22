@@ -4,4 +4,5 @@ class GDIMinigunner {
 
     int x
     int y
+    int health
 }

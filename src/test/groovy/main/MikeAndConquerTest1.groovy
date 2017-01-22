@@ -2,6 +2,7 @@ package main
 
 import client.MikeAndConquerGameClient
 import spock.lang.Specification
+import spock.util.concurrent.PollingConditions
 
 
 class MikeAndConquerTest1 extends Specification {
@@ -44,6 +45,7 @@ class MikeAndConquerTest1 extends Specification {
         GDIMinigunner nodMinigunner = gameClient.getNODMinigunner()
         assert nodMinigunner.x == 1000
         assert nodMinigunner.y == 300
+        assert nodMinigunner.health == 1000
 
 
         when:
@@ -52,8 +54,18 @@ class MikeAndConquerTest1 extends Specification {
         and:
         gameClient.leftClick(1000,300)
 
+        and:
+        sleep(8000)
+
+        and:
+        nodMinigunner = gameClient.getNODMinigunner()
+
         then:
-        5 == 5
+//        PollingConditions
+//        def conditions = new PollingConditions(timeout: 10, initialDelay: 1.5, factor: 1.25)
+
+        nodMinigunner.health <= 0
+//        5 == 5
 
 //        and:
         // Nod minigunner exists at 500, 500
