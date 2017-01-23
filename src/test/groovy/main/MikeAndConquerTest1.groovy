@@ -54,10 +54,9 @@ class MikeAndConquerTest1 extends Specification {
         and:
         gameClient.leftClick(1000,300)
 
-//        and:
-//        sleep(8000)
-//
-//        and:
+//        then:
+//        // The GDI minigunner moves into range
+//        i == 3
 
         then:
         def conditions = new PollingConditions(timeout: 10, initialDelay: 1.5, factor: 1.25)
@@ -65,27 +64,6 @@ class MikeAndConquerTest1 extends Specification {
             def expectedDeadMinigunner = gameClient.getNODMinigunner()
             assert expectedDeadMinigunner.health == 0
         }
-
-//        nodMinigunner.health <= 0
-//        5 == 5
-
-//        and:
-        // Nod minigunner exists at 500, 500
-
-//        when:
-//        // GDI minigunner is commanded to attack nod minigunner
-//        i = 3
-//
-//        then:
-//        // The GDI minigunner moves into range
-//        i == 3
-
-
-//        and:
-        // The GID minigunner attacks the Nod minigunner
-
-//        and:
-        // The Nod mingunner loses health until it is destroyed
 
     }
 
