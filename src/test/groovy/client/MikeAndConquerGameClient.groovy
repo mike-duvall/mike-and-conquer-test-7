@@ -5,6 +5,9 @@ import main.Minigunner
 
 class MikeAndConquerGameClient {
 
+    // Document firewall setup
+
+
     String hostUrl
     RESTClient  restClient
 
@@ -13,17 +16,23 @@ class MikeAndConquerGameClient {
         restClient = new RESTClient(hostUrl)
     }
 
-    void addGDIMinigunner(int minigunnerX, int minigunnerY) {
+    void addMinigunner(int minigunnerX, int minigunnerY, String aPath) {
         def resp = restClient.post(
-                path: '/gdiMinigunner',
+                path: aPath,
                 body: [ x: minigunnerX, y: minigunnerY ],
                 requestContentType: 'application/json' )
 
-//        * Determine what firewalls need to be off
-//        * Debug BadRequest when both firewalls on both machines are turned off
-
         assert resp.status == 200
     }
+
+    void addGDIMinigunner(int minigunnerX, int minigunnerY) {
+        addMinigunner(minigunnerX, minigunnerY, '/gdiMinigunner' )
+    }
+
+    void addNODMinigunner(int minigunnerX, int minigunnerY) {
+        addMinigunner(minigunnerX, minigunnerY, '/nodMinigunner' )
+    }
+
 
 
     Minigunner getMinigunner(String aPath) {
@@ -43,14 +52,6 @@ class MikeAndConquerGameClient {
     }
 
 
-    void addNODMinigunner(int minigunnerX, int minigunnerY) {
-        def resp = restClient.post(
-                path: '/nodMinigunner',
-                body: [ x: minigunnerX, y: minigunnerY ],
-                requestContentType: 'application/json' )
-
-        assert resp.status == 200  // HTTP response code; 404 means not found, etc.
-    }
 
     Minigunner getNODMinigunner() {
         return getMinigunner('/nodMinigunner')
@@ -62,7 +63,7 @@ class MikeAndConquerGameClient {
                 body: [ x: mouseX, y: mouseY ],
                 requestContentType: 'application/json' )
 
-        assert resp.status == 200  // HTTP response code; 404 means not found, etc.
+        assert resp.status == 200
 
     }
 }
