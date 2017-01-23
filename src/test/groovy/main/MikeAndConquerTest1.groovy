@@ -23,7 +23,7 @@ class MikeAndConquerTest1 extends Specification {
         gameClient.addGDIMinigunner(300,700)
 
         then:
-        GDIMinigunner gdiMinigunner = gameClient.getGDIMinigunner()
+        Minigunner gdiMinigunner = gameClient.getGDIMinigunner()
         assert gdiMinigunner.x == 300
         assert gdiMinigunner.y == 700
 
@@ -36,13 +36,13 @@ class MikeAndConquerTest1 extends Specification {
         gameClient.addNODMinigunner(1000,300)
 
         then:
-        GDIMinigunner gdiMinigunner = gameClient.getGDIMinigunner()
+        Minigunner gdiMinigunner = gameClient.getGDIMinigunner()
         assert gdiMinigunner.x == 300
         assert gdiMinigunner.y == 700
 
 
         and:
-        GDIMinigunner nodMinigunner = gameClient.getNODMinigunner()
+        Minigunner nodMinigunner = gameClient.getNODMinigunner()
         assert nodMinigunner.x == 1000
         assert nodMinigunner.y == 300
         assert nodMinigunner.health == 1000

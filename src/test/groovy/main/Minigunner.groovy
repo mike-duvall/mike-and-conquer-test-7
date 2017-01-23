@@ -1,6 +1,6 @@
 package main
 
-class GDIMinigunner {
+class Minigunner {
 
     int x
     int y

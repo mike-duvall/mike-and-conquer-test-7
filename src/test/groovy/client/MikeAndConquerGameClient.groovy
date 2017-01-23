@@ -1,7 +1,7 @@
 package client
 
 import groovyx.net.http.RESTClient
-import main.GDIMinigunner
+import main.Minigunner
 
 class MikeAndConquerGameClient {
 
@@ -22,16 +22,24 @@ class MikeAndConquerGameClient {
 //        * Determine what firewalls need to be off
 //        * Debug BadRequest when both firewalls on both machines are turned off
 
-        assert resp.status == 200  // HTTP response code; 404 means not found, etc.
+        assert resp.status == 200
     }
 
-    GDIMinigunner getGDIMinigunner() {
-        def resp = restClient.get( path : '/gdiMinigunner' ) // ACME boomerang
+
+    Minigunner getMinigunner(String aPath) {
+        def resp = restClient.get( path : aPath ) // ACME boomerang
         assert resp.status == 200  // HTTP response code; 404 means not found, etc.
-        GDIMinigunner minigunner = new GDIMinigunner()
+        Minigunner minigunner = new Minigunner()
         minigunner.x = resp.responseData.x
         minigunner.y = resp.responseData.y
+        minigunner.health = resp.responseData.health
         return minigunner
+    }
+
+
+
+    Minigunner getGDIMinigunner() {
+        return getMinigunner('/gdiMinigunner')
     }
 
 
@@ -44,14 +52,8 @@ class MikeAndConquerGameClient {
         assert resp.status == 200  // HTTP response code; 404 means not found, etc.
     }
 
-    GDIMinigunner getNODMinigunner() {
-        def resp = restClient.get( path : '/nodMinigunner' ) // ACME boomerang
-        assert resp.status == 200  // HTTP response code; 404 means not found, etc.
-        GDIMinigunner minigunner = new GDIMinigunner()
-        minigunner.x = resp.responseData.x
-        minigunner.y = resp.responseData.y
-        minigunner.health = resp.responseData.health
-        return minigunner
+    Minigunner getNODMinigunner() {
+        return getMinigunner('/nodMinigunner')
     }
 
     void leftClick(int mouseX, int mouseY) {
