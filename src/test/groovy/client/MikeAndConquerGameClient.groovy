@@ -6,14 +6,14 @@ import main.GDIMinigunner
 class MikeAndConquerGameClient {
 
     String hostUrl
+    RESTClient  restClient
 
     MikeAndConquerGameClient(String host, int port) {
         hostUrl = "http://$host:$port"
+        restClient = new RESTClient(hostUrl)
     }
 
     void addGDIMinigunner(int minigunnerX, int minigunnerY) {
-
-        RESTClient  restClient = new RESTClient(hostUrl)
         def resp = restClient.post(
                 path: '/gdiMinigunner',
                 body: [ x: minigunnerX, y: minigunnerY ],
@@ -26,7 +26,6 @@ class MikeAndConquerGameClient {
     }
 
     GDIMinigunner getGDIMinigunner() {
-        RESTClient  restClient = new RESTClient(hostUrl)
         def resp = restClient.get( path : '/gdiMinigunner' ) // ACME boomerang
         assert resp.status == 200  // HTTP response code; 404 means not found, etc.
         GDIMinigunner minigunner = new GDIMinigunner()
@@ -37,8 +36,6 @@ class MikeAndConquerGameClient {
 
 
     void addNODMinigunner(int minigunnerX, int minigunnerY) {
-
-        RESTClient  restClient = new RESTClient(hostUrl)
         def resp = restClient.post(
                 path: '/nodMinigunner',
                 body: [ x: minigunnerX, y: minigunnerY ],
@@ -48,7 +45,6 @@ class MikeAndConquerGameClient {
     }
 
     GDIMinigunner getNODMinigunner() {
-        RESTClient  restClient = new RESTClient(hostUrl)
         def resp = restClient.get( path : '/nodMinigunner' ) // ACME boomerang
         assert resp.status == 200  // HTTP response code; 404 means not found, etc.
         GDIMinigunner minigunner = new GDIMinigunner()
@@ -59,7 +55,6 @@ class MikeAndConquerGameClient {
     }
 
     void leftClick(int mouseX, int mouseY) {
-        RESTClient  restClient = new RESTClient(hostUrl)
         def resp = restClient.post(
                 path: '/leftClick',
                 body: [ x: mouseX, y: mouseY ],
