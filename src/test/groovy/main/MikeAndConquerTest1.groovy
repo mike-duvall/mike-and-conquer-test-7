@@ -13,7 +13,7 @@ class MikeAndConquerTest1 extends Specification {
 
     def setup() {
         //gameClient = new MikeAndConquerGameClient("localhost", 11369)
-//        gameClient = new MikeAndConquerGameClient("192.168.0.179", 11369)
+        //gameClient = new MikeAndConquerGameClient("192.168.0.179", 11369)
         gameClient = new MikeAndConquerGameClient("192.168.0.195", 11369)
     }
 
