@@ -26,11 +26,11 @@ class MikeAndConquerGameClient {
     }
 
     void addGDIMinigunner(int minigunnerX, int minigunnerY) {
-        addMinigunner(minigunnerX, minigunnerY, '/gdiMinigunner' )
+        addMinigunner(minigunnerX, minigunnerY, '/mac/gdiMinigunner' )
     }
 
     void addNODMinigunner(int minigunnerX, int minigunnerY) {
-        addMinigunner(minigunnerX, minigunnerY, '/nodMinigunner' )
+        addMinigunner(minigunnerX, minigunnerY, '/mac/nodMinigunner' )
     }
 
 
@@ -48,18 +48,18 @@ class MikeAndConquerGameClient {
 
 
     Minigunner getGDIMinigunner() {
-        return getMinigunner('/gdiMinigunner')
+        return getMinigunner('/mac/gdiMinigunner')
     }
 
 
 
     Minigunner getNODMinigunner() {
-        return getMinigunner('/nodMinigunner')
+        return getMinigunner('/mac/nodMinigunner')
     }
 
     void leftClick(int mouseX, int mouseY) {
         def resp = restClient.post(
-                path: '/leftClick',
+                path: '/mac/leftClick',
                 body: [ x: mouseX, y: mouseY ],
                 requestContentType: 'application/json' )
 
