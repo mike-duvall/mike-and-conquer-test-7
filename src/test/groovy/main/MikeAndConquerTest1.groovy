@@ -13,19 +13,31 @@ class MikeAndConquerTest1 extends Specification {
 
     def setup() {
         //gameClient = new MikeAndConquerGameClient("localhost", 11369)
-        //gameClient = new MikeAndConquerGameClient("192.168.0.179", 11369)
+//        gameClient = new MikeAndConquerGameClient("192.168.0.179", 11369)
         gameClient = new MikeAndConquerGameClient("192.168.0.195", 11369)
     }
 
-    def "Should place GDI minigunner"() {
+    def "clicking nod mingunner should not initiate attack unless gdi minigunner is selected" () {
+
+        given:
+        int originalGDIX = 300
+        int originalGDIY = 700
+        gameClient.addGDIMinigunner(originalGDIX, originalGDIY)
+        gameClient.addNODMinigunner(1000,300)
+
 
         when:
-        gameClient.addGDIMinigunner(300,700)
+        gameClient.leftClick(1000,300)
+
+        and:
+        sleep(2000)
+
 
         then:
         Minigunner gdiMinigunner = gameClient.getGDIMinigunner()
-        assert gdiMinigunner.x == 300
-        assert gdiMinigunner.y == 700
+        assert gdiMinigunner.x == originalGDIX
+        assert gdiMinigunner.y == originalGDIY
+
 
     }
 
@@ -68,30 +80,6 @@ class MikeAndConquerTest1 extends Specification {
     }
 
 
-
-    def "clicking nod mingunner should not initiate attack unless gdi minigunner is selected" () {
-
-        given:
-        int originalGDIX = 300
-        int originalGDIY = 700
-        gameClient.addGDIMinigunner(originalGDIX, originalGDIY)
-        gameClient.addNODMinigunner(1000,300)
-
-
-        when:
-        gameClient.leftClick(1000,300)
-
-        and:
-        sleep(2000)
-
-
-        then:
-        Minigunner gdiMinigunner = gameClient.getGDIMinigunner()
-        assert gdiMinigunner.x == originalGDIX
-        assert gdiMinigunner.y == originalGDIY
-
-
-    }
 
 
 

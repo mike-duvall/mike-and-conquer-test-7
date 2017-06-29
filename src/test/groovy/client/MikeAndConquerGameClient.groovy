@@ -2,6 +2,7 @@ package client
 
 import groovyx.net.http.RESTClient
 import main.Minigunner
+import org.apache.http.params.CoreConnectionPNames
 
 class MikeAndConquerGameClient {
 
@@ -14,6 +15,8 @@ class MikeAndConquerGameClient {
     MikeAndConquerGameClient(String host, int port) {
         hostUrl = "http://$host:$port"
         restClient = new RESTClient(hostUrl)
+        restClient.client.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT, new Integer(2000))
+        restClient.client.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, new Integer(2000))
     }
 
     void addMinigunner(int minigunnerX, int minigunnerY, String aPath) {
