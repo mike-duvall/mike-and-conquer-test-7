@@ -39,13 +39,20 @@ class MikeAndConquerGameClient {
 
 
     Minigunner getMinigunner(String aPath) {
-        def resp = restClient.get( path : aPath ) // ACME boomerang
+        def resp = restClient.get( path : aPath )
         assert resp.status == 200  // HTTP response code; 404 means not found, etc.
         Minigunner minigunner = new Minigunner()
         minigunner.x = resp.responseData.x
         minigunner.y = resp.responseData.y
         minigunner.health = resp.responseData.health
         return minigunner
+    }
+
+    String getGameState() {
+        def resp = restClient.get( path : '/mac/gameState' )
+        assert resp.status == 200  // HTTP response code; 404 means not found, etc.
+        return resp.responseData.gameState
+        Minigunner minigunner = new Minigunner()
     }
 
 

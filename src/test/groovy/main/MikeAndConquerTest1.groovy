@@ -66,16 +66,19 @@ class MikeAndConquerTest1 extends Specification {
         and:
         gameClient.leftClick(1000,300)
 
-//        then:
-//        // The GDI minigunner moves into range
-//        i == 3
-
         then:
         def conditions = new PollingConditions(timeout: 10, initialDelay: 1.5, factor: 1.25)
         conditions.eventually {
             def expectedDeadMinigunner = gameClient.getNODMinigunner()
             assert expectedDeadMinigunner.health == 0
         }
+
+        and:
+        String gameState = gameClient.getGameState()
+//        String expectedGameState = "Mission Accomplished"
+        String expectedGameState = "Game Over"
+
+        assert gameState == expectedGameState
 
     }
 
