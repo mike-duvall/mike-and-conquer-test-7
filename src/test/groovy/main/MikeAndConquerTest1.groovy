@@ -119,6 +119,14 @@ class MikeAndConquerTest1 extends Specification {
         assert nodMinigunner.y > 300
         assert nodMinigunner.health == 1000
 
+        and:
+        String gameState = gameClient.getGameState()
+//        String expectedGameState = "Mission Accomplished"
+        String expectedGameState = "Game Over"
+
+        assert gameState == expectedGameState
+
+
 
     }
 
