@@ -75,7 +75,6 @@ class MikeAndConquerTest1 extends Specification {
 
         and:
         String gameState = gameClient.getGameState()
-//        String expectedGameState = "Mission Accomplished"
         String expectedGameState = "Game Over"
 
         assert gameState == expectedGameState
@@ -120,7 +119,6 @@ class MikeAndConquerTest1 extends Specification {
 
         and:
         String gameState = gameClient.getGameState()
-//        String expectedGameState = "Mission Accomplished"
         String expectedGameState = "Mission Failed"
 
         assert gameState == expectedGameState

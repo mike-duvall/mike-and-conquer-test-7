@@ -35,7 +35,6 @@ class MikeAndConquerGameClient {
     void resetGame() {
         def resp = restClient.post(
                 path: '/mac/resetGame',
-//                body: [ x: mouseX, y: mouseY ],
                 requestContentType: 'application/json' )
 
         assert resp.status == 200
