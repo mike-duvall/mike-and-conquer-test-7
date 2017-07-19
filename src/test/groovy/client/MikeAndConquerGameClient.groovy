@@ -15,14 +15,27 @@ class MikeAndConquerGameClient {
     MikeAndConquerGameClient(String host, int port) {
         hostUrl = "http://$host:$port"
         restClient = new RESTClient(hostUrl)
-        restClient.client.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT, new Integer(2000))
-        restClient.client.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, new Integer(2000))
+
+        boolean useTimeouts = true
+        if(useTimeouts) {
+            restClient.client.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT, new Integer(2000))
+            restClient.client.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, new Integer(2000))
+        }
     }
 
     void addMinigunner(int minigunnerX, int minigunnerY, String aPath) {
         def resp = restClient.post(
                 path: aPath,
                 body: [ x: minigunnerX, y: minigunnerY ],
+                requestContentType: 'application/json' )
+
+        assert resp.status == 200
+    }
+
+    void resetGame() {
+        def resp = restClient.post(
+                path: '/mac/resetGame',
+//                body: [ x: mouseX, y: mouseY ],
                 requestContentType: 'application/json' )
 
         assert resp.status == 200

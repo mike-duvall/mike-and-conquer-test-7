@@ -15,6 +15,7 @@ class MikeAndConquerTest1 extends Specification {
         //gameClient = new MikeAndConquerGameClient("localhost", 11369)
 //        gameClient = new MikeAndConquerGameClient("192.168.0.179", 11369)
         gameClient = new MikeAndConquerGameClient("192.168.0.195", 11369)
+        gameClient.resetGame()
     }
 
     def "clicking nod mingunner should not initiate attack unless gdi minigunner is selected" () {
@@ -37,9 +38,8 @@ class MikeAndConquerTest1 extends Specification {
         Minigunner gdiMinigunner = gameClient.getGDIMinigunner()
         assert gdiMinigunner.x == originalGDIX
         assert gdiMinigunner.y == originalGDIY
-
-
     }
+
 
     def "should be able to move to and attack target" () {
 
@@ -79,7 +79,6 @@ class MikeAndConquerTest1 extends Specification {
         String expectedGameState = "Game Over"
 
         assert gameState == expectedGameState
-
     }
 
     def "Nod minigunner should wait 8 seconds and then attack GDI minigunner" () {
@@ -125,11 +124,7 @@ class MikeAndConquerTest1 extends Specification {
         String expectedGameState = "Mission Failed"
 
         assert gameState == expectedGameState
-
-
-
     }
-
 
 
 
