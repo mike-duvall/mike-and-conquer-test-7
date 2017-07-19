@@ -15,14 +15,26 @@ class MikeAndConquerGameClient {
     MikeAndConquerGameClient(String host, int port) {
         hostUrl = "http://$host:$port"
         restClient = new RESTClient(hostUrl)
-        restClient.client.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT, new Integer(2000))
-        restClient.client.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, new Integer(2000))
+
+        boolean useTimeouts = true
+        if(useTimeouts) {
+            restClient.client.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT, new Integer(2000))
+            restClient.client.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, new Integer(2000))
+        }
     }
 
     void addMinigunner(int minigunnerX, int minigunnerY, String aPath) {
         def resp = restClient.post(
                 path: aPath,
                 body: [ x: minigunnerX, y: minigunnerY ],
+                requestContentType: 'application/json' )
+
+        assert resp.status == 200
+    }
+
+    void resetGame() {
+        def resp = restClient.post(
+                path: '/mac/resetGame',
                 requestContentType: 'application/json' )
 
         assert resp.status == 200
@@ -39,13 +51,20 @@ class MikeAndConquerGameClient {
 
 
     Minigunner getMinigunner(String aPath) {
-        def resp = restClient.get( path : aPath ) // ACME boomerang
+        def resp = restClient.get( path : aPath )
         assert resp.status == 200  // HTTP response code; 404 means not found, etc.
         Minigunner minigunner = new Minigunner()
         minigunner.x = resp.responseData.x
         minigunner.y = resp.responseData.y
         minigunner.health = resp.responseData.health
         return minigunner
+    }
+
+    String getGameState() {
+        def resp = restClient.get( path : '/mac/gameState' )
+        assert resp.status == 200  // HTTP response code; 404 means not found, etc.
+        return resp.responseData.gameState
+        Minigunner minigunner = new Minigunner()
     }
 
 
