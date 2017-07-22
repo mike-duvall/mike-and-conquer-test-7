@@ -18,8 +18,8 @@ class MikeAndConquerGameClient {
 
         boolean useTimeouts = true
         if(useTimeouts) {
-            restClient.client.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT, new Integer(2000))
-            restClient.client.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, new Integer(2000))
+            restClient.client.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT, new Integer(3000))
+            restClient.client.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, new Integer(3000))
         }
     }
 
