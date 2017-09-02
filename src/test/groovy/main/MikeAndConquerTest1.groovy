@@ -35,7 +35,7 @@ class MikeAndConquerTest1 extends Specification {
 
 
         then:
-        Minigunner gdiMinigunner = gameClient.getGDIMinigunner()
+        Minigunner gdiMinigunner = gameClient.getMinigunnerAtLocation(originalGDIX, originalGDIY)
         assert gdiMinigunner.x == originalGDIX
         assert gdiMinigunner.y == originalGDIY
     }
@@ -48,7 +48,7 @@ class MikeAndConquerTest1 extends Specification {
         gameClient.addNODMinigunner(1000,300)
 
         then:
-        Minigunner gdiMinigunner = gameClient.getGDIMinigunner()
+        Minigunner gdiMinigunner = gameClient.getMinigunnerAtLocation(300,700)
         assert gdiMinigunner.x == 300
         assert gdiMinigunner.y == 700
 
@@ -80,6 +80,47 @@ class MikeAndConquerTest1 extends Specification {
         assert gameState == expectedGameState
     }
 
+
+    def "should be able to move two separate GDI minigunners" () {
+
+        when:
+        gameClient.addGDIMinigunner(300,700)
+        gameClient.addGDIMinigunner(500,700)
+//        gameClient.addNODMinigunner(1000,300)
+
+        then:
+        Minigunner gdiMinigunner = gameClient.getMinigunnerAtLocation(300, 700)
+        assert gdiMinigunner.x == 300
+        assert gdiMinigunner.y == 700
+
+
+        when:
+        gameClient.leftClick(300,700)
+
+        and:
+        gameClient.leftClick(1000,300)
+
+        then:
+        def conditions = new PollingConditions(timeout: 10, initialDelay: 1.5, factor: 1.25)
+        conditions.eventually {
+            def expectedMinigunner = gameClient.getMinigunnerAtLocation(1000,300)
+            if( expectedMinigunner == null) {
+                assert false
+            }
+            assert expectedMinigunner.health != 0
+        }
+
+        // need to add code to move both minigunners at the same time
+
+        and:
+        String gameState = gameClient.getGameState()
+        String expectedGameState = "Playing"  // not sure if Playing is correct state
+
+        assert gameState == expectedGameState
+    }
+
+
+
     def "Nod minigunner should wait 8 seconds and then attack GDI minigunner" () {
 
         given:
@@ -91,7 +132,8 @@ class MikeAndConquerTest1 extends Specification {
         sleep(3000)
 
         then:
-        Minigunner gdiMinigunner = gameClient.getGDIMinigunner()
+        // TODO need to validate that minigunners are GDI or NOD
+        Minigunner gdiMinigunner = gameClient.getMinigunnerAtLocation(300,700)
         assert gdiMinigunner.x == 300
         assert gdiMinigunner.y == 700
 
@@ -105,7 +147,7 @@ class MikeAndConquerTest1 extends Specification {
         then:
         def conditions = new PollingConditions(timeout: 30, initialDelay: 1.5, factor: 1.25)
         conditions.eventually {
-            def expectedDeadMinigunner = gameClient.getGDIMinigunner()
+            def expectedDeadMinigunner = gameClient.getMinigunnerAtLocation(300, 700)
             assert expectedDeadMinigunner.health == 0
         }
 

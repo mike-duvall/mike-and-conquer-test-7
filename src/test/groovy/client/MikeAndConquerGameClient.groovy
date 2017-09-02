@@ -1,5 +1,6 @@
 package client
 
+import groovyx.net.http.HttpResponseException
 import groovyx.net.http.RESTClient
 import main.Minigunner
 import org.apache.http.params.CoreConnectionPNames
@@ -60,6 +61,32 @@ class MikeAndConquerGameClient {
         return minigunner
     }
 
+
+    Minigunner getMinigunner(int minigunnerX, int mingunnerY) {
+        String aPath = '/mac/gdiMinigunner'
+        def resp
+        try {
+            resp = restClient.get(path: aPath, query: [x: minigunnerX, y: mingunnerY])
+        }
+        catch(HttpResponseException e) {
+            if(e.statusCode == 404) {
+                return null
+            }
+            else {
+                throw e
+            }
+        }
+        if( resp.status == 404) {
+            return null
+        }
+        assert resp.status == 200  // HTTP response code; 404 means not found, etc.
+        Minigunner minigunner = new Minigunner()
+        minigunner.x = resp.responseData.x
+        minigunner.y = resp.responseData.y
+        minigunner.health = resp.responseData.health
+        return minigunner
+    }
+
     String getGameState() {
         def resp = restClient.get( path : '/mac/gameState' )
         assert resp.status == 200  // HTTP response code; 404 means not found, etc.
@@ -69,10 +96,15 @@ class MikeAndConquerGameClient {
 
 
 
-    Minigunner getGDIMinigunner() {
-        return getMinigunner('/mac/gdiMinigunner')
-    }
+//    Minigunner getGDIMinigunner() {
+//        return getMinigunner('/mac/gdiMinigunner')
+//    }
 
+
+    Minigunner getMinigunnerAtLocation(int x, int y) {
+//        return getMinigunner('/mac/gdiMinigunner')
+        return getMinigunner(x, y)
+    }
 
 
     Minigunner getNODMinigunner() {
