@@ -13,11 +13,10 @@ class MikeAndConquerGameClient {
     String hostUrl
     RESTClient  restClient
 
-    MikeAndConquerGameClient(String host, int port) {
+    MikeAndConquerGameClient(String host, int port, boolean useTimeouts = true) {
         hostUrl = "http://$host:$port"
         restClient = new RESTClient(hostUrl)
 
-        boolean useTimeouts = true
         if(useTimeouts) {
             restClient.client.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT, new Integer(3000))
             restClient.client.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, new Integer(3000))
@@ -59,6 +58,27 @@ class MikeAndConquerGameClient {
         minigunner.y = resp.responseData.y
         minigunner.health = resp.responseData.health
         return minigunner
+    }
+
+
+    List<Minigunner> getGDIMinigunners() {
+        String aPath = '/mac/gdiMinigunners'
+        def resp
+        resp = restClient.get(path: aPath)
+
+        assert resp.status == 200  // HTTP response code; 404 means not found, etc.
+
+        int numItems = resp.responseData.size
+
+        List<Minigunner> allMinigunnersList = []
+        for (int i = 0; i < numItems; i++) {
+            Minigunner newMingunner = new Minigunner()
+            newMingunner.x = resp.responseData[i]['x']
+            newMingunner.y = resp.responseData[i]['y']
+            newMingunner.health = resp.responseData[i]['health']
+            allMinigunnersList.add(newMingunner)
+        }
+        return allMinigunnersList
     }
 
 

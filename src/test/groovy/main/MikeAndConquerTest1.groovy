@@ -5,6 +5,7 @@ import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
 
+
 class MikeAndConquerTest1 extends Specification {
 
 
@@ -12,11 +13,15 @@ class MikeAndConquerTest1 extends Specification {
 
 
     def setup() {
-        //gameClient = new MikeAndConquerGameClient("localhost", 11369)
 //        gameClient = new MikeAndConquerGameClient("192.168.0.179", 11369)
-        gameClient = new MikeAndConquerGameClient("192.168.0.195", 11369)
+        String host = "192.168.0.195"
+        int port = 11369
+        boolean useTimeouts = false
+        gameClient = new MikeAndConquerGameClient(host, port, useTimeouts )
         gameClient.resetGame()
     }
+
+
 
     def "clicking nod mingunner should not initiate attack unless gdi minigunner is selected" () {
 
@@ -24,20 +29,28 @@ class MikeAndConquerTest1 extends Specification {
         int originalGDIX = 300
         int originalGDIY = 700
         gameClient.addGDIMinigunner(originalGDIX, originalGDIY)
-        gameClient.addNODMinigunner(1000,300)
+
+        int nodMinigunnerX = 1000
+        int nodMinigunnerY = 300
+        gameClient.addNODMinigunner( nodMinigunnerX, nodMinigunnerY )
 
 
         when:
-        gameClient.leftClick(1000,300)
+        gameClient.leftClick(nodMinigunnerX, nodMinigunnerY )
 
         and:
-        sleep(2000)
+        int TWO_SECONDS_IN_MILLIS = 2000
+        sleep( TWO_SECONDS_IN_MILLIS )
 
 
         then:
-        Minigunner gdiMinigunner = gameClient.getMinigunnerAtLocation(originalGDIX, originalGDIY)
-        assert gdiMinigunner.x == originalGDIX
-        assert gdiMinigunner.y == originalGDIY
+        List<Minigunner> gdiMinigunnerList = gameClient.getGDIMinigunners()
+        assert gdiMinigunnerList.size == 1
+        assert gdiMinigunnerList[0].x == originalGDIX
+        assert gdiMinigunnerList[0].y == originalGDIY
+//        Minigunner gdiMinigunner = gameClient.getMinigunnerAtLocation(originalGDIX, originalGDIY)
+//        assert gdiMinigunner.x == originalGDIX
+//        assert gdiMinigunner.y == originalGDIY
     }
 
 
