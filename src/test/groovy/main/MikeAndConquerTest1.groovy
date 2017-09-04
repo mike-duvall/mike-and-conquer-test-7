@@ -48,9 +48,6 @@ class MikeAndConquerTest1 extends Specification {
         assert gdiMinigunnerList.size == 1
         assert gdiMinigunnerList[0].x == originalGDIX
         assert gdiMinigunnerList[0].y == originalGDIY
-//        Minigunner gdiMinigunner = gameClient.getMinigunnerAtLocation(originalGDIX, originalGDIY)
-//        assert gdiMinigunner.x == originalGDIX
-//        assert gdiMinigunner.y == originalGDIY
     }
 
 
@@ -160,8 +157,9 @@ class MikeAndConquerTest1 extends Specification {
         then:
         def conditions = new PollingConditions(timeout: 30, initialDelay: 1.5, factor: 1.25)
         conditions.eventually {
-            def expectedDeadMinigunner = gameClient.getMinigunnerAtLocation(300, 700)
-            assert expectedDeadMinigunner.health == 0
+            List<Minigunner> allGDIMinigunners = gameClient.getGDIMinigunners()
+            assert allGDIMinigunners.size == 1
+            assert allGDIMinigunners[0].health == 0
         }
 
         when:
