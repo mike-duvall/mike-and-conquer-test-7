@@ -84,25 +84,22 @@ class MikeAndConquerTest1 extends Specification {
         }
 
         and:
-        String gameState = gameClient.getGameState()
         String expectedGameState = "Game Over"
 
-        assert gameState == expectedGameState
+        conditions.eventually {
+            String gameState = gameClient.getGameState()
+            assert gameState == expectedGameState
+        }
+
+
     }
 
 
     def "should be able to move two separate GDI minigunners" () {
 
-        when:
-        gameClient.addGDIMinigunner(300,700)
-        gameClient.addGDIMinigunner(500,700)
-//        gameClient.addNODMinigunner(1000,300)
-
-        then:
-        Minigunner gdiMinigunner = gameClient.getMinigunnerAtLocation(300, 700)
-        assert gdiMinigunner.x == 300
-        assert gdiMinigunner.y == 700
-
+        given:
+        Minigunner createdMinigunner1 = gameClient.addGDIMinigunner(300,700)
+        Minigunner createdMinigunner2 = gameClient.addGDIMinigunner(500,700)
 
         when:
         gameClient.leftClick(300,700)
@@ -113,10 +110,9 @@ class MikeAndConquerTest1 extends Specification {
         then:
         def conditions = new PollingConditions(timeout: 10, initialDelay: 1.5, factor: 1.25)
         conditions.eventually {
-            def expectedMinigunner = gameClient.getMinigunnerAtLocation(1000,300)
-            if( expectedMinigunner == null) {
-                assert false
-            }
+            def expectedMinigunner = gameClient.getMinigunnerById(createdMinigunner1.id)
+            assert expectedMinigunner.x == 1000
+            assert expectedMinigunner.y == 300
             assert expectedMinigunner.health != 0
         }
 

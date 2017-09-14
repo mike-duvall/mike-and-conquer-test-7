@@ -40,8 +40,20 @@ class MikeAndConquerGameClient {
         assert resp.status == 200
     }
 
-    void addGDIMinigunner(int minigunnerX, int minigunnerY) {
-        addMinigunner(minigunnerX, minigunnerY, '/mac/gdiMinigunner' )
+    Minigunner addGDIMinigunner(int minigunnerX, int minigunnerY) {
+        def resp = restClient.post(
+                path: '/mac/gdiMinigunners',
+                body: [ x: minigunnerX, y: minigunnerY ],
+                requestContentType: 'application/json' )
+
+        assert resp.status == 200
+
+        Minigunner minigunner = new Minigunner()
+        minigunner.id = resp.responseData.id
+        minigunner.x = resp.responseData.x
+        minigunner.y = resp.responseData.y
+        minigunner.health = resp.responseData.health
+        return minigunner
     }
 
     void addNODMinigunner(int minigunnerX, int minigunnerY) {
@@ -139,5 +151,32 @@ class MikeAndConquerGameClient {
 
         assert resp.status == 200
 
+    }
+
+    Minigunner getMinigunnerById(int minigunnerId) {
+
+        String aPath = '/mac/gdiMinigunners/' + minigunnerId
+        def resp
+        try {
+            resp = restClient.get(path: aPath)
+        }
+        catch(HttpResponseException e) {
+            if(e.statusCode == 404) {
+                return null
+            }
+            else {
+                throw e
+            }
+        }
+        if( resp.status == 404) {
+            return null
+        }
+        assert resp.status == 200  // HTTP response code; 404 means not found, etc.
+        Minigunner minigunner = new Minigunner()
+        minigunner.x = resp.responseData.x
+        minigunner.y = resp.responseData.y
+        minigunner.health = resp.responseData.health
+        minigunner.id = resp.responseData.id
+        return minigunner
     }
 }
