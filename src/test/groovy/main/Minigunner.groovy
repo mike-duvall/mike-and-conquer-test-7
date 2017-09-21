@@ -6,4 +6,5 @@ class Minigunner {
     int x
     int y
     int health
+    boolean selected
 }
