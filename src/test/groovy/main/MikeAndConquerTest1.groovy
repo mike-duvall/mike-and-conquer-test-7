@@ -16,7 +16,7 @@ class MikeAndConquerTest1 extends Specification {
 //        gameClient = new MikeAndConquerGameClient("192.168.0.179", 11369)
         String host = "192.168.0.195"
         int port = 11369
-        boolean useTimeouts = false
+        boolean useTimeouts = true
         gameClient = new MikeAndConquerGameClient(host, port, useTimeouts )
         gameClient.resetGame()
     }
