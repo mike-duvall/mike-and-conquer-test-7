@@ -95,7 +95,7 @@ class MikeAndConquerGameClient {
 
 
     Minigunner getMinigunner(int minigunnerX, int mingunnerY) {
-        String aPath = '/mac/gdiMinigunner'
+        String aPath = '/mac/gdiMinigunners'
         def resp
         try {
             resp = restClient.get(path: aPath, query: [x: minigunnerX, y: mingunnerY])
@@ -128,13 +128,7 @@ class MikeAndConquerGameClient {
 
 
 
-//    Minigunner getGDIMinigunner() {
-//        return getMinigunner('/mac/gdiMinigunner')
-//    }
-
-
     Minigunner getMinigunnerAtLocation(int x, int y) {
-//        return getMinigunner('/mac/gdiMinigunner')
         return getMinigunner(x, y)
     }
 
