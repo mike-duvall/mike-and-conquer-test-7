@@ -57,7 +57,7 @@ class MikeAndConquerGameClient {
     }
 
     void addNODMinigunner(int minigunnerX, int minigunnerY) {
-        addMinigunner(minigunnerX, minigunnerY, '/mac/nodMinigunner' )
+        addMinigunner(minigunnerX, minigunnerY, '/mac/nodMinigunners' )
     }
 
 
@@ -134,7 +134,7 @@ class MikeAndConquerGameClient {
 
 
     Minigunner getNODMinigunner() {
-        return getMinigunner('/mac/nodMinigunner')
+        return getMinigunner('/mac/nodMinigunners')
     }
 
     void leftClick(int mouseX, int mouseY) {
