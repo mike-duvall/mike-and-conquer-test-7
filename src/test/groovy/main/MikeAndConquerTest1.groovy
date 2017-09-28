@@ -44,7 +44,7 @@ class MikeAndConquerTest1 extends Specification {
 
 
         then:
-        Minigunner retrievedGdiMinigunner = gameClient.getMinigunnerById(gdiMinigunner.id)
+        Minigunner retrievedGdiMinigunner = gameClient.getGdiMinigunnerById(gdiMinigunner.id)
         assert retrievedGdiMinigunner.x == originalGDIX
         assert retrievedGdiMinigunner.y == originalGDIY
     }
@@ -114,8 +114,8 @@ class MikeAndConquerTest1 extends Specification {
         gameClient.leftClick(gdiMinigunner1.x, gdiMinigunner1.y)
 
         and:
-        Minigunner retrievedMinigunner1 = gameClient.getMinigunnerById(gdiMinigunner1.id)
-        Minigunner retrievedMinigunner2 = gameClient.getMinigunnerById(gdiMinigunner2.id)
+        Minigunner retrievedMinigunner1 = gameClient.getGdiMinigunnerById(gdiMinigunner1.id)
+        Minigunner retrievedMinigunner2 = gameClient.getGdiMinigunnerById(gdiMinigunner2.id)
 
         then:
         assert retrievedMinigunner1.selected == true
@@ -125,8 +125,8 @@ class MikeAndConquerTest1 extends Specification {
         gameClient.leftClick(gdiMinigunner2.x, gdiMinigunner2.y)
 
         and:
-        retrievedMinigunner1 = gameClient.getMinigunnerById(gdiMinigunner1.id)
-        retrievedMinigunner2 = gameClient.getMinigunnerById(gdiMinigunner2.id)
+        retrievedMinigunner1 = gameClient.getGdiMinigunnerById(gdiMinigunner1.id)
+        retrievedMinigunner2 = gameClient.getGdiMinigunnerById(gdiMinigunner2.id)
 
         then:
         assert retrievedMinigunner1.selected == false
@@ -169,7 +169,7 @@ class MikeAndConquerTest1 extends Specification {
         then:
         def conditions = new PollingConditions(timeout: 10, initialDelay: 1.5, factor: 1.25)
         conditions.eventually {
-            def expectedMinigunner = gameClient.getMinigunnerById(createdMinigunner1.id)
+            def expectedMinigunner = gameClient.getGdiMinigunnerById(createdMinigunner1.id)
             assert expectedMinigunner.x == minigunner1DestinationX
             assert expectedMinigunner.y == minigunner1DestinationY
             assert expectedMinigunner.health != 0
@@ -178,7 +178,7 @@ class MikeAndConquerTest1 extends Specification {
         and:
         def conditions2 = new PollingConditions(timeout: 10, initialDelay: 1.5, factor: 1.25)
         conditions2.eventually {
-            def expectedMinigunner = gameClient.getMinigunnerById(createdMinigunner2.id)
+            def expectedMinigunner = gameClient.getGdiMinigunnerById(createdMinigunner2.id)
             assert expectedMinigunner.x == minigunner2DestinationX
             assert expectedMinigunner.y == minigunner2DestinationY
             assert expectedMinigunner.health != 0

@@ -13,6 +13,11 @@ class MikeAndConquerGameClient {
     String hostUrl
     RESTClient  restClient
 
+
+    private static final String GDI_MINIGUNNERS_BASE_URL = '/mac/gdiMinigunners'
+    private static final String NOD_MINIGUNNERS_BASE_URL = '/mac/nodMinigunners'
+
+
     MikeAndConquerGameClient(String host, int port, boolean useTimeouts = true) {
         hostUrl = "http://$host:$port"
         restClient = new RESTClient(hostUrl)
@@ -42,7 +47,7 @@ class MikeAndConquerGameClient {
 
     Minigunner addGDIMinigunner(int minigunnerX, int minigunnerY) {
         def resp = restClient.post(
-                path: '/mac/gdiMinigunners',
+                path: GDI_MINIGUNNERS_BASE_URL,
                 body: [ x: minigunnerX, y: minigunnerY ],
                 requestContentType: 'application/json' )
 
@@ -57,7 +62,7 @@ class MikeAndConquerGameClient {
     }
 
     void addNODMinigunner(int minigunnerX, int minigunnerY) {
-        addMinigunner(minigunnerX, minigunnerY, '/mac/nodMinigunners' )
+        addMinigunner(minigunnerX, minigunnerY, NOD_MINIGUNNERS_BASE_URL)
     }
 
 
@@ -74,7 +79,7 @@ class MikeAndConquerGameClient {
 
 
     List<Minigunner> getGDIMinigunners() {
-        String aPath = '/mac/gdiMinigunners'
+        String aPath = GDI_MINIGUNNERS_BASE_URL
         def resp
         resp = restClient.get(path: aPath)
 
@@ -95,7 +100,7 @@ class MikeAndConquerGameClient {
 
 
     Minigunner getMinigunner(int minigunnerX, int mingunnerY) {
-        String aPath = '/mac/gdiMinigunners'
+        String aPath = GDI_MINIGUNNERS_BASE_URL
         def resp
         try {
             resp = restClient.get(path: aPath, query: [x: minigunnerX, y: mingunnerY])
@@ -134,7 +139,7 @@ class MikeAndConquerGameClient {
 
 
     Minigunner getNODMinigunner() {
-        return getMinigunner('/mac/nodMinigunners')
+        return getMinigunner(NOD_MINIGUNNERS_BASE_URL)
     }
 
     void leftClick(int mouseX, int mouseY) {
@@ -147,9 +152,9 @@ class MikeAndConquerGameClient {
 
     }
 
-    Minigunner getMinigunnerById(int minigunnerId) {
+    Minigunner getGdiMinigunnerById(int minigunnerId) {
 
-        String aPath = '/mac/gdiMinigunners/' + minigunnerId
+        String aPath = GDI_MINIGUNNERS_BASE_URL + '/' + minigunnerId
         def resp
         try {
             resp = restClient.get(path: aPath)
