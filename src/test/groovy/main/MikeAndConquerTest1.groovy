@@ -13,7 +13,7 @@ class MikeAndConquerTest1 extends Specification {
 
 
     def setup() {
-//        gameClient = new MikeAndConquerGameClient("192.168.0.179", 11369)
+        // String host = "192.168.0.179"
         String host = "192.168.0.195"
         int port = 11369
         boolean useTimeouts = true
@@ -53,17 +53,15 @@ class MikeAndConquerTest1 extends Specification {
     def "should be able to move to and attack target" () {
 
         when:
-        gameClient.addGDIMinigunner(300,700)
+        Minigunner gdiMinigunner = gameClient.addGDIMinigunner(300,700)
         Minigunner nodMinigunner = gameClient.addNODMinigunner(1000,300)
 
         then:
-        Minigunner gdiMinigunner = gameClient.getMinigunnerAtLocation(300,700)
         assert gdiMinigunner.x == 300
         assert gdiMinigunner.y == 700
 
 
         and:
-//        Minigunner nodMinigunner = gameClient.getNODMinigunner()
         assert nodMinigunner.x == 1000
         assert nodMinigunner.y == 300
         assert nodMinigunner.health == 1000
@@ -217,9 +215,8 @@ class MikeAndConquerTest1 extends Specification {
         then:
         def conditions = new PollingConditions(timeout: 30, initialDelay: 1.5, factor: 1.25)
         conditions.eventually {
-            List<Minigunner> allGDIMinigunners = gameClient.getGDIMinigunners()
-            assert allGDIMinigunners.size == 1
-            assert allGDIMinigunners[0].health == 0
+            gdiMinigunner = gameClient.getGdiMinigunnerById(gdiMinigunner.id)
+            assert gdiMinigunner.health == 0
         }
 
         when:
@@ -236,7 +233,6 @@ class MikeAndConquerTest1 extends Specification {
 
         assert gameState == expectedGameState
     }
-
 
 
 }

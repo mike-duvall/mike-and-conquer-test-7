@@ -28,15 +28,6 @@ class MikeAndConquerGameClient {
         }
     }
 
-    void addMinigunner(int minigunnerX, int minigunnerY, String aPath) {
-        def resp = restClient.post(
-                path: aPath,
-                body: [ x: minigunnerX, y: minigunnerY ],
-                requestContentType: 'application/json' )
-
-        assert resp.status == 200
-    }
-
     void resetGame() {
         def resp = restClient.post(
                 path: '/mac/resetGame',
@@ -44,111 +35,6 @@ class MikeAndConquerGameClient {
 
         assert resp.status == 200
     }
-
-    Minigunner addGDIMinigunner(int minigunnerX, int minigunnerY) {
-        def resp = restClient.post(
-                path: GDI_MINIGUNNERS_BASE_URL,
-                body: [ x: minigunnerX, y: minigunnerY ],
-                requestContentType: 'application/json' )
-
-        assert resp.status == 200
-
-        Minigunner minigunner = new Minigunner()
-        minigunner.id = resp.responseData.id
-        minigunner.x = resp.responseData.x
-        minigunner.y = resp.responseData.y
-        minigunner.health = resp.responseData.health
-        return minigunner
-    }
-
-    Minigunner addNODMinigunner(int minigunnerX, int minigunnerY) {
-        def resp = restClient.post(
-                path: NOD_MINIGUNNERS_BASE_URL,
-                body: [ x: minigunnerX, y: minigunnerY ],
-                requestContentType: 'application/json' )
-
-        assert resp.status == 200
-
-        Minigunner minigunner = new Minigunner()
-        minigunner.id = resp.responseData.id
-        minigunner.x = resp.responseData.x
-        minigunner.y = resp.responseData.y
-        minigunner.health = resp.responseData.health
-        return minigunner
-    }
-
-
-
-    Minigunner getMinigunner(String aPath) {
-        def resp = restClient.get( path : aPath )
-        assert resp.status == 200  // HTTP response code; 404 means not found, etc.
-        Minigunner minigunner = new Minigunner()
-        minigunner.x = resp.responseData.x
-        minigunner.y = resp.responseData.y
-        minigunner.health = resp.responseData.health
-        return minigunner
-    }
-
-
-    List<Minigunner> getGDIMinigunners() {
-        String aPath = GDI_MINIGUNNERS_BASE_URL
-        def resp
-        resp = restClient.get(path: aPath)
-
-        assert resp.status == 200  // HTTP response code; 404 means not found, etc.
-
-        int numItems = resp.responseData.size
-
-        List<Minigunner> allMinigunnersList = []
-        for (int i = 0; i < numItems; i++) {
-            Minigunner newMingunner = new Minigunner()
-            newMingunner.x = resp.responseData[i]['x']
-            newMingunner.y = resp.responseData[i]['y']
-            newMingunner.health = resp.responseData[i]['health']
-            allMinigunnersList.add(newMingunner)
-        }
-        return allMinigunnersList
-    }
-
-
-    Minigunner getMinigunner(int minigunnerX, int mingunnerY) {
-        String aPath = GDI_MINIGUNNERS_BASE_URL
-        def resp
-        try {
-            resp = restClient.get(path: aPath, query: [x: minigunnerX, y: mingunnerY])
-        }
-        catch(HttpResponseException e) {
-            if(e.statusCode == 404) {
-                return null
-            }
-            else {
-                throw e
-            }
-        }
-        if( resp.status == 404) {
-            return null
-        }
-        assert resp.status == 200  // HTTP response code; 404 means not found, etc.
-        Minigunner minigunner = new Minigunner()
-        minigunner.x = resp.responseData.x
-        minigunner.y = resp.responseData.y
-        minigunner.health = resp.responseData.health
-        return minigunner
-    }
-
-    String getGameState() {
-        def resp = restClient.get( path : '/mac/gameState' )
-        assert resp.status == 200  // HTTP response code; 404 means not found, etc.
-        return resp.responseData.gameState
-        Minigunner minigunner = new Minigunner()
-    }
-
-
-
-    Minigunner getMinigunnerAtLocation(int x, int y) {
-        return getMinigunner(x, y)
-    }
-
 
     void leftClick(int mouseX, int mouseY) {
         def resp = restClient.post(
@@ -159,6 +45,39 @@ class MikeAndConquerGameClient {
         assert resp.status == 200
 
     }
+
+    String getGameState() {
+        def resp = restClient.get( path : '/mac/gameState' )
+        assert resp.status == 200  // HTTP response code; 404 means not found, etc.
+        return resp.responseData.gameState
+        Minigunner minigunner = new Minigunner()
+    }
+
+    Minigunner addMinigunner(String baseUrl, int minigunnerX, int minigunnerY) {
+        def resp = restClient.post(
+                path: baseUrl,
+                body: [ x: minigunnerX, y: minigunnerY ],
+                requestContentType: 'application/json' )
+
+        assert resp.status == 200
+
+        Minigunner minigunner = new Minigunner()
+        minigunner.id = resp.responseData.id
+        minigunner.x = resp.responseData.x
+        minigunner.y = resp.responseData.y
+        minigunner.health = resp.responseData.health
+        return minigunner
+    }
+
+
+    Minigunner addGDIMinigunner(int minigunnerX, int minigunnerY) {
+        return addMinigunner(GDI_MINIGUNNERS_BASE_URL, minigunnerX, minigunnerY)
+    }
+
+    Minigunner addNODMinigunner(int minigunnerX, int minigunnerY) {
+        return addMinigunner(NOD_MINIGUNNERS_BASE_URL, minigunnerX, minigunnerY)
+    }
+
 
 
     Minigunner getMinigunnerById(String baseUrl, int minigunnerId) {
@@ -195,6 +114,53 @@ class MikeAndConquerGameClient {
 
     Minigunner getNodMinigunnerById(int minigunnerId) {
         return getMinigunnerById(NOD_MINIGUNNERS_BASE_URL, minigunnerId)
+    }
+
+
+    List<Minigunner> getGdiMinigunners() {
+        String aPath = GDI_MINIGUNNERS_BASE_URL
+        def resp
+        resp = restClient.get(path: aPath)
+
+        assert resp.status == 200  // HTTP response code; 404 means not found, etc.
+
+        int numItems = resp.responseData.size
+
+        List<Minigunner> allMinigunnersList = []
+        for (int i = 0; i < numItems; i++) {
+            Minigunner newMingunner = new Minigunner()
+            newMingunner.x = resp.responseData[i]['x']
+            newMingunner.y = resp.responseData[i]['y']
+            newMingunner.health = resp.responseData[i]['health']
+            allMinigunnersList.add(newMingunner)
+        }
+        return allMinigunnersList
+    }
+
+
+    Minigunner getGdiMinigunnerAtLocation(int minigunnerX, int mingunnerY) {
+        String aPath = GDI_MINIGUNNERS_BASE_URL
+        def resp
+        try {
+            resp = restClient.get(path: aPath, query: [x: minigunnerX, y: mingunnerY])
+        }
+        catch(HttpResponseException e) {
+            if(e.statusCode == 404) {
+                return null
+            }
+            else {
+                throw e
+            }
+        }
+        if( resp.status == 404) {
+            return null
+        }
+        assert resp.status == 200  // HTTP response code; 404 means not found, etc.
+        Minigunner minigunner = new Minigunner()
+        minigunner.x = resp.responseData.x
+        minigunner.y = resp.responseData.y
+        minigunner.health = resp.responseData.health
+        return minigunner
     }
 
 
