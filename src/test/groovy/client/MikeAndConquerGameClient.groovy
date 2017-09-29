@@ -61,8 +61,20 @@ class MikeAndConquerGameClient {
         return minigunner
     }
 
-    void addNODMinigunner(int minigunnerX, int minigunnerY) {
-        addMinigunner(minigunnerX, minigunnerY, NOD_MINIGUNNERS_BASE_URL)
+    Minigunner addNODMinigunner(int minigunnerX, int minigunnerY) {
+        def resp = restClient.post(
+                path: NOD_MINIGUNNERS_BASE_URL,
+                body: [ x: minigunnerX, y: minigunnerY ],
+                requestContentType: 'application/json' )
+
+        assert resp.status == 200
+
+        Minigunner minigunner = new Minigunner()
+        minigunner.id = resp.responseData.id
+        minigunner.x = resp.responseData.x
+        minigunner.y = resp.responseData.y
+        minigunner.health = resp.responseData.health
+        return minigunner
     }
 
 
@@ -138,10 +150,6 @@ class MikeAndConquerGameClient {
     }
 
 
-    Minigunner getNODMinigunner() {
-        return getMinigunner(NOD_MINIGUNNERS_BASE_URL)
-    }
-
     void leftClick(int mouseX, int mouseY) {
         def resp = restClient.post(
                 path: '/mac/leftClick',
@@ -152,9 +160,10 @@ class MikeAndConquerGameClient {
 
     }
 
-    Minigunner getGdiMinigunnerById(int minigunnerId) {
 
-        String aPath = GDI_MINIGUNNERS_BASE_URL + '/' + minigunnerId
+    Minigunner getMinigunnerById(String baseUrl, int minigunnerId) {
+
+        String aPath = baseUrl + '/' + minigunnerId
         def resp
         try {
             resp = restClient.get(path: aPath)
@@ -179,4 +188,14 @@ class MikeAndConquerGameClient {
         minigunner.selected = resp.responseData.selected
         return minigunner
     }
+
+    Minigunner getGdiMinigunnerById(int minigunnerId) {
+        return getMinigunnerById(GDI_MINIGUNNERS_BASE_URL, minigunnerId)
+    }
+
+    Minigunner getNodMinigunnerById(int minigunnerId) {
+        return getMinigunnerById(NOD_MINIGUNNERS_BASE_URL, minigunnerId)
+    }
+
+
 }
