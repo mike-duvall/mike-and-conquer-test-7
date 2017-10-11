@@ -43,7 +43,6 @@ class MikeAndConquerGameClient {
                 requestContentType: 'application/json' )
 
         assert resp.status == 200
-
     }
 
     String getGameState() {
@@ -162,6 +161,5 @@ class MikeAndConquerGameClient {
         minigunner.health = resp.responseData.health
         return minigunner
     }
-
 
 }
