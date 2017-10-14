@@ -49,7 +49,47 @@ class MikeAndConquerTest1 extends Specification {
         assert retrievedGdiMinigunner.y == originalGDIY
     }
 
-    @Ignore
+    def "Nod successively attacks two gdi minigunners"() {
+        given:
+        Minigunner gdiMinigunner1 = createRandomGdiMinigunner()
+        Minigunner gdiMinigunner2 = createRandomGdiMinigunner()
+
+        Minigunner nodMinigunner = createRandomNodMinigunner()
+
+
+        when:
+        int TEN_SECONDS_IN_MILLIS = 10000
+        sleep( TEN_SECONDS_IN_MILLIS )
+
+        then:
+        assertGdiMinigunnerDies(gdiMinigunner1.id)
+        assertGdiMinigunnerDies(gdiMinigunner2.id)
+        assertGameStateGoesToMissionFailed()
+    }
+
+    def "Multiple Nod attack superior GDI forces"() {
+        given:
+        Minigunner gdiMinigunner1 = createRandomGdiMinigunner()
+        Minigunner gdiMinigunner2 = createRandomGdiMinigunner()
+        Minigunner gdiMinigunner3 = createRandomGdiMinigunner()
+
+        Minigunner nodMinigunner1 = createRandomNodMinigunner()
+        Minigunner nodMinigunner2 = createRandomNodMinigunner()
+
+
+        when:
+        int TEN_SECONDS_IN_MILLIS = 10000
+        sleep( TEN_SECONDS_IN_MILLIS )
+
+        then:
+        assertGdiMinigunnerDies(gdiMinigunner1.id)
+        assertGdiMinigunnerDies(gdiMinigunner2.id)
+        assertGdiMinigunnerDies(gdiMinigunner3.id)
+        assertGameStateGoesToMissionFailed()
+    }
+
+
+//    @Ignore
     def "Stress test for memory leaks" () {
 
         given:
@@ -74,15 +114,37 @@ class MikeAndConquerTest1 extends Specification {
 
 
     def assertNodMinigunnerDies(int id) {
-        def conditions = new PollingConditions(timeout: 10, initialDelay: 1.5, factor: 1.25)
+        def conditions = new PollingConditions(timeout: 20, initialDelay: 1.5, factor: 1.25)
         conditions.eventually {
             def expectedDeadMinigunner = gameClient.getNodMinigunnerById(id)
             assert expectedDeadMinigunner.health == 0
         }
+        return true
+    }
+
+
+    def assertGdiMinigunnerDies(int id) {
+        def conditions = new PollingConditions(timeout: 10, initialDelay: 1.5, factor: 1.25)
+        conditions.eventually {
+            def expectedDeadMinigunner = gameClient.getGdiMinigunnerById(id)
+            assert expectedDeadMinigunner.health == 0
+        }
+        return true
+    }
+
+
+    def assertGameStateGoesToMissionFailed() {
+        String expectedGameState = "Mission Failed"
+
+        def conditions = new PollingConditions(timeout: 10, initialDelay: 1.5, factor: 1.25)
+        conditions.eventually {
+            String gameState = gameClient.getGameState()
+            assert gameState == expectedGameState
+        }
 
         return true
-
     }
+
 
     def assertGameStateGoesToGameOver() {
         String expectedGameState = "Game Over"
@@ -142,15 +204,30 @@ class MikeAndConquerTest1 extends Specification {
     }
 
     Minigunner createRandomGdiMinigunner() {
-
         Random rand = new Random()
 
+        int minX = 100
+        int minY = 100
         int maxX = 1000
         int maxY = 800
 
-        int randomX = rand.nextInt(maxX)
-        int randomY = rand.nextInt(maxY)
+        int randomX = rand.nextInt(maxX) + minX
+        int randomY = rand.nextInt(maxY) + minY
         return gameClient.addGDIMinigunner(randomX,randomY)
+    }
+
+
+    Minigunner createRandomNodMinigunner() {
+        Random rand = new Random()
+
+        int minX = 100
+        int minY = 100
+        int maxX = 1000
+        int maxY = 800
+
+        int randomX = rand.nextInt(maxX) + minX
+        int randomY = rand.nextInt(maxY) + minY
+        return gameClient.addNODMinigunner(randomX,randomY)
     }
 
 
