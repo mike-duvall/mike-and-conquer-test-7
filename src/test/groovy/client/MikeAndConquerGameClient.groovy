@@ -33,7 +33,7 @@ class MikeAndConquerGameClient {
                 path: '/mac/resetGame',
                 requestContentType: 'application/json' )
 
-        assert resp.status == 200
+        assert resp.status == 204
     }
 
     void leftClick(int mouseX, int mouseY) {

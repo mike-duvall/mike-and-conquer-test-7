@@ -14,8 +14,9 @@ class MikeAndConquerTest1 extends Specification {
 
 
     def setup() {
-        // String host = "192.168.0.179"
-        String host = "192.168.0.195"
+        //String host = "192.168.0.179"
+        String host = "localhost"
+        //String host = "192.168.0.195"
         int port = 11369
         boolean useTimeouts = true
         gameClient = new MikeAndConquerGameClient(host, port, useTimeouts )
