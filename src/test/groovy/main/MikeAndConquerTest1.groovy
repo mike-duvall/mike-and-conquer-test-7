@@ -165,6 +165,14 @@ class MikeAndConquerTest1 extends Specification {
         Minigunner gdiMinigunner = gameClient.addGDIMinigunner(300,700)
         Minigunner nodMinigunner = gameClient.addNODMinigunner(1000,300)
 
+
+        when:
+        Minigunner retrievedGdiMinigunner = gameClient.getGdiMinigunnerById(gdiMinigunner.id)
+
+        then:
+        assert retrievedGdiMinigunner.x == 300
+        assert retrievedGdiMinigunner.y == 700
+
         when:
         leftClickMinigunner(gdiMinigunner)
 

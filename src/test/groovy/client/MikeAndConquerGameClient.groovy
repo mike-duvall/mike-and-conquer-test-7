@@ -53,9 +53,13 @@ class MikeAndConquerGameClient {
     }
 
     Minigunner addMinigunner(String baseUrl, int minigunnerX, int minigunnerY) {
+        Minigunner inputMinigunner = new Minigunner()
+        inputMinigunner.x = minigunnerX
+        inputMinigunner.y = minigunnerY
         def resp = restClient.post(
                 path: baseUrl,
-                body: [ x: minigunnerX, y: minigunnerY ],
+//                body: [ x: minigunnerX, y: minigunnerY ],
+                body:   inputMinigunner ,
                 requestContentType: 'application/json' )
 
         assert resp.status == 200
