@@ -3,6 +3,7 @@ package client
 import groovyx.net.http.HttpResponseException
 import groovyx.net.http.RESTClient
 import main.Minigunner
+import main.Point
 import org.apache.http.params.CoreConnectionPNames
 
 class MikeAndConquerGameClient {
@@ -36,10 +37,16 @@ class MikeAndConquerGameClient {
         assert resp.status == 204
     }
 
+
+
     void leftClick(int mouseX, int mouseY) {
+        Point point = new Point();
+        point.x = mouseX
+        point.y = mouseY
+
         def resp = restClient.post(
                 path: '/mac/leftClick',
-                body: [ x: mouseX, y: mouseY ],
+                body: point,
                 requestContentType: 'application/json' )
 
         assert resp.status == 200
