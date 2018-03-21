@@ -65,7 +65,6 @@ class MikeAndConquerGameClient {
         inputMinigunner.y = minigunnerY
         def resp = restClient.post(
                 path: baseUrl,
-//                body: [ x: minigunnerX, y: minigunnerY ],
                 body:   inputMinigunner ,
                 requestContentType: 'application/json' )
 
