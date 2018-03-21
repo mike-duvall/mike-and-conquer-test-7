@@ -15,10 +15,15 @@ class MikeAndConquerTest1 extends Specification {
 
     def setup() {
         //String host = "192.168.0.179"
-        String host = "localhost"
-        //String host = "192.168.0.195"
+        String localhost = "localhost"
+        String remoteHost = "192.168.0.195"
+//        String host = localhost;
+        String host = remoteHost;
+
+
         int port = 11369
-        boolean useTimeouts = true
+        //boolean useTimeouts = true
+        boolean useTimeouts = false
         gameClient = new MikeAndConquerGameClient(host, port, useTimeouts )
         gameClient.resetGame()
     }
@@ -165,11 +170,20 @@ class MikeAndConquerTest1 extends Specification {
         Minigunner gdiMinigunner = gameClient.addGDIMinigunner(300,700)
         Minigunner nodMinigunner = gameClient.addNODMinigunner(1000,300)
 
+
+        when:
+        Minigunner retrievedGdiMinigunner = gameClient.getGdiMinigunnerById(gdiMinigunner.id)
+
+        then:
+        assert retrievedGdiMinigunner.x == 300
+        assert retrievedGdiMinigunner.y == 700
+
         when:
         leftClickMinigunner(gdiMinigunner)
 
         and:
         leftClickMinigunner(nodMinigunner)
+
 
         then:
         assertNodMinigunnerDies(nodMinigunner.id)
@@ -235,6 +249,42 @@ class MikeAndConquerTest1 extends Specification {
     void leftClickMinigunner(Minigunner minigunner) {
         gameClient.leftClick(minigunner.x, minigunner.y)
     }
+
+
+
+    def "should handle selecting deselecting gdi minigunner"() {
+        given:
+        Minigunner gdiMinigunner1 = createRandomGdiMinigunner()
+
+        when:
+        Minigunner retrievedMinigunner1 = gameClient.getGdiMinigunnerById(gdiMinigunner1.id)
+
+
+        then:
+        assert retrievedMinigunner1.selected == false
+
+        when:
+        leftClickMinigunner(gdiMinigunner1)
+
+        and:
+        retrievedMinigunner1 = gameClient.getGdiMinigunnerById(gdiMinigunner1.id)
+
+        then:
+        assert retrievedMinigunner1.selected == true
+
+        when:
+        gameClient.leftClick(200,200)
+
+        and:
+        retrievedMinigunner1 = gameClient.getGdiMinigunnerById(gdiMinigunner1.id)
+
+        then:
+        assert retrievedMinigunner1.selected == false
+
+
+
+    }
+
 
     def "should handle selecting a different player unit when player unit already selected"() {
         given:
