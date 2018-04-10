@@ -73,6 +73,7 @@ class MikeAndConquerTest1 extends Specification {
         assertGameStateGoesToMissionFailed()
     }
 
+    @Ignore
     def "Multiple Nod attack superior GDI forces"() {
         given:
         Minigunner gdiMinigunner1 = createRandomGdiMinigunner()
@@ -95,7 +96,7 @@ class MikeAndConquerTest1 extends Specification {
     }
 
 
-//    @Ignore
+    @Ignore
     def "Stress test for memory leaks" () {
 
         given:
@@ -164,6 +165,7 @@ class MikeAndConquerTest1 extends Specification {
         return true
     }
 
+
     def "should be able to move to and attack target" () {
 
         given:
@@ -194,6 +196,7 @@ class MikeAndConquerTest1 extends Specification {
     }
 
 
+    @Ignore
     def "two gdi minigunners attack two nod minigunners" () {
         given:
         Minigunner gdiMinigunner1 = gameClient.addGDIMinigunner(300,700)
@@ -251,7 +254,6 @@ class MikeAndConquerTest1 extends Specification {
     }
 
 
-
     def "should handle selecting deselecting gdi minigunner"() {
         given:
         Minigunner gdiMinigunner1 = createRandomGdiMinigunner()
@@ -284,7 +286,6 @@ class MikeAndConquerTest1 extends Specification {
 
 
     }
-
 
     def "should handle selecting a different player unit when player unit already selected"() {
         given:
@@ -374,7 +375,7 @@ class MikeAndConquerTest1 extends Specification {
     }
 
 
-
+    @Ignore
     def "Nod minigunner should wait 8 seconds and then attack GDI minigunner" () {
 
         given:
