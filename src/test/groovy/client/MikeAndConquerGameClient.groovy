@@ -52,6 +52,21 @@ class MikeAndConquerGameClient {
         assert resp.status == 200
     }
 
+
+    void rightClick(int mouseX, int mouseY) {
+        Point point = new Point();
+        point.x = mouseX
+        point.y = mouseY
+
+        def resp = restClient.post(
+                path: '/mac/rightClick',
+                body: point,
+                requestContentType: 'application/json' )
+
+        assert resp.status == 200
+    }
+
+
     String getGameState() {
         def resp = restClient.get( path : '/mac/gameState' )
         assert resp.status == 200  // HTTP response code; 404 means not found, etc.

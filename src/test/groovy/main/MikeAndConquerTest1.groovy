@@ -73,7 +73,7 @@ class MikeAndConquerTest1 extends Specification {
         assertGameStateGoesToMissionFailed()
     }
 
-    @Ignore
+
     def "Multiple Nod attack superior GDI forces"() {
         given:
         Minigunner gdiMinigunner1 = createRandomGdiMinigunner()
@@ -196,7 +196,6 @@ class MikeAndConquerTest1 extends Specification {
     }
 
 
-    @Ignore
     def "two gdi minigunners attack two nod minigunners" () {
         given:
         Minigunner gdiMinigunner1 = gameClient.addGDIMinigunner(300,700)
@@ -253,7 +252,6 @@ class MikeAndConquerTest1 extends Specification {
         gameClient.leftClick(minigunner.x, minigunner.y)
     }
 
-
     def "should handle selecting deselecting gdi minigunner"() {
         given:
         Minigunner gdiMinigunner1 = createRandomGdiMinigunner()
@@ -275,16 +273,13 @@ class MikeAndConquerTest1 extends Specification {
         assert retrievedMinigunner1.selected == true
 
         when:
-        gameClient.leftClick(200,200)
+        gameClient.rightClick(200,200)
 
         and:
         retrievedMinigunner1 = gameClient.getGdiMinigunnerById(gdiMinigunner1.id)
 
         then:
         assert retrievedMinigunner1.selected == false
-
-
-
     }
 
     def "should handle selecting a different player unit when player unit already selected"() {
@@ -375,7 +370,6 @@ class MikeAndConquerTest1 extends Specification {
     }
 
 
-    @Ignore
     def "Nod minigunner should wait 8 seconds and then attack GDI minigunner" () {
 
         given:
