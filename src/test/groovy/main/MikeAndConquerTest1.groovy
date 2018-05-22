@@ -55,6 +55,30 @@ class MikeAndConquerTest1 extends Specification {
         assert retrievedGdiMinigunner.y == originalGDIY
     }
 
+
+
+
+    def "multithread tests"() {
+        given:
+        createRandomGdiMinigunner()
+        createRandomGdiMinigunner()
+        createRandomGdiMinigunner()
+        createRandomGdiMinigunner()
+        createRandomGdiMinigunner()
+        createRandomGdiMinigunner()
+        createRandomGdiMinigunner()
+        createRandomGdiMinigunner()
+
+
+        when:
+        gameClient.resetGame()
+
+        then:
+        true
+    }
+
+
+
     def "Nod successively attacks two gdi minigunners"() {
         given:
         Minigunner gdiMinigunner1 = createRandomGdiMinigunner()
@@ -96,7 +120,6 @@ class MikeAndConquerTest1 extends Specification {
     }
 
 
-    @Ignore
     def "Stress test for memory leaks" () {
 
         given:
@@ -131,7 +154,7 @@ class MikeAndConquerTest1 extends Specification {
 
 
     def assertGdiMinigunnerDies(int id) {
-        def conditions = new PollingConditions(timeout: 10, initialDelay: 1.5, factor: 1.25)
+        def conditions = new PollingConditions(timeout: 20, initialDelay: 1.5, factor: 1.25)
         conditions.eventually {
             def expectedDeadMinigunner = gameClient.getGdiMinigunnerById(id)
             assert expectedDeadMinigunner.health == 0
