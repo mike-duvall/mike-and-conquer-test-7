@@ -188,15 +188,6 @@ class MikeAndConquerTest1 extends Specification {
 
     }
 
-
-    def assertMinigunnerIsAtScreenPosition(Minigunner minigunner, int screenX, int screenY)
-    {
-        int leeway = 4
-        assert (minigunner.screenX >= screenX - leeway) && (minigunner.screenX <= screenX + leeway)
-        assert (minigunner.screenY >= screenY - leeway) && (minigunner.screenY <= screenY + leeway)
-
-    }
-
     def "should be able to move two separate GDI minigunners" () {
         given:
 
@@ -288,6 +279,14 @@ class MikeAndConquerTest1 extends Specification {
     }
 
 
+
+    def assertMinigunnerIsAtScreenPosition(Minigunner minigunner, int screenX, int screenY)
+    {
+        int leeway = 4
+        assert (minigunner.screenX >= screenX - leeway) && (minigunner.screenX <= screenX + leeway)
+        assert (minigunner.screenY >= screenY - leeway) && (minigunner.screenY <= screenY + leeway)
+
+    }
 
 
     def assertNodMinigunnerDies(int id) {
