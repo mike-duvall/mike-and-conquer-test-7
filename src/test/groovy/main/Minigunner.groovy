@@ -9,4 +9,5 @@ class Minigunner {
     int screenY
     int health
     boolean selected
+    boolean aiIsOn
 }

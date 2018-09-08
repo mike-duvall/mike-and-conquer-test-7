@@ -28,7 +28,7 @@ class MikeAndConquerTest1 extends Specification {
 
         given:
         Minigunner gdiMinigunner = createRandomGdiMinigunner()
-        Minigunner nodMinigunner = createRandomNodMinigunner()
+        Minigunner nodMinigunner = createRandomNodMinigunnerWithAiTurnedOff()
 
         when:
         gameClient.leftClickMinigunner(nodMinigunner.id)
@@ -48,11 +48,8 @@ class MikeAndConquerTest1 extends Specification {
         Minigunner gdiMinigunner1 = createRandomGdiMinigunner()
         Minigunner gdiMinigunner2 = createRandomGdiMinigunner()
 
-        createRandomNodMinigunner()
-
         when:
-        int TEN_SECONDS_IN_MILLIS = 10000
-        sleep( TEN_SECONDS_IN_MILLIS )
+        createRandomNodMinigunnerWithAiTurnedOn()
 
         then:
         assertGdiMinigunnerDies(gdiMinigunner1.id)
@@ -66,12 +63,10 @@ class MikeAndConquerTest1 extends Specification {
         Minigunner gdiMinigunner2 = createRandomGdiMinigunner()
         Minigunner gdiMinigunner3 = createRandomGdiMinigunner()
 
-        createRandomNodMinigunner()
-        createRandomNodMinigunner()
 
         when:
-        int TEN_SECONDS_IN_MILLIS = 10000
-        sleep( TEN_SECONDS_IN_MILLIS )
+        createRandomNodMinigunnerWithAiTurnedOn()
+        createRandomNodMinigunnerWithAiTurnedOn()
 
         then:
         assertGdiMinigunnerDies(gdiMinigunner1.id)
@@ -84,7 +79,7 @@ class MikeAndConquerTest1 extends Specification {
 
         given:
         Minigunner gdiMinigunner = createRandomGdiMinigunner()
-        Minigunner nodMinigunner = createRandomNodMinigunner()
+        Minigunner nodMinigunner = createRandomNodMinigunnerWithAiTurnedOff()
 
         when:
         gameClient.leftClickMinigunner(gdiMinigunner.id)
@@ -103,8 +98,8 @@ class MikeAndConquerTest1 extends Specification {
         given:
         Minigunner gdiMinigunner1 = createRandomGdiMinigunner()
         Minigunner gdiMinigunner2 = createRandomGdiMinigunner()
-        Minigunner nodMinigunner1 = createRandomNodMinigunner()
-        Minigunner nodMinigunner2 = createRandomNodMinigunner()
+        Minigunner nodMinigunner1 = createRandomNodMinigunnerWithAiTurnedOff()
+        Minigunner nodMinigunner2 = createRandomNodMinigunnerWithAiTurnedOff()
 
         when:
         gameClient.leftClickMinigunner(gdiMinigunner1.id)
@@ -335,7 +330,7 @@ class MikeAndConquerTest1 extends Specification {
     }
 
 
-    Point getRandomMinigunnerPosition()
+    Point createRandomMinigunnerPosition()
     {
         Random rand = new Random()
 
@@ -359,16 +354,24 @@ class MikeAndConquerTest1 extends Specification {
     }
 
     Minigunner createRandomGdiMinigunner() {
-        Point randomPosition = getRandomMinigunnerPosition()
+        Point randomPosition = createRandomMinigunnerPosition()
         return gameClient.addGDIMinigunner(randomPosition.x, randomPosition.y)
     }
 
 
-    Minigunner createRandomNodMinigunner() {
-        Point randomPosition = getRandomMinigunnerPosition()
-        return gameClient.addNODMinigunner(randomPosition.x, randomPosition.y)
+    Minigunner createRandomNodMinigunner(boolean aiIsOn) {
+        Point randomPosition = createRandomMinigunnerPosition()
+        return gameClient.addNODMinigunner(randomPosition.x, randomPosition.y, aiIsOn)
     }
 
+    Minigunner createRandomNodMinigunnerWithAiTurnedOff() {
+        boolean aiIsOn = false
+        return createRandomNodMinigunner(aiIsOn)
+    }
 
+    Minigunner createRandomNodMinigunnerWithAiTurnedOn() {
+        boolean aiIsOn = true
+        return createRandomNodMinigunner(aiIsOn)
+    }
 
 }

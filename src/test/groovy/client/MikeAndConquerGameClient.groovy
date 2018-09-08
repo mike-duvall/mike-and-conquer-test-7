@@ -88,13 +88,13 @@ class MikeAndConquerGameClient {
         def resp = restClient.get( path : '/mac/gameState' )
         assert resp.status == 200  // HTTP response code; 404 means not found, etc.
         return resp.responseData.gameState
-        Minigunner minigunner = new Minigunner()
     }
 
-    Minigunner addMinigunner(String baseUrl, int minigunnerX, int minigunnerY) {
+    Minigunner addMinigunner(String baseUrl, int minigunnerX, int minigunnerY, boolean aiIsOn) {
         Minigunner inputMinigunner = new Minigunner()
         inputMinigunner.x = minigunnerX
         inputMinigunner.y = minigunnerY
+        inputMinigunner.aiIsOn = aiIsOn
         def resp = restClient.post(
                 path: baseUrl,
                 body:   inputMinigunner ,
@@ -112,11 +112,12 @@ class MikeAndConquerGameClient {
 
 
     Minigunner addGDIMinigunner(int minigunnerX, int minigunnerY) {
-        return addMinigunner(GDI_MINIGUNNERS_BASE_URL, minigunnerX, minigunnerY)
+        boolean aiIsOn = false
+        return addMinigunner(GDI_MINIGUNNERS_BASE_URL, minigunnerX, minigunnerY, aiIsOn)
     }
 
-    Minigunner addNODMinigunner(int minigunnerX, int minigunnerY) {
-        return addMinigunner(NOD_MINIGUNNERS_BASE_URL, minigunnerX, minigunnerY)
+    Minigunner addNODMinigunner(int minigunnerX, int minigunnerY, boolean aiIsOn) {
+        return addMinigunner(NOD_MINIGUNNERS_BASE_URL, minigunnerX, minigunnerY, aiIsOn)
     }
 
 
