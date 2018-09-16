@@ -183,6 +183,30 @@ class MikeAndConquerTest1 extends Specification {
 
     }
 
+
+    // Note this test is hard coded to work with zoom = 3.0f and
+    // the map scrolled all the way up and left
+    def "movement destination should snap to center of map square"() {
+        given:
+        Minigunner createdMinigunner1 = createRandomGdiMinigunner()
+
+        when:
+        gameClient.leftClickMinigunner(createdMinigunner1.id)
+
+        and:
+        // click square all the way to the left and
+        // one down
+        gameClient.leftClick(20,90)
+
+        and:
+        Minigunner retrievedMinigunner = gameClient.getGdiMinigunnerById(createdMinigunner1.id)
+
+        then:
+        assert retrievedMinigunner.destinationX == 12
+        assert retrievedMinigunner.destinationY == 36
+
+    }
+
     def "should be able to move two separate GDI minigunners" () {
         given:
 
@@ -207,11 +231,16 @@ class MikeAndConquerTest1 extends Specification {
         gameClient.leftClick(minigunner2DestinationX, minigunner2DestinationY )
 
 
+
         then:
         def conditions = new PollingConditions(timeout: 40, initialDelay: 1.5, factor: 1.25)
         conditions.eventually {
             Minigunner retrievedMinigunner = gameClient.getGdiMinigunnerById(createdMinigunner1.id)
-            assertMinigunnerIsAtScreenPosition(retrievedMinigunner, minigunner1DestinationX, minigunner1DestinationY)
+//            assertMinigunnerIsAtScreenPosition(retrievedMinigunner, minigunner1DestinationX, minigunner1DestinationY)
+            assertMinigunnerIsAtWorldPosition(
+                    retrievedMinigunner,
+                    retrievedMinigunner.destinationX,
+                    retrievedMinigunner.destinationY)
             assert retrievedMinigunner.health != 0
         }
 
@@ -219,7 +248,12 @@ class MikeAndConquerTest1 extends Specification {
         def conditions2 = new PollingConditions(timeout: 40, initialDelay: 1.5, factor: 1.25)
         conditions2.eventually {
             def retrievedMinigunner = gameClient.getGdiMinigunnerById(createdMinigunner2.id)
-            assertMinigunnerIsAtScreenPosition(retrievedMinigunner, minigunner2DestinationX, minigunner2DestinationY)
+//            assertMinigunnerIsAtScreenPosition(retrievedMinigunner, minigunner2DestinationX, minigunner2DestinationY)
+            assertMinigunnerIsAtWorldPosition(
+                    retrievedMinigunner,
+                    retrievedMinigunner.destinationX,
+                    retrievedMinigunner.destinationY)
+
             assert retrievedMinigunner.health != 0
         }
 
@@ -280,12 +314,17 @@ class MikeAndConquerTest1 extends Specification {
         int leeway = 4
         assert (minigunner.screenX >= screenX - leeway) && (minigunner.screenX <= screenX + leeway)
         assert (minigunner.screenY >= screenY - leeway) && (minigunner.screenY <= screenY + leeway)
-
     }
 
+    def assertMinigunnerIsAtWorldPosition(Minigunner minigunner, int expectedX, int expectedY)
+    {
+        int leeway = 4
+        assert (minigunner.x >= expectedX - leeway) && (minigunner.x <= expectedX + leeway)
+        assert (minigunner.y >= expectedY - leeway) && (minigunner.y <= expectedY + leeway)
+    }
 
     def assertNodMinigunnerDies(int id) {
-        def conditions = new PollingConditions(timeout: 20, initialDelay: 1.5, factor: 1.25)
+        def conditions = new PollingConditions(timeout: 40, initialDelay: 1.5, factor: 1.25)
         conditions.eventually {
             def expectedDeadMinigunner = gameClient.getNodMinigunnerById(id)
             assert expectedDeadMinigunner.health == 0

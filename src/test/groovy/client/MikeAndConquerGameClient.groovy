@@ -149,6 +149,8 @@ class MikeAndConquerGameClient {
         minigunner.health = resp.responseData.health
         minigunner.id = resp.responseData.id
         minigunner.selected = resp.responseData.selected
+        minigunner.destinationX = resp.responseData.destinationX
+        minigunner.destinationY = resp.responseData.destinationY
         return minigunner
     }
 
