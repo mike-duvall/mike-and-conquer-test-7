@@ -230,17 +230,11 @@ class MikeAndConquerTest1 extends Specification {
         and:
         gameClient.leftClick(minigunner2DestinationX, minigunner2DestinationY )
 
-
-
         then:
         def conditions = new PollingConditions(timeout: 40, initialDelay: 1.5, factor: 1.25)
         conditions.eventually {
             Minigunner retrievedMinigunner = gameClient.getGdiMinigunnerById(createdMinigunner1.id)
-//            assertMinigunnerIsAtScreenPosition(retrievedMinigunner, minigunner1DestinationX, minigunner1DestinationY)
-            assertMinigunnerIsAtWorldPosition(
-                    retrievedMinigunner,
-                    retrievedMinigunner.destinationX,
-                    retrievedMinigunner.destinationY)
+            assertMinigunnerIsAtDestination(retrievedMinigunner)
             assert retrievedMinigunner.health != 0
         }
 
@@ -248,11 +242,7 @@ class MikeAndConquerTest1 extends Specification {
         def conditions2 = new PollingConditions(timeout: 40, initialDelay: 1.5, factor: 1.25)
         conditions2.eventually {
             def retrievedMinigunner = gameClient.getGdiMinigunnerById(createdMinigunner2.id)
-//            assertMinigunnerIsAtScreenPosition(retrievedMinigunner, minigunner2DestinationX, minigunner2DestinationY)
-            assertMinigunnerIsAtWorldPosition(
-                    retrievedMinigunner,
-                    retrievedMinigunner.destinationX,
-                    retrievedMinigunner.destinationY)
+            assertMinigunnerIsAtDestination(retrievedMinigunner)
 
             assert retrievedMinigunner.health != 0
         }
@@ -316,11 +306,11 @@ class MikeAndConquerTest1 extends Specification {
         assert (minigunner.screenY >= screenY - leeway) && (minigunner.screenY <= screenY + leeway)
     }
 
-    def assertMinigunnerIsAtWorldPosition(Minigunner minigunner, int expectedX, int expectedY)
+    def assertMinigunnerIsAtDestination(Minigunner minigunner)
     {
         int leeway = 4
-        assert (minigunner.x >= expectedX - leeway) && (minigunner.x <= expectedX + leeway)
-        assert (minigunner.y >= expectedY - leeway) && (minigunner.y <= expectedY + leeway)
+        assert (minigunner.x >= minigunner.destinationX - leeway) && (minigunner.x <= minigunner.destinationX + leeway)
+        assert (minigunner.y >= minigunner.destinationY - leeway) && (minigunner.y <= minigunner.destinationY + leeway)
     }
 
     def assertNodMinigunnerDies(int id) {
