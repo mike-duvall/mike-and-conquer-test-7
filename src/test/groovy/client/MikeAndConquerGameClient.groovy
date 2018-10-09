@@ -5,6 +5,7 @@ import groovyx.net.http.RESTClient
 import main.Minigunner
 import main.MinigunnerId
 import main.Point
+import main.Sandbag
 import org.apache.http.params.CoreConnectionPNames
 
 class MikeAndConquerGameClient {
@@ -14,6 +15,8 @@ class MikeAndConquerGameClient {
 
     String hostUrl
     RESTClient  restClient
+
+    int mapSquareWidth = 24
 
 
     private static final String GDI_MINIGUNNERS_BASE_URL = '/mac/gdiMinigunners'
@@ -90,7 +93,20 @@ class MikeAndConquerGameClient {
         return resp.responseData.gameState
     }
 
-    Minigunner addMinigunner(String baseUrl, int minigunnerX, int minigunnerY, boolean aiIsOn) {
+    def addSandbag(int x, int y, int index) {
+
+        Sandbag sandbag = new Sandbag(x,y,index)
+
+        def resp = restClient.post(
+                path: '/mac/sandbag',
+                body: sandbag,
+                requestContentType: 'application/json' )
+
+        assert resp.status == 200
+
+    }
+
+    Minigunner addMinigunnerAtWorldCoordinates(String baseUrl, int minigunnerX, int minigunnerY, boolean aiIsOn) {
         Minigunner inputMinigunner = new Minigunner()
         inputMinigunner.x = minigunnerX
         inputMinigunner.y = minigunnerY
@@ -111,13 +127,25 @@ class MikeAndConquerGameClient {
     }
 
 
-    Minigunner addGDIMinigunner(int minigunnerX, int minigunnerY) {
+    Minigunner addGDIMinigunnerAtWorldCoordinates(int minigunnerX, int minigunnerY) {
         boolean aiIsOn = false
-        return addMinigunner(GDI_MINIGUNNERS_BASE_URL, minigunnerX, minigunnerY, aiIsOn)
+        return addMinigunnerAtWorldCoordinates(GDI_MINIGUNNERS_BASE_URL, minigunnerX, minigunnerY, aiIsOn)
     }
 
-    Minigunner addNODMinigunner(int minigunnerX, int minigunnerY, boolean aiIsOn) {
-        return addMinigunner(NOD_MINIGUNNERS_BASE_URL, minigunnerX, minigunnerY, aiIsOn)
+
+    def addGDIMinigunnerAtMapSquare(int x, int y) {
+        int halfMapSquareWidth = mapSquareWidth / 2
+        int worldX = (x * mapSquareWidth) + halfMapSquareWidth
+        int worldY = (y * mapSquareWidth) + halfMapSquareWidth
+
+        return addGDIMinigunnerAtWorldCoordinates(worldX, worldY)
+    }
+
+
+
+
+    Minigunner addNodMinigunnerAtWorldCoordinates(int minigunnerX, int minigunnerY, boolean aiIsOn) {
+        return addMinigunnerAtWorldCoordinates(NOD_MINIGUNNERS_BASE_URL, minigunnerX, minigunnerY, aiIsOn)
     }
 
 
