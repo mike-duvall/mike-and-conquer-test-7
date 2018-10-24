@@ -10,4 +10,6 @@ class Minigunner {
     int health
     boolean selected
     boolean aiIsOn
+    int destinationX
+    int destinationY
 }
