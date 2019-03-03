@@ -1,6 +1,7 @@
 package main
 
 import client.MikeAndConquerGameClient
+import groovyx.net.http.HttpResponseException
 import spock.lang.Ignore
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
@@ -13,7 +14,7 @@ class MikeAndConquerTest1 extends Specification {
 
     def setup() {
         String localhost = "localhost"
-        String remoteHost = "192.168.0.195"
+        String remoteHost = "192.168.0.146"
 //        String host = localhost
         String host = remoteHost
 
@@ -193,7 +194,7 @@ class MikeAndConquerTest1 extends Specification {
     // the map scrolled all the way up and left
     // Ignoring this test for now
     // since the move to using Path's results in destinationX and Y
-    // now being set to next sqaure in the path, not the ultimate destination
+    // now being set to next square in the path, not the ultimate destination
     @Ignore
     def "movement destination should snap to center of map square"() {
         given:
@@ -223,7 +224,7 @@ class MikeAndConquerTest1 extends Specification {
         int minigunner1DestinationY = 200
         Minigunner createdMinigunner1 = createRandomGdiMinigunner()
 
-        int minigunner2DestinationX = 800
+        int minigunner2DestinationX = 850
         int minigunner2DestinationY = 400
         Minigunner createdMinigunner2 = createRandomGdiMinigunner()
 
@@ -265,6 +266,7 @@ class MikeAndConquerTest1 extends Specification {
     }
 
 
+    @Ignore
     def "minigunner should be able to navigate around simple sandbag obstacle" () {
         given:
         def createdMinigunner1 =  gameClient.addGDIMinigunnerAtMapSquare(11,2)
@@ -474,8 +476,33 @@ class MikeAndConquerTest1 extends Specification {
     }
 
     Minigunner createRandomGdiMinigunner() {
-        Point randomPosition = createRandomMinigunnerPosition()
-        return gameClient.addGDIMinigunnerAtWorldCoordinates(randomPosition.x, randomPosition.y)
+        int numTiesTried = 0
+        int maxTimesToTry = 10
+
+        Point randomPosition
+        while(true) {
+            try {
+                randomPosition = createRandomMinigunnerPosition()
+                return gameClient.addGDIMinigunnerAtWorldCoordinates(randomPosition.x, randomPosition.y)
+            }
+            catch(HttpResponseException e) {
+                if(numTiesTried < maxTimesToTry) {
+                    if (e.response.responseData["Message"] == "Cannot create on blocking terrain") {
+                        numTiesTried++
+                    }
+                    print e
+                    print "::" + e.response.responseData["Message"]
+                    println ", for position, x:" + randomPosition.x + ",y:" + randomPosition.y
+
+                }
+                else {
+                    print e
+                    println "::" + e.response.responseData["Message"]
+                    throw e
+                }
+            }
+        }
+//        return gameClient.addGDIMinigunnerAtWorldCoordinates(randomPosition.x, randomPosition.y)
     }
 
 
