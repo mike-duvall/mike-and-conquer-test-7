@@ -508,6 +508,7 @@ class MikeAndConquerTest1 extends Specification {
 
     }
 
+    // TODO:  Unduplicate this retry code
     Minigunner createRandomNodMinigunner(boolean aiIsOn) {
         int numTiesTried = 0
         int maxTimesToTry = 10
