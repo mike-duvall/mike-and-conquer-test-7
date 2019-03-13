@@ -100,10 +100,6 @@ class MikeAndConquerTest1 extends Specification {
         Minigunner gdiMinigunner1 = createRandomGdiMinigunner()
         Minigunner gdiMinigunner2 = createRandomGdiMinigunner()
 
-//        for(int i = 0; i < 10; i++) {
-//            Minigunner gdiMinigunner3 = createRandomGdiMinigunner()
-//            int x = 3
-//        }
         Minigunner nodMinigunner1 = createRandomNodMinigunnerWithAiTurnedOff()
         Minigunner nodMinigunner2 = createRandomNodMinigunnerWithAiTurnedOff()
 
