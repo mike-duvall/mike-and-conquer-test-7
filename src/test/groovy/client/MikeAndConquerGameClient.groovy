@@ -10,14 +10,11 @@ import org.apache.http.params.CoreConnectionPNames
 
 class MikeAndConquerGameClient {
 
-    // Document firewall setup
-
 
     String hostUrl
     RESTClient  restClient
 
     int mapSquareWidth = 24
-
 
     private static final String GDI_MINIGUNNERS_BASE_URL = '/mac/gdiMinigunners'
     private static final String NOD_MINIGUNNERS_BASE_URL = '/mac/nodMinigunners'
@@ -41,15 +38,13 @@ class MikeAndConquerGameClient {
         assert resp.status == 204
     }
 
-
-
-    void leftClick(int mouseX, int mouseY) {
-        Point point = new Point();
-        point.x = mouseX
-        point.y = mouseY
+    void leftClickInWorldCoordinates(int x, int y) {
+        Point point = new Point()
+        point.x = x
+        point.y = y
 
         def resp = restClient.post(
-                path: '/mac/leftClick',
+                path: '/mac/leftClickInWorldCoordinates',
                 body: point,
                 requestContentType: 'application/json' )
 
@@ -141,14 +136,9 @@ class MikeAndConquerGameClient {
         return addGDIMinigunnerAtWorldCoordinates(worldX, worldY)
     }
 
-
-
-
     Minigunner addNodMinigunnerAtWorldCoordinates(int minigunnerX, int minigunnerY, boolean aiIsOn) {
         return addMinigunnerAtWorldCoordinates(NOD_MINIGUNNERS_BASE_URL, minigunnerX, minigunnerY, aiIsOn)
     }
-
-
 
     Minigunner getMinigunnerById(String baseUrl, int minigunnerId) {
 

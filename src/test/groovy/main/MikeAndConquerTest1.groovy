@@ -1,6 +1,7 @@
 package main
 
 import client.MikeAndConquerGameClient
+import groovyx.net.http.HttpResponseException
 import spock.lang.Ignore
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
@@ -13,7 +14,7 @@ class MikeAndConquerTest1 extends Specification {
 
     def setup() {
         String localhost = "localhost"
-        String remoteHost = "192.168.0.195"
+        String remoteHost = "192.168.0.146"
 //        String host = localhost
         String host = remoteHost
 
@@ -98,6 +99,7 @@ class MikeAndConquerTest1 extends Specification {
         given:
         Minigunner gdiMinigunner1 = createRandomGdiMinigunner()
         Minigunner gdiMinigunner2 = createRandomGdiMinigunner()
+
         Minigunner nodMinigunner1 = createRandomNodMinigunnerWithAiTurnedOff()
         Minigunner nodMinigunner2 = createRandomNodMinigunnerWithAiTurnedOff()
 
@@ -219,39 +221,39 @@ class MikeAndConquerTest1 extends Specification {
     def "should be able to move two separate GDI minigunners" () {
         given:
 
-        int minigunner1DestinationX = 600
-        int minigunner1DestinationY = 200
+        int minigunner1DestinationX = 300
+        int minigunner1DestinationY = 100
         Minigunner createdMinigunner1 = createRandomGdiMinigunner()
 
-        int minigunner2DestinationX = 800
-        int minigunner2DestinationY = 400
+        int minigunner2DestinationX = 320
+        int minigunner2DestinationY = 140
         Minigunner createdMinigunner2 = createRandomGdiMinigunner()
 
         when:
         gameClient.leftClickMinigunner(createdMinigunner1.id)
 
         and:
-        gameClient.leftClick(minigunner1DestinationX, minigunner1DestinationY )
+        gameClient.leftClickInWorldCoordinates(minigunner1DestinationX, minigunner1DestinationY )
 
         and:
         gameClient.leftClickMinigunner(createdMinigunner2.id)
 
         and:
-        gameClient.leftClick(minigunner2DestinationX, minigunner2DestinationY )
+        gameClient.leftClickInWorldCoordinates(minigunner2DestinationX, minigunner2DestinationY )
 
         then:
-        def conditions = new PollingConditions(timeout: 40, initialDelay: 1.5, factor: 1.25)
+        def conditions = new PollingConditions(timeout: 60, initialDelay: 1.5, factor: 1.25)
         conditions.eventually {
             Minigunner retrievedMinigunner = gameClient.getGdiMinigunnerById(createdMinigunner1.id)
-            assertMinigunnerIsAtDestination(retrievedMinigunner)
+            assertMinigunnerIsAtDesignatedDestination(retrievedMinigunner, minigunner1DestinationX, minigunner1DestinationY)
             assert retrievedMinigunner.health != 0
         }
 
         and:
-        def conditions2 = new PollingConditions(timeout: 40, initialDelay: 1.5, factor: 1.25)
+        def conditions2 = new PollingConditions(timeout: 60, initialDelay: 1.5, factor: 1.25)
         conditions2.eventually {
             def retrievedMinigunner = gameClient.getGdiMinigunnerById(createdMinigunner2.id)
-            assertMinigunnerIsAtDestination(retrievedMinigunner)
+            assertMinigunnerIsAtDesignatedDestination(retrievedMinigunner, minigunner2DestinationX, minigunner2DestinationY)
 
             assert retrievedMinigunner.health != 0
         }
@@ -265,6 +267,7 @@ class MikeAndConquerTest1 extends Specification {
     }
 
 
+    @Ignore
     def "minigunner should be able to navigate around simple sandbag obstacle" () {
         given:
         def createdMinigunner1 =  gameClient.addGDIMinigunnerAtMapSquare(11,2)
@@ -401,6 +404,12 @@ class MikeAndConquerTest1 extends Specification {
         assert (minigunner.y >= minigunner.destinationY - leeway) && (minigunner.y <= minigunner.destinationY + leeway)
     }
 
+    def assertMinigunnerIsAtDesignatedDestination(Minigunner minigunner,int destinationX, int destinationY)
+    {
+        int leeway = 10
+        assert (minigunner.x >= destinationX - leeway) && (minigunner.x <= destinationX + leeway)
+        assert (minigunner.y >= destinationY - leeway) && (minigunner.y <= destinationY + leeway)
+    }
 
 
 
@@ -454,14 +463,13 @@ class MikeAndConquerTest1 extends Specification {
     {
         Random rand = new Random()
 
-        int minX = 20
-        int minY = 20
-//        int maxX = 610
-//        int maxY = 540
-        // Currently capping max x and y so that they appear on screen with Zoom = 3 in the app
-        // and so that any clicks won't also initiate scrolling of screen
-        int maxX = 580
-        int maxY = 290
+        int minX = 150
+        int minY = 150
+
+
+        // Capping max so it will fit on screen
+        int maxX = 450
+        int maxY = 240
 
         int randomX = rand.nextInt(maxX) + minX
         int randomY = rand.nextInt(maxY) + minY
@@ -474,14 +482,58 @@ class MikeAndConquerTest1 extends Specification {
     }
 
     Minigunner createRandomGdiMinigunner() {
-        Point randomPosition = createRandomMinigunnerPosition()
-        return gameClient.addGDIMinigunnerAtWorldCoordinates(randomPosition.x, randomPosition.y)
+        int numTiesTried = 0
+        int maxTimesToTry = 10
+
+        while(true) {
+            try {
+               Point randomPosition = createRandomMinigunnerPosition()
+               return gameClient.addGDIMinigunnerAtWorldCoordinates(randomPosition.x, randomPosition.y)
+            }
+            catch(HttpResponseException e) {
+                if(numTiesTried < maxTimesToTry) {
+                    if (e.response.responseData["Message"] == "Cannot create on blocking terrain") {
+                        numTiesTried++
+                    }
+                    print e
+                    println "::" + e.response.responseData["Message"]
+                }
+                else {
+                    print e
+                    println "::" + e.response.responseData["Message"]
+                    throw e
+                }
+            }
+        }
+
     }
 
-
+    // TODO:  Unduplicate this retry code
     Minigunner createRandomNodMinigunner(boolean aiIsOn) {
-        Point randomPosition = createRandomMinigunnerPosition()
-        return gameClient.addNodMinigunnerAtWorldCoordinates(randomPosition.x, randomPosition.y, aiIsOn)
+        int numTiesTried = 0
+        int maxTimesToTry = 10
+
+        while(true) {
+            try {
+                Point randomPosition = createRandomMinigunnerPosition()
+                return gameClient.addNodMinigunnerAtWorldCoordinates(randomPosition.x, randomPosition.y, aiIsOn)
+            }
+            catch(HttpResponseException e) {
+                if(numTiesTried < maxTimesToTry) {
+                    if (e.response.responseData["Message"] == "Cannot create on blocking terrain") {
+                        numTiesTried++
+                    }
+                    print e
+                    println "::" + e.response.responseData["Message"]
+                }
+                else {
+                    print e
+                    println "::" + e.response.responseData["Message"]
+                    throw e
+                }
+            }
+        }
+
     }
 
     Minigunner createRandomNodMinigunnerWithAiTurnedOff() {
