@@ -28,7 +28,7 @@ class MikeAndConquerTest1 extends Specification {
     def "clicking nod mingunner should not initiate attack unless gdi minigunner is selected" () {
 
         given:
-        Minigunner gdiMinigunner = createRandomGdiMinigunner()
+        Minigunner gdiMinigunner = createRandomGDIMinigunner()
         Minigunner nodMinigunner = createRandomNodMinigunnerWithAiTurnedOff()
 
         when:
@@ -46,8 +46,8 @@ class MikeAndConquerTest1 extends Specification {
 
     def "Nod successively attacks two gdi minigunners"() {
         given:
-        Minigunner gdiMinigunner1 = createRandomGdiMinigunner()
-        Minigunner gdiMinigunner2 = createRandomGdiMinigunner()
+        Minigunner gdiMinigunner1 = createRandomGDIMinigunner()
+        Minigunner gdiMinigunner2 = createRandomGDIMinigunner()
 
         when:
         createRandomNodMinigunnerWithAiTurnedOn()
@@ -60,9 +60,10 @@ class MikeAndConquerTest1 extends Specification {
 
     def "Multiple Nod attack superior GDI forces"() {
         given:
-        Minigunner gdiMinigunner1 = createRandomGdiMinigunner()
-        Minigunner gdiMinigunner2 = createRandomGdiMinigunner()
-        Minigunner gdiMinigunner3 = createRandomGdiMinigunner()
+
+        Minigunner gdiMinigunner1 = createRandomGDIMinigunner()
+        Minigunner gdiMinigunner2 = createRandomGDIMinigunner()
+        Minigunner gdiMinigunner3 = createRandomGDIMinigunner()
 
 
         when:
@@ -79,7 +80,7 @@ class MikeAndConquerTest1 extends Specification {
     def "should be able to move to and attack target" () {
 
         given:
-        Minigunner gdiMinigunner = createRandomGdiMinigunner()
+        Minigunner gdiMinigunner = createRandomGDIMinigunner()
         Minigunner nodMinigunner = createRandomNodMinigunnerWithAiTurnedOff()
 
         when:
@@ -97,8 +98,8 @@ class MikeAndConquerTest1 extends Specification {
 
     def "two gdi minigunners attack two nod minigunners" () {
         given:
-        Minigunner gdiMinigunner1 = createRandomGdiMinigunner()
-        Minigunner gdiMinigunner2 = createRandomGdiMinigunner()
+        Minigunner gdiMinigunner1 = createRandomGDIMinigunner()
+        Minigunner gdiMinigunner2 = createRandomGDIMinigunner()
 
         Minigunner nodMinigunner1 = createRandomNodMinigunnerWithAiTurnedOff()
         Minigunner nodMinigunner2 = createRandomNodMinigunnerWithAiTurnedOff()
@@ -123,7 +124,7 @@ class MikeAndConquerTest1 extends Specification {
 
     def "should handle selecting deselecting gdi minigunner"() {
         given:
-        Minigunner gdiMinigunner1 = createRandomGdiMinigunner()
+        Minigunner gdiMinigunner1 = createRandomGDIMinigunner()
 
         when:
         Minigunner retrievedMinigunner1 = gameClient.getGdiMinigunnerById(gdiMinigunner1.id)
@@ -152,8 +153,8 @@ class MikeAndConquerTest1 extends Specification {
 
     def "should handle selecting a different player unit when player unit already selected"() {
         given:
-        Minigunner gdiMinigunner1 = createRandomGdiMinigunner()
-        Minigunner gdiMinigunner2 = createRandomGdiMinigunner()
+        Minigunner gdiMinigunner1 = createRandomGDIMinigunner()
+        Minigunner gdiMinigunner2 = createRandomGDIMinigunner()
 
         when:
         gameClient.leftClickMinigunner(gdiMinigunner1.id)
@@ -199,7 +200,7 @@ class MikeAndConquerTest1 extends Specification {
     @Ignore
     def "movement destination should snap to center of map square"() {
         given:
-        Minigunner createdMinigunner1 = createRandomGdiMinigunner()
+        Minigunner createdMinigunner1 = createRandomGDIMinigunner()
 
         when:
         gameClient.leftClickMinigunner(createdMinigunner1.id)
@@ -223,11 +224,11 @@ class MikeAndConquerTest1 extends Specification {
 
         int minigunner1DestinationX = 300
         int minigunner1DestinationY = 100
-        Minigunner createdMinigunner1 = createRandomGdiMinigunner()
+        Minigunner createdMinigunner1 = createRandomGDIMinigunner()
 
         int minigunner2DestinationX = 320
         int minigunner2DestinationY = 140
-        Minigunner createdMinigunner2 = createRandomGdiMinigunner()
+        Minigunner createdMinigunner2 = createRandomGDIMinigunner()
 
         when:
         gameClient.leftClickMinigunner(createdMinigunner1.id)
@@ -349,14 +350,14 @@ class MikeAndConquerTest1 extends Specification {
 
     def "multithread tests"() {
         given:
-        createRandomGdiMinigunner()
-        createRandomGdiMinigunner()
-        createRandomGdiMinigunner()
-        createRandomGdiMinigunner()
-        createRandomGdiMinigunner()
-        createRandomGdiMinigunner()
-        createRandomGdiMinigunner()
-        createRandomGdiMinigunner()
+        createRandomGDIMinigunner()
+        createRandomGDIMinigunner()
+        createRandomGDIMinigunner()
+        createRandomGDIMinigunner()
+        createRandomGDIMinigunner()
+        createRandomGDIMinigunner()
+        createRandomGDIMinigunner()
+        createRandomGDIMinigunner()
 
         when:
         gameClient.resetGame()
@@ -414,7 +415,7 @@ class MikeAndConquerTest1 extends Specification {
 
 
     def assertNodMinigunnerDies(int id) {
-        def conditions = new PollingConditions(timeout: 40, initialDelay: 1.5, factor: 1.25)
+        def conditions = new PollingConditions(timeout: 80, initialDelay: 1.5, factor: 1.25)
         conditions.eventually {
             def expectedDeadMinigunner = gameClient.getNodMinigunnerById(id)
             assert expectedDeadMinigunner.health == 0
@@ -424,7 +425,7 @@ class MikeAndConquerTest1 extends Specification {
 
 
     def assertGdiMinigunnerDies(int id) {
-        def conditions = new PollingConditions(timeout: 40, initialDelay: 1.5, factor: 1.25)
+        def conditions = new PollingConditions(timeout: 80, initialDelay: 1.5, factor: 1.25)
         conditions.eventually {
             def expectedDeadMinigunner = gameClient.getGdiMinigunnerById(id)
             assert expectedDeadMinigunner.health == 0
@@ -463,13 +464,13 @@ class MikeAndConquerTest1 extends Specification {
     {
         Random rand = new Random()
 
-        int minX = 150
-        int minY = 150
+        int minX = 10
+        int minY = 10
 
 
         // Capping max so it will fit on screen
-        int maxX = 450
-        int maxY = 240
+        int maxX = 600
+        int maxY = 400
 
         int randomX = rand.nextInt(maxX) + minX
         int randomY = rand.nextInt(maxY) + minY
@@ -481,7 +482,7 @@ class MikeAndConquerTest1 extends Specification {
 
     }
 
-    Minigunner createRandomGdiMinigunner() {
+    Minigunner createRandomGDIMinigunner() {
         int numTiesTried = 0
         int maxTimesToTry = 10
 
