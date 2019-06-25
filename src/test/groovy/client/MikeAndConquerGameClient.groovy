@@ -227,4 +227,38 @@ class MikeAndConquerGameClient {
         return minigunner
     }
 
+    void dragSelect(int x1, int y1, int x2, int y2) {
+
+        Point point1 = new Point()
+        point1.x = x1
+        point1.y = y1
+
+        Point point2 = new Point()
+        point2.x = x2
+        point2.y = y2
+
+        def resp = restClient.post(
+                path: '/mac/leftClickAndHoldInWorldCoordinates',
+                body: point1,
+                requestContentType: 'application/json' )
+
+        assert resp.status == 200
+
+        resp = restClient.post(
+                path: '/mac/moveMouseToWorldCoordinates',
+                body: point2,
+                requestContentType: 'application/json' )
+
+        assert resp.status == 200
+
+
+        resp = restClient.post(
+                path: '/mac/releaseLeftMouseClick',
+                body: point2,
+                requestContentType: 'application/json' )
+
+        assert resp.status == 200
+
+
+    }
 }

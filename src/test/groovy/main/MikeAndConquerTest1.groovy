@@ -23,6 +23,7 @@ class MikeAndConquerTest1 extends Specification {
         boolean useTimeouts = false
         gameClient = new MikeAndConquerGameClient(host, port, useTimeouts )
         gameClient.resetGame()
+        gameClient.leftClickInWorldCoordinates(1,1)  // to get mouse clicks in default state
     }
 
     def "clicking nod mingunner should not initiate attack unless gdi minigunner is selected" () {
@@ -76,6 +77,54 @@ class MikeAndConquerTest1 extends Specification {
         assertGdiMinigunnerDies(gdiMinigunner3.id)
         assertGameStateGoesToMissionFailed()
     }
+
+
+    def "should be able to move to and attack target through obstacle" () {
+
+        given:
+        Minigunner gdiMinigunner = createGDIMinigunnerAtLocation(82,369)
+        Minigunner nodMinigunner = createNodMinigunnerAtLocation(346,320, false)
+
+        when:
+        gameClient.leftClickMinigunner(gdiMinigunner.id)
+
+        and:
+        gameClient.leftClickMinigunner(nodMinigunner.id)
+
+        then:
+        assertNodMinigunnerDies(nodMinigunner.id)
+
+        and:
+        assertGameStateGoesToGameOver()
+    }
+
+
+    def "should be able to drag select multiple GDI minigunnerss" () {
+        when:
+        Minigunner gdiMinigunner1 = createGDIMinigunnerAtLocation(82,369)
+        Minigunner gdiMinigunner2 = createGDIMinigunnerAtLocation(92,380)
+        Minigunner gdiMinigunner3 = createGDIMinigunnerAtLocation(200,300)
+
+        then:
+        assert gdiMinigunner1.selected == false
+        assert gdiMinigunner2.selected == false
+        assert gdiMinigunner3.selected == false
+
+        when:
+        gameClient.dragSelect(75,350, 100,400)
+
+        then:
+        def retrievedGdiMinigunner1 = gameClient.getGdiMinigunnerById(gdiMinigunner1.id)
+        assert retrievedGdiMinigunner1.selected == true
+
+        def retrievedGdiMinigunner2 = gameClient.getGdiMinigunnerById(gdiMinigunner2.id)
+        assert retrievedGdiMinigunner2.selected == true
+
+        def retrievedGdiMinigunner3 = gameClient.getGdiMinigunnerById(gdiMinigunner3.id)
+        assert retrievedGdiMinigunner3.selected == false
+
+    }
+
 
     def "should be able to move to and attack target" () {
 
@@ -187,11 +236,6 @@ class MikeAndConquerTest1 extends Specification {
     }
 
 
-
-
-
-
-
     // Note this test is hard coded to work with zoom = 3.0f and
     // the map scrolled all the way up and left
     // Ignoring this test for now
@@ -221,7 +265,6 @@ class MikeAndConquerTest1 extends Specification {
 
     def "should be able to move two separate GDI minigunners" () {
         given:
-
         int minigunner1DestinationX = 300
         int minigunner1DestinationY = 100
         Minigunner createdMinigunner1 = createRandomGDIMinigunner()
@@ -242,8 +285,14 @@ class MikeAndConquerTest1 extends Specification {
         and:
         gameClient.leftClickInWorldCoordinates(minigunner2DestinationX, minigunner2DestinationY )
 
+        and:
+        println "createdMinigunner1.x=" + createdMinigunner1.x
+        println "createdMinigunner1.x=" + createdMinigunner1.y
+        println "createdMinigunner2.x=" + createdMinigunner2.x
+        println "createdMinigunner2.x=" + createdMinigunner2.y
+
         then:
-        def conditions = new PollingConditions(timeout: 60, initialDelay: 1.5, factor: 1.25)
+        def conditions = new PollingConditions(timeout: 90, initialDelay: 1.5, factor: 1.25)
         conditions.eventually {
             Minigunner retrievedMinigunner = gameClient.getGdiMinigunnerById(createdMinigunner1.id)
             assertMinigunnerIsAtDesignatedDestination(retrievedMinigunner, minigunner1DestinationX, minigunner1DestinationY)
@@ -251,7 +300,7 @@ class MikeAndConquerTest1 extends Specification {
         }
 
         and:
-        def conditions2 = new PollingConditions(timeout: 60, initialDelay: 1.5, factor: 1.25)
+        def conditions2 = new PollingConditions(timeout: 90, initialDelay: 1.5, factor: 1.25)
         conditions2.eventually {
             def retrievedMinigunner = gameClient.getGdiMinigunnerById(createdMinigunner2.id)
             assertMinigunnerIsAtDesignatedDestination(retrievedMinigunner, minigunner2DestinationX, minigunner2DestinationY)
@@ -407,7 +456,7 @@ class MikeAndConquerTest1 extends Specification {
 
     def assertMinigunnerIsAtDesignatedDestination(Minigunner minigunner,int destinationX, int destinationY)
     {
-        int leeway = 10
+        int leeway = 15
         assert (minigunner.x >= destinationX - leeway) && (minigunner.x <= destinationX + leeway)
         assert (minigunner.y >= destinationY - leeway) && (minigunner.y <= destinationY + leeway)
     }
@@ -508,6 +557,31 @@ class MikeAndConquerTest1 extends Specification {
         }
 
     }
+
+    Minigunner createGDIMinigunnerAtLocation(int x, int y) {
+        try {
+            Point position = new Point(x,y)
+            return gameClient.addGDIMinigunnerAtWorldCoordinates(position.x, position.y)
+        }
+        catch(HttpResponseException e) {
+            print e
+            println "::" + e.response.responseData["Message"]
+            throw e
+        }
+    }
+
+    Minigunner createNodMinigunnerAtLocation(int x, int y, boolean aiIsOn) {
+        try {
+            Point position = new Point(x,y)
+            return gameClient.addNodMinigunnerAtWorldCoordinates(position.x, position.y,aiIsOn)
+        }
+        catch(HttpResponseException e) {
+            print e
+            println "::" + e.response.responseData["Message"]
+            throw e
+        }
+    }
+
 
     // TODO:  Unduplicate this retry code
     Minigunner createRandomNodMinigunner(boolean aiIsOn) {
