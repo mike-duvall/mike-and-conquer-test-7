@@ -4,6 +4,7 @@ import client.MikeAndConquerGameClient
 import groovyx.net.http.HttpResponseException
 import spock.lang.Ignore
 import spock.lang.Specification
+import spock.lang.Unroll
 import spock.util.concurrent.PollingConditions
 
 
@@ -98,12 +99,19 @@ class MikeAndConquerTest1 extends Specification {
         assertGameStateGoesToGameOver()
     }
 
+    static int selectionBoxLeftmostX = 75
+    static int selectionBoxRightmostX = 100
+    static int selectionBoxTopmostY = 350
+    static int selectionBoxBottommostY = 400
 
-    def "should be able to drag select multiple GDI minigunnerss" () {
+    @Unroll
+    def "should be able to drag select multiple GDI minigunners" () {
+
         when:
         Minigunner gdiMinigunner1 = createGDIMinigunnerAtLocation(82,369)
         Minigunner gdiMinigunner2 = createGDIMinigunnerAtLocation(92,380)
         Minigunner gdiMinigunner3 = createGDIMinigunnerAtLocation(200,300)
+
 
         then:
         assert gdiMinigunner1.selected == false
@@ -111,17 +119,40 @@ class MikeAndConquerTest1 extends Specification {
         assert gdiMinigunner3.selected == false
 
         when:
-        gameClient.dragSelect(75,350, 100,400)
+        gameClient.dragSelect(dragStartX, dragStartY, dragEndX, dragEndY)
+
+        and:
+        gdiMinigunner1 = gameClient.getGdiMinigunnerById(gdiMinigunner1.id)
+        gdiMinigunner2 = gameClient.getGdiMinigunnerById(gdiMinigunner2.id)
+        gdiMinigunner3 = gameClient.getGdiMinigunnerById(gdiMinigunner3.id)
+
 
         then:
-        def retrievedGdiMinigunner1 = gameClient.getGdiMinigunnerById(gdiMinigunner1.id)
-        assert retrievedGdiMinigunner1.selected == true
+        assert gdiMinigunner1.selected == true
+        assert gdiMinigunner2.selected == true
+        assert gdiMinigunner3.selected == false
 
-        def retrievedGdiMinigunner2 = gameClient.getGdiMinigunnerById(gdiMinigunner2.id)
-        assert retrievedGdiMinigunner2.selected == true
+        when:
+        gameClient.rightClick(10,10)
 
-        def retrievedGdiMinigunner3 = gameClient.getGdiMinigunnerById(gdiMinigunner3.id)
-        assert retrievedGdiMinigunner3.selected == false
+        and:
+        gdiMinigunner1 = gameClient.getGdiMinigunnerById(gdiMinigunner1.id)
+        gdiMinigunner2 = gameClient.getGdiMinigunnerById(gdiMinigunner2.id)
+        gdiMinigunner3 = gameClient.getGdiMinigunnerById(gdiMinigunner3.id)
+
+
+        then:
+        assert gdiMinigunner1.selected == false
+        assert gdiMinigunner2.selected == false
+        assert gdiMinigunner3.selected == false
+
+
+        where:
+        dragStartX              | dragStartY                | dragEndX                  | dragEndY
+        selectionBoxLeftmostX   | selectionBoxTopmostY      | selectionBoxRightmostX    | selectionBoxBottommostY    // Top left to bottom right
+        selectionBoxRightmostX  | selectionBoxBottommostY   | selectionBoxLeftmostX     | selectionBoxTopmostY    // Bottom right to top left
+        selectionBoxRightmostX  | selectionBoxTopmostY      | selectionBoxLeftmostX     | selectionBoxBottommostY    // Top right to bottom left
+        selectionBoxLeftmostX   | selectionBoxBottommostY   | selectionBoxRightmostX    | selectionBoxTopmostY    // Bottom left to top right
 
     }
 
@@ -292,7 +323,7 @@ class MikeAndConquerTest1 extends Specification {
         println "createdMinigunner2.x=" + createdMinigunner2.y
 
         then:
-        def conditions = new PollingConditions(timeout: 90, initialDelay: 1.5, factor: 1.25)
+        def conditions = new PollingConditions(timeout: 60, initialDelay: 1.5, factor: 1.25)
         conditions.eventually {
             Minigunner retrievedMinigunner = gameClient.getGdiMinigunnerById(createdMinigunner1.id)
             assertMinigunnerIsAtDesignatedDestination(retrievedMinigunner, minigunner1DestinationX, minigunner1DestinationY)
@@ -300,7 +331,7 @@ class MikeAndConquerTest1 extends Specification {
         }
 
         and:
-        def conditions2 = new PollingConditions(timeout: 90, initialDelay: 1.5, factor: 1.25)
+        def conditions2 = new PollingConditions(timeout: 60, initialDelay: 1.5, factor: 1.25)
         conditions2.eventually {
             def retrievedMinigunner = gameClient.getGdiMinigunnerById(createdMinigunner2.id)
             assertMinigunnerIsAtDesignatedDestination(retrievedMinigunner, minigunner2DestinationX, minigunner2DestinationY)
