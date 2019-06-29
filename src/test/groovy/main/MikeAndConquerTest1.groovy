@@ -67,7 +67,6 @@ class MikeAndConquerTest1 extends Specification {
         Minigunner gdiMinigunner2 = createRandomGDIMinigunner()
         Minigunner gdiMinigunner3 = createRandomGDIMinigunner()
 
-
         when:
         createRandomNodMinigunnerWithAiTurnedOn()
         createRandomNodMinigunnerWithAiTurnedOn()
@@ -157,6 +156,7 @@ class MikeAndConquerTest1 extends Specification {
     }
 
 
+    @Ignore
     def "should be able to move to and attack target" () {
 
         given:
@@ -267,30 +267,46 @@ class MikeAndConquerTest1 extends Specification {
     }
 
 
-    // Note this test is hard coded to work with zoom = 3.0f and
-    // the map scrolled all the way up and left
-    // Ignoring this test for now
-    // since the move to using Path's results in destinationX and Y
-    // now being set to next sqaure in the path, not the ultimate destination
-    @Ignore
-    def "movement destination should snap to center of map square"() {
+    def "should set mouse cursor correctly when minigunner is selected" () {
+
         given:
-        Minigunner createdMinigunner1 = createRandomGDIMinigunner()
+        Minigunner gdiMinigunner = createRandomGDIMinigunner()
+        Point mountainSquareLocation = new Point(55,20)
+        Point clearSquare = new Point(10,10)
 
         when:
-        gameClient.leftClickMinigunner(createdMinigunner1.id)
+        gameClient.leftClickMinigunner(gdiMinigunner.id)
 
         and:
-        // click square all the way to the left and
-        // one down
-        gameClient.leftClick(20,90)
-
-        and:
-        Minigunner retrievedMinigunner = gameClient.getGdiMinigunnerById(createdMinigunner1.id)
+        gameClient.moveMouseToWorldCoordinates(mountainSquareLocation)
 
         then:
-        assert retrievedMinigunner.destinationX == 12
-        assert retrievedMinigunner.destinationY == 36
+        String mouseCursorState = gameClient.getMouseCursorState()
+        assert mouseCursorState == "MovementNoteAllowedCursor"
+
+        when:
+        gameClient.moveMouseToWorldCoordinates(clearSquare)
+        mouseCursorState = gameClient.getMouseCursorState()
+
+        then:
+        assert mouseCursorState == "MoveToLocationCursor"
+
+
+        when:
+        Minigunner nodMinigunner = createRandomNodMinigunnerWithAiTurnedOff()
+        gameClient.moveMouseToWorldCoordinates(new Point(nodMinigunner.x, nodMinigunner.y))
+        mouseCursorState = gameClient.getMouseCursorState()
+
+        then:
+        assert mouseCursorState == "AttackEnemyCursor"
+
+
+        when:
+        gameClient.rightClick(20,20)
+        mouseCursorState = gameClient.getMouseCursorState()
+
+        then:
+        assert mouseCursorState == "DefaultArrowCursor"
 
     }
 
@@ -428,6 +444,7 @@ class MikeAndConquerTest1 extends Specification {
 
 
 
+    @Ignore
     def "multithread tests"() {
         given:
         createRandomGDIMinigunner()
