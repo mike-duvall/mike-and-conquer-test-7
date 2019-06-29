@@ -51,6 +51,15 @@ class MikeAndConquerGameClient {
         assert resp.status == 200
     }
 
+    void moveMouseToWorldCoordinates(Point point) {
+
+        def resp = restClient.post(
+                path: '/mac/moveMouseToWorldCoordinates',
+                body: point,
+                requestContentType: 'application/json' )
+
+        assert resp.status == 200
+    }
 
     void leftClickMinigunner(int minigunnerId) {
         MinigunnerId minigunnerId1 = new MinigunnerId()
@@ -86,6 +95,13 @@ class MikeAndConquerGameClient {
         def resp = restClient.get( path : '/mac/gameState' )
         assert resp.status == 200  // HTTP response code; 404 means not found, etc.
         return resp.responseData.gameState
+    }
+
+
+    String getMouseCursorState() {
+        def resp = restClient.get( path : '/mac/mouseCursorState' )
+        assert resp.status == 200  // HTTP response code; 404 means not found, etc.
+        return resp.responseData.cursorState
     }
 
     def addSandbag(int x, int y, int index) {
