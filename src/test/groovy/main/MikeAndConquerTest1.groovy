@@ -98,6 +98,9 @@ class MikeAndConquerTest1 extends Specification {
         assertGameStateGoesToGameOver()
     }
 
+
+    // Unfortunately, these have to be static(or @Shared) to be accessible in the "where" block
+    // https://stackoverflow.com/questions/22707195/how-to-use-instance-variable-in-where-section-of-spock-test
     static int selectionBoxLeftmostX = 75
     static int selectionBoxRightmostX = 100
     static int selectionBoxTopmostY = 350
@@ -109,7 +112,7 @@ class MikeAndConquerTest1 extends Specification {
         when:
         Minigunner gdiMinigunner1 = createGDIMinigunnerAtLocation(82,369)
         Minigunner gdiMinigunner2 = createGDIMinigunnerAtLocation(92,380)
-        Minigunner gdiMinigunner3 = createGDIMinigunnerAtLocation(200,300)
+        Minigunner gdiMinigunner3 = createGDIMinigunnerAtLocation(230,300)
 
 
         then:
@@ -156,25 +159,6 @@ class MikeAndConquerTest1 extends Specification {
     }
 
 
-    @Ignore
-    def "should be able to move to and attack target" () {
-
-        given:
-        Minigunner gdiMinigunner = createRandomGDIMinigunner()
-        Minigunner nodMinigunner = createRandomNodMinigunnerWithAiTurnedOff()
-
-        when:
-        gameClient.leftClickMinigunner(gdiMinigunner.id)
-
-        and:
-        gameClient.leftClickMinigunner(nodMinigunner.id)
-
-        then:
-        assertNodMinigunnerDies(nodMinigunner.id)
-
-        and:
-        assertGameStateGoesToGameOver()
-    }
 
     def "two gdi minigunners attack two nod minigunners" () {
         given:
@@ -271,7 +255,7 @@ class MikeAndConquerTest1 extends Specification {
 
         given:
         Minigunner gdiMinigunner = createRandomGDIMinigunner()
-        Point mountainSquareLocation = new Point(55,20)
+        Point mountainSquareLocation = new Point(79,20)
         Point clearSquare = new Point(10,10)
 
         when:
