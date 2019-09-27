@@ -7,6 +7,8 @@ import spock.lang.Specification
 import spock.lang.Unroll
 import spock.util.concurrent.PollingConditions
 
+import javax.imageio.ImageIO
+import java.awt.image.BufferedImage
 
 
 class MikeAndConquerTest1 extends Specification {
@@ -27,6 +29,60 @@ class MikeAndConquerTest1 extends Specification {
         gameClient.leftClickInWorldCoordinates(1,1)  // to get mouse clicks in default state
     }
 
+    static boolean imagesAreEqual(BufferedImage imgA, BufferedImage imgB) {
+        // The images must be the same size.
+        if (imgA.getWidth() != imgB.getWidth() || imgA.getHeight() != imgB.getHeight()) {
+            return false;
+        }
+
+        int width  = imgA.getWidth();
+        int height = imgA.getHeight();
+
+        // Loop over every pixel.
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                // Compare the pixels for equality.
+                if (imgA.getRGB(x, y) != imgB.getRGB(x, y)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+
+    def "screenshots match" () {
+        when:
+//        int x = 3
+//        BufferedImage originalImage = ImageIO.read(new File(
+//                "D:\\workspace\\mike-and-conquer-test\\test5.png"));
+
+        gameClient.moveMouseToWorldCoordinates(new Point(300,300))
+        BufferedImage screenShotImage = gameClient.getScreenshot()
+
+        then:
+        BufferedImage topLeft100x100 = screenShotImage.getSubimage(0,0,162,218)
+//        File imageFile = new File("D:\\workspace\\mike-and-conquer-6\\screenshots\\real-game-top-left-screenshot-100x100.png")
+//        File imageFile2 = new File("D:\\workspace\\mike-and-conquer-6\\screenshots\\x.png")
+
+//        ImageIO.write(topLeft100x100, "png", imageFile2)
+
+        File imageFile = new File("D:\\workspace\\mike-and-conquer-6\\screenshots\\real-game-162x218-manual.png")
+        BufferedImage referenceFileImage = ImageIO.read(imageFile)
+
+
+        File outputfile1 = new File("D:\\x\\mike.jpg");
+        ImageIO.write(topLeft100x100, "png", outputfile1);
+
+        File outputfile2 = new File("D:\\x\\real.jpg");
+        ImageIO.write(referenceFileImage, "png", outputfile2);
+
+
+        assert imagesAreEqual(topLeft100x100, referenceFileImage)
+    }
+
+
     def "clicking nod mingunner should not initiate attack unless gdi minigunner is selected" () {
 
         given:
@@ -34,6 +90,7 @@ class MikeAndConquerTest1 extends Specification {
         Minigunner nodMinigunner = createRandomNodMinigunnerWithAiTurnedOff()
 
         when:
+        gameClient.getScreenshot()
         gameClient.leftClickMinigunner(nodMinigunner.id)
 
         and:
@@ -112,8 +169,8 @@ class MikeAndConquerTest1 extends Specification {
         when:
         Minigunner gdiMinigunner1 = createGDIMinigunnerAtLocation(82,369)
         Minigunner gdiMinigunner2 = createGDIMinigunnerAtLocation(92,380)
-        Minigunner gdiMinigunner3 = createGDIMinigunnerAtLocation(230,300)
 
+        Minigunner gdiMinigunner3 = createGDIMinigunnerAtLocation(230,300)
 
         then:
         assert gdiMinigunner1.selected == false

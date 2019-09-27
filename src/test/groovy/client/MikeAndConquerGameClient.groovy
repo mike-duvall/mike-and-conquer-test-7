@@ -8,6 +8,9 @@ import main.Point
 import main.Sandbag
 import org.apache.http.params.CoreConnectionPNames
 
+import javax.imageio.ImageIO
+import java.awt.image.BufferedImage
+
 class MikeAndConquerGameClient {
 
 
@@ -187,6 +190,45 @@ class MikeAndConquerGameClient {
         minigunner.destinationY = resp.responseData.destinationY
         return minigunner
     }
+
+    static boolean compareImages(BufferedImage imgA, BufferedImage imgB) {
+        // The images must be the same size.
+        if (imgA.getWidth() != imgB.getWidth() || imgA.getHeight() != imgB.getHeight()) {
+            return false;
+        }
+
+        int width  = imgA.getWidth();
+        int height = imgA.getHeight();
+
+        // Loop over every pixel.
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                // Compare the pixels for equality.
+                if (imgA.getRGB(x, y) != imgB.getRGB(x, y)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    BufferedImage  getScreenshot() {
+
+        def resp = restClient.get( path : '/mac/screenshot' )
+
+//        Pickup here
+        // THis is returning inputstream, but looks signed, maybe need unsigned bytes?
+
+        char xx = resp.responseData.buf[0]
+        ByteArrayInputStream byteArrayInputStream = resp.responseData
+
+
+        BufferedImage screenShotImage = ImageIO.read(byteArrayInputStream)
+
+        return screenShotImage
+    }
+
 
     Minigunner getGdiMinigunnerById(int minigunnerId) {
         return getMinigunnerById(GDI_MINIGUNNERS_BASE_URL, minigunnerId)
