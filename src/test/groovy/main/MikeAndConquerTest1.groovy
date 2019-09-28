@@ -29,59 +29,45 @@ class MikeAndConquerTest1 extends Specification {
         gameClient.leftClickInWorldCoordinates(1,1)  // to get mouse clicks in default state
     }
 
-    static boolean imagesAreEqual(BufferedImage imgA, BufferedImage imgB) {
-        // The images must be the same size.
-        if (imgA.getWidth() != imgB.getWidth() || imgA.getHeight() != imgB.getHeight()) {
-            return false;
-        }
+    def "top left corner of screenshot of game should match equivalent reference screenshot of real command and conquer" () {
 
-        int width  = imgA.getWidth();
-        int height = imgA.getHeight();
+        given:
+        int screenshotCompareWidth = 162
+        int screenshotCompareHeight = 218
 
-        // Loop over every pixel.
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                // Compare the pixels for equality.
-                if (imgA.getRGB(x, y) != imgB.getRGB(x, y)) {
-                    return false;
-                }
-            }
-        }
+        // move mouse out of screenshot
+        gameClient.moveMouseToWorldCoordinates(new Point(screenshotCompareWidth + 50,screenshotCompareHeight + 50))
 
-        return true;
-    }
+        File imageFile = new File(
+                getClass().getClassLoader().getResource("real-game-162x218-manual.png").getFile()
+        );
+        BufferedImage realGameScreenshot = ImageIO.read(imageFile)
 
 
-    def "screenshots match" () {
         when:
-//        int x = 3
-//        BufferedImage originalImage = ImageIO.read(new File(
-//                "D:\\workspace\\mike-and-conquer-test\\test5.png"));
-
-        gameClient.moveMouseToWorldCoordinates(new Point(300,300))
-        BufferedImage screenShotImage = gameClient.getScreenshot()
+        BufferedImage fullScreenShot = gameClient.getScreenshot()
 
         then:
-        BufferedImage topLeft100x100 = screenShotImage.getSubimage(0,0,162,218)
-//        File imageFile = new File("D:\\workspace\\mike-and-conquer-6\\screenshots\\real-game-top-left-screenshot-100x100.png")
-//        File imageFile2 = new File("D:\\workspace\\mike-and-conquer-6\\screenshots\\x.png")
+        BufferedImage screenshotSubImage = fullScreenShot.getSubimage(0,0,162,218)
 
-//        ImageIO.write(topLeft100x100, "png", imageFile2)
+        writeImageToFileInBuildDirectory(screenshotSubImage, "mike-and-conquer-screenshot.jpg" )
+        writeImageToFileInBuildDirectory(realGameScreenshot, "real-game-reference-screenshot.jpg" )
 
-        File imageFile = new File("D:\\workspace\\mike-and-conquer-6\\screenshots\\real-game-162x218-manual.png")
-        BufferedImage referenceFileImage = ImageIO.read(imageFile)
+        and:
+        assert ImageUtil.imagesAreEqual(screenshotSubImage, realGameScreenshot)
 
-
-        File outputfile1 = new File("D:\\x\\mike.jpg");
-        ImageIO.write(topLeft100x100, "png", outputfile1);
-
-        File outputfile2 = new File("D:\\x\\real.jpg");
-        ImageIO.write(referenceFileImage, "png", outputfile2);
-
-
-        assert imagesAreEqual(topLeft100x100, referenceFileImage)
     }
 
+    void writeImageToFileInBuildDirectory(BufferedImage bufferedImage, String fileName) {
+        String relPath = getClass().getProtectionDomain().getCodeSource().getLocation().getFile();
+        File targetDir = new File(relPath+"../../../../build/screenshot");
+        if(!targetDir.exists()) {
+            targetDir.mkdir();
+        }
+        String absPath = targetDir.getAbsolutePath()
+        File outputfile = new File(absPath + "\\" + fileName);
+        ImageIO.write(bufferedImage, "png", outputfile);
+    }
 
     def "clicking nod mingunner should not initiate attack unless gdi minigunner is selected" () {
 
