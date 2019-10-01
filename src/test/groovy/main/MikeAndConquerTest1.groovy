@@ -58,6 +58,37 @@ class MikeAndConquerTest1 extends Specification {
 
     }
 
+    def "screenshot with trees" () {
+
+        given:
+        int screenshotCompareWidth = 480
+        int screenshotCompareHeight = 302
+
+        // move mouse out of screenshot
+        gameClient.moveMouseToWorldCoordinates(new Point(screenshotCompareWidth + 50,screenshotCompareHeight + 50))
+
+        File imageFile = new File(
+                getClass().getClassLoader().getResource("real-game-480x302-manual.png").getFile()
+        );
+        BufferedImage realGameScreenshot = ImageIO.read(imageFile)
+
+
+        when:
+        BufferedImage fullScreenShot = gameClient.getScreenshot()
+
+        then:
+        BufferedImage screenshotSubImage = fullScreenShot.getSubimage(0,0,screenshotCompareWidth,screenshotCompareHeight)
+
+        writeImageToFileInBuildDirectory(screenshotSubImage, "mike-and-conquer-screenshot-480x302.jpg" )
+        writeImageToFileInBuildDirectory(realGameScreenshot, "real-game-reference-screenshot-480x302.jpg" )
+
+        and:
+        assert ImageUtil.imagesAreEqual(screenshotSubImage, realGameScreenshot)
+
+    }
+
+
+
     void writeImageToFileInBuildDirectory(BufferedImage bufferedImage, String fileName) {
         String relPath = getClass().getProtectionDomain().getCodeSource().getLocation().getFile();
         File targetDir = new File(relPath+"../../../../build/screenshot");
