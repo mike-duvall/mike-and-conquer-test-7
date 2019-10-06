@@ -8,6 +8,9 @@ import main.Point
 import main.Sandbag
 import org.apache.http.params.CoreConnectionPNames
 
+import javax.imageio.ImageIO
+import java.awt.image.BufferedImage
+
 class MikeAndConquerGameClient {
 
 
@@ -186,6 +189,13 @@ class MikeAndConquerGameClient {
         minigunner.destinationX = resp.responseData.destinationX
         minigunner.destinationY = resp.responseData.destinationY
         return minigunner
+    }
+
+    BufferedImage  getScreenshot() {
+        def resp = restClient.get( path : '/mac/screenshot' )
+        ByteArrayInputStream byteArrayInputStream = resp.responseData
+        BufferedImage screenShotImage = ImageIO.read(byteArrayInputStream)
+        return screenShotImage
     }
 
     Minigunner getGdiMinigunnerById(int minigunnerId) {

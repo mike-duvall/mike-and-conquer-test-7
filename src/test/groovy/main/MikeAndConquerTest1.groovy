@@ -7,6 +7,8 @@ import spock.lang.Specification
 import spock.lang.Unroll
 import spock.util.concurrent.PollingConditions
 
+import javax.imageio.ImageIO
+import java.awt.image.BufferedImage
 
 
 class MikeAndConquerTest1 extends Specification {
@@ -27,6 +29,77 @@ class MikeAndConquerTest1 extends Specification {
         gameClient.leftClickInWorldCoordinates(1,1)  // to get mouse clicks in default state
     }
 
+    def "top left corner of screenshot of game should match equivalent reference screenshot of real command and conquer" () {
+
+        given:
+        int screenshotCompareWidth = 162
+        int screenshotCompareHeight = 218
+
+        // move mouse out of screenshot
+        gameClient.moveMouseToWorldCoordinates(new Point(screenshotCompareWidth + 50,screenshotCompareHeight + 50))
+
+        File imageFile = new File(
+                getClass().getClassLoader().getResource("real-game-162x218-manual.png").getFile()
+        );
+        BufferedImage realGameScreenshot = ImageIO.read(imageFile)
+
+
+        when:
+        BufferedImage fullScreenShot = gameClient.getScreenshot()
+
+        then:
+        BufferedImage screenshotSubImage = fullScreenShot.getSubimage(0,0,162,218)
+
+        writeImageToFileInBuildDirectory(screenshotSubImage, "mike-and-conquer-screenshot.jpg" )
+        writeImageToFileInBuildDirectory(realGameScreenshot, "real-game-reference-screenshot.jpg" )
+
+        and:
+        assert ImageUtil.imagesAreEqual(screenshotSubImage, realGameScreenshot)
+
+    }
+
+    def "screenshot with trees" () {
+
+        given:
+        int screenshotCompareWidth = 480
+        int screenshotCompareHeight = 302
+
+        // move mouse out of screenshot
+        gameClient.moveMouseToWorldCoordinates(new Point(screenshotCompareWidth + 50,screenshotCompareHeight + 50))
+
+        File imageFile = new File(
+                getClass().getClassLoader().getResource("real-game-480x302-manual.png").getFile()
+        );
+        BufferedImage realGameScreenshot = ImageIO.read(imageFile)
+
+
+        when:
+        BufferedImage fullScreenShot = gameClient.getScreenshot()
+
+        then:
+        BufferedImage screenshotSubImage = fullScreenShot.getSubimage(0,0,screenshotCompareWidth,screenshotCompareHeight)
+
+        writeImageToFileInBuildDirectory(screenshotSubImage, "mike-and-conquer-screenshot-480x302.jpg" )
+        writeImageToFileInBuildDirectory(realGameScreenshot, "real-game-reference-screenshot-480x302.jpg" )
+
+        and:
+        assert ImageUtil.imagesAreEqual(screenshotSubImage, realGameScreenshot)
+
+    }
+
+
+
+    void writeImageToFileInBuildDirectory(BufferedImage bufferedImage, String fileName) {
+        String relPath = getClass().getProtectionDomain().getCodeSource().getLocation().getFile();
+        File targetDir = new File(relPath+"../../../../build/screenshot");
+        if(!targetDir.exists()) {
+            targetDir.mkdir();
+        }
+        String absPath = targetDir.getAbsolutePath()
+        File outputfile = new File(absPath + "\\" + fileName);
+        ImageIO.write(bufferedImage, "png", outputfile);
+    }
+
     def "clicking nod mingunner should not initiate attack unless gdi minigunner is selected" () {
 
         given:
@@ -34,6 +107,7 @@ class MikeAndConquerTest1 extends Specification {
         Minigunner nodMinigunner = createRandomNodMinigunnerWithAiTurnedOff()
 
         when:
+        gameClient.getScreenshot()
         gameClient.leftClickMinigunner(nodMinigunner.id)
 
         and:
@@ -112,8 +186,8 @@ class MikeAndConquerTest1 extends Specification {
         when:
         Minigunner gdiMinigunner1 = createGDIMinigunnerAtLocation(82,369)
         Minigunner gdiMinigunner2 = createGDIMinigunnerAtLocation(92,380)
-        Minigunner gdiMinigunner3 = createGDIMinigunnerAtLocation(230,300)
 
+        Minigunner gdiMinigunner3 = createGDIMinigunnerAtLocation(230,300)
 
         then:
         assert gdiMinigunner1.selected == false
