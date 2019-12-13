@@ -88,6 +88,40 @@ class MikeAndConquerTest1 extends Specification {
     }
 
 
+//    @Ignore
+    def "screenshot of opening game map shroud" () {
+
+        given:
+        int screenshotCompareWidth = 216
+        int screenshotCompareHeight = 96
+
+        // move mouse out of screenshot
+        gameClient.moveMouseToWorldCoordinates(new Point(screenshotCompareWidth + 50,screenshotCompareHeight + 50))
+
+        File imageFile = new File(
+                getClass().getClassLoader().getResource("real-game-shroud-1-start-x408-y240-216x96.png").getFile()
+        );
+        BufferedImage realGameScreenshot = ImageIO.read(imageFile)
+
+
+        when:
+        BufferedImage fullScreenShot = gameClient.getScreenshot()
+
+        then:
+        // 481, 246
+
+        BufferedImage screenshotSubImage = fullScreenShot.getSubimage(408,240,screenshotCompareWidth,screenshotCompareHeight)
+//        BufferedImage screenshotSubImage = fullScreenShot
+
+        writeImageToFileInBuildDirectory(screenshotSubImage, "mike-and-conquer-actual-shroud-1-start-x408-y240-216x96.png" )
+        writeImageToFileInBuildDirectory(realGameScreenshot, "real-game-copied-shroud-1-start-x408-y240-216x96.png" )
+
+        and:
+        assert ImageUtil.imagesAreEqual(screenshotSubImage, realGameScreenshot)
+
+    }
+
+
 
     void writeImageToFileInBuildDirectory(BufferedImage bufferedImage, String fileName) {
         String relPath = getClass().getProtectionDomain().getCodeSource().getLocation().getFile();
