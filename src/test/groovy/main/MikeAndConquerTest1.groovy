@@ -88,7 +88,7 @@ class MikeAndConquerTest1 extends Specification {
     }
 
 
-//    @Ignore
+    @Ignore
     def "screenshot of opening game map shroud" () {
 
         given:
@@ -108,8 +108,6 @@ class MikeAndConquerTest1 extends Specification {
         BufferedImage fullScreenShot = gameClient.getScreenshot()
 
         then:
-        // 481, 246
-
         BufferedImage screenshotSubImage = fullScreenShot.getSubimage(408,240,screenshotCompareWidth,screenshotCompareHeight)
 //        BufferedImage screenshotSubImage = fullScreenShot
 
@@ -118,6 +116,14 @@ class MikeAndConquerTest1 extends Specification {
 
         and:
         assert ImageUtil.imagesAreEqual(screenshotSubImage, realGameScreenshot)
+
+        when:
+        Minigunner minigunner = gameClient.addGDIMinigunnerAtMapSquare(21,12)
+//        gameClient.deleteGdiMinigunnerById(minigunner.id)
+
+        then:
+        true
+
 
     }
 
@@ -593,6 +599,19 @@ class MikeAndConquerTest1 extends Specification {
         assert (minigunner.x >= minigunner.destinationX - leeway) && (minigunner.x <= minigunner.destinationX + leeway)
         assert (minigunner.y >= minigunner.destinationY - leeway) && (minigunner.y <= minigunner.destinationY + leeway)
     }
+
+    def assertMinigunnerIsAtDesignatedDestinationInMapSquareCoordinates(Minigunner minigunner,int mapSquareX, int mapSquareY)
+    {
+        Point worldCoordinates = Util.convertWorldCoordinatesToMapSquareCoordinates(mapSquareX, mapSquareY)
+
+        int destinationX = worldCoordinates.x
+        int destinationY = worldCoordinates.y
+        int leeway = 15
+        assert (minigunner.x >= destinationX - leeway) && (minigunner.x <= destinationX + leeway)
+        assert (minigunner.y >= destinationY - leeway) && (minigunner.y <= destinationY + leeway)
+    }
+
+
 
     def assertMinigunnerIsAtDesignatedDestination(Minigunner minigunner,int destinationX, int destinationY)
     {
