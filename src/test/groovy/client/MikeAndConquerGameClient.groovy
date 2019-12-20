@@ -202,19 +202,7 @@ class MikeAndConquerGameClient {
         return minigunner
     }
 
-    void deleteMinigunnerById(String baseUrl, int id) {
-        String aPath = baseUrl + '/' + id
-        def resp = restClient.post(
-                path: aPath,
-                requestContentType: 'application/json' )
-        assert resp.status == 200
-    }
-
-    void deleteGdiMinigunnerById(int minigunnerId) {
-        deleteMinigunnerById(GDI_MINIGUNNERS_BASE_URL, minigunnerId)
-    }
-
-
+s
     BufferedImage  getScreenshot() {
         def resp = restClient.get( path : '/mac/screenshot' )
         ByteArrayInputStream byteArrayInputStream = resp.responseData
