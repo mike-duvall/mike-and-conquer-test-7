@@ -202,7 +202,6 @@ class MikeAndConquerGameClient {
         return minigunner
     }
 
-s
     BufferedImage  getScreenshot() {
         def resp = restClient.get( path : '/mac/screenshot' )
         ByteArrayInputStream byteArrayInputStream = resp.responseData
