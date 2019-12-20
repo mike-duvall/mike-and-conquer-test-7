@@ -88,6 +88,46 @@ class MikeAndConquerTest1 extends Specification {
     }
 
 
+    @Ignore
+    def "screenshot of opening game map shroud" () {
+
+        given:
+        int screenshotCompareWidth = 216
+        int screenshotCompareHeight = 96
+
+        // move mouse out of screenshot
+        gameClient.moveMouseToWorldCoordinates(new Point(screenshotCompareWidth + 50,screenshotCompareHeight + 50))
+
+        File imageFile = new File(
+                getClass().getClassLoader().getResource("real-game-shroud-1-start-x408-y240-216x96.png").getFile()
+        );
+        BufferedImage realGameScreenshot = ImageIO.read(imageFile)
+
+
+        when:
+        BufferedImage fullScreenShot = gameClient.getScreenshot()
+
+        then:
+        BufferedImage screenshotSubImage = fullScreenShot.getSubimage(408,240,screenshotCompareWidth,screenshotCompareHeight)
+//        BufferedImage screenshotSubImage = fullScreenShot
+
+        writeImageToFileInBuildDirectory(screenshotSubImage, "mike-and-conquer-actual-shroud-1-start-x408-y240-216x96.png" )
+        writeImageToFileInBuildDirectory(realGameScreenshot, "real-game-copied-shroud-1-start-x408-y240-216x96.png" )
+
+        and:
+        assert ImageUtil.imagesAreEqual(screenshotSubImage, realGameScreenshot)
+
+        when:
+        Minigunner minigunner = gameClient.addGDIMinigunnerAtMapSquare(21,12)
+//        gameClient.deleteGdiMinigunnerById(minigunner.id)
+
+        then:
+        true
+
+
+    }
+
+
 
     void writeImageToFileInBuildDirectory(BufferedImage bufferedImage, String fileName) {
         String relPath = getClass().getProtectionDomain().getCodeSource().getLocation().getFile();
@@ -559,6 +599,19 @@ class MikeAndConquerTest1 extends Specification {
         assert (minigunner.x >= minigunner.destinationX - leeway) && (minigunner.x <= minigunner.destinationX + leeway)
         assert (minigunner.y >= minigunner.destinationY - leeway) && (minigunner.y <= minigunner.destinationY + leeway)
     }
+
+    def assertMinigunnerIsAtDesignatedDestinationInMapSquareCoordinates(Minigunner minigunner,int mapSquareX, int mapSquareY)
+    {
+        Point worldCoordinates = Util.convertWorldCoordinatesToMapSquareCoordinates(mapSquareX, mapSquareY)
+
+        int destinationX = worldCoordinates.x
+        int destinationY = worldCoordinates.y
+        int leeway = 15
+        assert (minigunner.x >= destinationX - leeway) && (minigunner.x <= destinationX + leeway)
+        assert (minigunner.y >= destinationY - leeway) && (minigunner.y <= destinationY + leeway)
+    }
+
+
 
     def assertMinigunnerIsAtDesignatedDestination(Minigunner minigunner,int destinationX, int destinationY)
     {

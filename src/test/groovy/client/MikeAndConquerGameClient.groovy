@@ -6,6 +6,7 @@ import main.Minigunner
 import main.MinigunnerId
 import main.Point
 import main.Sandbag
+import main.Util
 import org.apache.http.params.CoreConnectionPNames
 
 import javax.imageio.ImageIO
@@ -16,8 +17,6 @@ class MikeAndConquerGameClient {
 
     String hostUrl
     RESTClient  restClient
-
-    int mapSquareWidth = 24
 
     private static final String GDI_MINIGUNNERS_BASE_URL = '/mac/gdiMinigunners'
     private static final String NOD_MINIGUNNERS_BASE_URL = '/mac/nodMinigunners'
@@ -53,6 +52,18 @@ class MikeAndConquerGameClient {
 
         assert resp.status == 200
     }
+
+
+    void leftClickInMapSquareCoordinates(int x, int y) {
+        Point worldCoordinates = Util.convertWorldCoordinatesToMapSquareCoordinates(x,y)
+        def resp = restClient.post(
+                path: '/mac/leftClickInWorldCoordinates',
+                body: worldCoordinates,
+                requestContentType: 'application/json' )
+
+        assert resp.status == 200
+    }
+
 
     void moveMouseToWorldCoordinates(Point point) {
 
@@ -148,9 +159,9 @@ class MikeAndConquerGameClient {
 
 
     def addGDIMinigunnerAtMapSquare(int x, int y) {
-        int halfMapSquareWidth = mapSquareWidth / 2
-        int worldX = (x * mapSquareWidth) + halfMapSquareWidth
-        int worldY = (y * mapSquareWidth) + halfMapSquareWidth
+        int halfMapSquareWidth = Util.mapSquareWidth / 2
+        int worldX = (x * Util.mapSquareWidth) + halfMapSquareWidth
+        int worldY = (y * Util.mapSquareWidth) + halfMapSquareWidth
 
         return addGDIMinigunnerAtWorldCoordinates(worldX, worldY)
     }
