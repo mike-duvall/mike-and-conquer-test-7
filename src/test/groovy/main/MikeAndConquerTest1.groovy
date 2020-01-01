@@ -88,7 +88,7 @@ class MikeAndConquerTest1 extends Specification {
     }
 
 
-    @Ignore
+//    @Ignore
     def "screenshot of opening game map shroud" () {
 
         given:
@@ -109,7 +109,6 @@ class MikeAndConquerTest1 extends Specification {
 
         then:
         BufferedImage screenshotSubImage = fullScreenShot.getSubimage(408,240,screenshotCompareWidth,screenshotCompareHeight)
-//        BufferedImage screenshotSubImage = fullScreenShot
 
         writeImageToFileInBuildDirectory(screenshotSubImage, "mike-and-conquer-actual-shroud-1-start-x408-y240-216x96.png" )
         writeImageToFileInBuildDirectory(realGameScreenshot, "real-game-copied-shroud-1-start-x408-y240-216x96.png" )
@@ -119,10 +118,23 @@ class MikeAndConquerTest1 extends Specification {
 
         when:
         Minigunner minigunner = gameClient.addGDIMinigunnerAtMapSquare(21,12)
-//        gameClient.deleteGdiMinigunnerById(minigunner.id)
+        gameClient.deleteGdiMinigunnerById(minigunner.id)
+
+        and:
+        imageFile = new File(
+                getClass().getClassLoader().getResource("real-game-shroud-2-start-x408-y240-216x96.png").getFile()
+        );
+        realGameScreenshot = ImageIO.read(imageFile)
+
+        and:
+        fullScreenShot = gameClient.getScreenshot()
+        screenshotSubImage = fullScreenShot.getSubimage(408,240,screenshotCompareWidth,screenshotCompareHeight)
 
         then:
-        true
+        writeImageToFileInBuildDirectory(screenshotSubImage, "mike-and-conquer-actual-shroud-2-start-x408-y240-216x96.png" )
+        writeImageToFileInBuildDirectory(realGameScreenshot, "real-game-copied-shroud-2-start-x408-y240-216x96.png" )
+        assert ImageUtil.imagesAreEqual(screenshotSubImage, realGameScreenshot)
+
 
 
     }

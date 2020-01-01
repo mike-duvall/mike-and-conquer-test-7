@@ -166,6 +166,22 @@ class MikeAndConquerGameClient {
         return addGDIMinigunnerAtWorldCoordinates(worldX, worldY)
     }
 
+    def deleteGdiMinigunnerById(int minigunnerId) {
+
+        MinigunnerId minigunnerId1 = new MinigunnerId()
+        minigunnerId1.id = minigunnerId
+
+        String aPath = GDI_MINIGUNNERS_BASE_URL + '/' + minigunnerId
+
+        def resp = restClient.delete(
+                path: aPath,
+                requestContentType: 'application/json' )
+
+        assert resp.status == 204
+
+
+    }
+
     Minigunner addNodMinigunnerAtWorldCoordinates(int minigunnerX, int minigunnerY, boolean aiIsOn) {
         return addMinigunnerAtWorldCoordinates(NOD_MINIGUNNERS_BASE_URL, minigunnerX, minigunnerY, aiIsOn)
     }
