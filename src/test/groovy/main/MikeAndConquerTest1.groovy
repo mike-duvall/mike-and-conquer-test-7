@@ -148,24 +148,73 @@ class MikeAndConquerTest1 extends Specification {
         int screenshotCompareWidth
         int screenshotCompareHeight
         int index
+        // Add bogus minigunner to not delete so game state stays in "Playing"
+        gameClient.addGDIMinigunnerAtMapSquare(4,5)
+
 
         when:
         startX = 408
-        startY = 240
-        screenshotCompareWidth = 216
-        screenshotCompareHeight = 96
+        startY = 129
+        screenshotCompareWidth = 232
+        screenshotCompareHeight = 159
         index = 1
 
         then:
         assertScreenshotMatches(index, startX, startY, screenshotCompareWidth, screenshotCompareHeight)
+        true
 
         when:
+        startX = 408
+        startY = 129
+        screenshotCompareWidth = 232
+        screenshotCompareHeight = 159
+
         index = 2
-        Minigunner minigunner = gameClient.addGDIMinigunnerAtMapSquare(21,12)
+        Minigunner minigunner = gameClient.addGDIMinigunnerAtMapSquare(21,10)
         gameClient.deleteGdiMinigunnerById(minigunner.id)
 
         then:
         assertScreenshotMatches(index, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
+        true
+
+//        when:
+//        startX = 408
+//        startY = 129
+//        screenshotCompareWidth = 232
+//        screenshotCompareHeight = 159
+//
+//        index = 3
+//        minigunner = gameClient.addGDIMinigunnerAtMapSquare(21,9)
+//        gameClient.deleteGdiMinigunnerById(minigunner.id)
+//
+//        minigunner = gameClient.addGDIMinigunnerAtMapSquare(22,9)
+//        gameClient.deleteGdiMinigunnerById(minigunner.id)
+//
+//
+//        then:
+//        assertScreenshotMatches(index, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
+
+        when:
+        startX = 419
+        startY = 113
+        screenshotCompareWidth = 182
+        screenshotCompareHeight = 158
+
+        index = 4
+        minigunner = gameClient.addGDIMinigunnerAtMapSquare(21,9)
+        gameClient.deleteGdiMinigunnerById(minigunner.id)
+
+        minigunner = gameClient.addGDIMinigunnerAtMapSquare(21,8)
+        gameClient.deleteGdiMinigunnerById(minigunner.id)
+
+        minigunner = gameClient.addGDIMinigunnerAtMapSquare(20,7)
+        gameClient.deleteGdiMinigunnerById(minigunner.id)
+
+        then:
+        assertScreenshotMatches(index, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
+
+
+
     }
 
     void assertScreenshotMatches(int index, int startX, int startY, int screenshotCompareWidth, int screenshotCompareHeight) {
