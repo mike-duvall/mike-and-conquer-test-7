@@ -147,81 +147,88 @@ class MikeAndConquerTest1 extends Specification {
         int startY
         int screenshotCompareWidth
         int screenshotCompareHeight
-        int index
+        int testScenarioNumber
         // Add bogus minigunner to not delete so game state stays in "Playing"
         gameClient.addGDIMinigunnerAtMapSquare(4,5)
+        Point mcvLocation = new Point(21,12)
 
 
-        when:
+
+        when: "Test scenario 1"
+        testScenarioNumber = 1
         startX = 408
         startY = 129
         screenshotCompareWidth = 232
         screenshotCompareHeight = 159
-        index = 1
+        // TODO:  Update this test to place MCV at map coordinates 22,13.
+        //  Currently it's happening in main game via: AddMCVAtMapSquareCoordinates(new Point(22,13));
+
 
         then:
-        assertScreenshotMatches(index, startX, startY, screenshotCompareWidth, screenshotCompareHeight)
+        assertScreenshotMatches(testScenarioNumber, startX, startY, screenshotCompareWidth, screenshotCompareHeight)
         true
 
-        when:
+        when: "Test scenario 2"
+        testScenarioNumber = 2
         startX = 408
         startY = 129
         screenshotCompareWidth = 232
         screenshotCompareHeight = 159
 
-        index = 2
-        Minigunner minigunner = gameClient.addGDIMinigunnerAtMapSquare(21,10)
+        Minigunner minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x, mcvLocation.y - 2)
         gameClient.deleteGdiMinigunnerById(minigunner.id)
 
         then:
-        assertScreenshotMatches(index, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
+        assertScreenshotMatches(testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
         true
 
+        when:  "Test scenario 3"
+        testScenarioNumber = 3
+        startX = 408
+        startY = 129
+        screenshotCompareWidth = 232
+        screenshotCompareHeight = 159
+
+//        minigunner = gameClient.addGDIMinigunnerAtMapSquare(21,9)
+        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x ,mcvLocation.y - 3)
+        gameClient.deleteGdiMinigunnerById(minigunner.id)
+
+//        minigunner = gameClient.addGDIMinigunnerAtMapSquare(22,9)
+        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x + 1,mcvLocation.y - 3)
+        gameClient.deleteGdiMinigunnerById(minigunner.id)
+
+
+        then:
+        assertScreenshotMatches(testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
+
 //        when:
-//        startX = 408
-//        startY = 129
-//        screenshotCompareWidth = 232
-//        screenshotCompareHeight = 159
+//        startX = 419
+//        startY = 113
+//        screenshotCompareWidth = 182
+//        screenshotCompareHeight = 158
 //
-//        index = 3
+//        index = 4
 //        minigunner = gameClient.addGDIMinigunnerAtMapSquare(21,9)
 //        gameClient.deleteGdiMinigunnerById(minigunner.id)
 //
-//        minigunner = gameClient.addGDIMinigunnerAtMapSquare(22,9)
+//        minigunner = gameClient.addGDIMinigunnerAtMapSquare(21,8)
 //        gameClient.deleteGdiMinigunnerById(minigunner.id)
 //
+//        minigunner = gameClient.addGDIMinigunnerAtMapSquare(20,7)
+//        gameClient.deleteGdiMinigunnerById(minigunner.id)
 //
 //        then:
 //        assertScreenshotMatches(index, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
-
-        when:
-        startX = 419
-        startY = 113
-        screenshotCompareWidth = 182
-        screenshotCompareHeight = 158
-
-        index = 4
-        minigunner = gameClient.addGDIMinigunnerAtMapSquare(21,9)
-        gameClient.deleteGdiMinigunnerById(minigunner.id)
-
-        minigunner = gameClient.addGDIMinigunnerAtMapSquare(21,8)
-        gameClient.deleteGdiMinigunnerById(minigunner.id)
-
-        minigunner = gameClient.addGDIMinigunnerAtMapSquare(20,7)
-        gameClient.deleteGdiMinigunnerById(minigunner.id)
-
-        then:
-        assertScreenshotMatches(index, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
 
 
 
     }
 
-    void assertScreenshotMatches(int index, int startX, int startY, int screenshotCompareWidth, int screenshotCompareHeight) {
+    void assertScreenshotMatches(int testScenarioNumber, int startX, int startY, int screenshotCompareWidth, int screenshotCompareHeight) {
 
         gameClient.moveMouseToWorldCoordinates(new Point(startX + screenshotCompareWidth + 50,startY + screenshotCompareHeight + 50))
 
-        String realGameFilename = "real-game-shroud-" + index + "-start-x" + startX + "-y" + startY + "-" + screenshotCompareWidth + "x" + screenshotCompareHeight + ".png"
+        String realGameFilename = "real-game-shroud-" + testScenarioNumber + "-start-x" + startX + "-y" + startY + "-" + screenshotCompareWidth + "x" + screenshotCompareHeight + ".png"
 
         File imageFile = new File(
                 getClass().getClassLoader().getResource(realGameFilename).getFile()
