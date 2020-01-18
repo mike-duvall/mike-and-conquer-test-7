@@ -161,7 +161,7 @@ class MikeAndConquerTest1 extends Specification {
         screenshotCompareWidth = 232
         screenshotCompareHeight = 159
         // TODO:  Update this test to place MCV at map coordinates 22,13.
-        //  Currently it's happening in main game via: AddMCVAtMapSquareCoordinates(new Point(22,13));
+        //  Currently it's happening in main game via: AddMCVAtMapSquareCoordinates(new Point(21,12));
 
 
         then:
@@ -189,17 +189,28 @@ class MikeAndConquerTest1 extends Specification {
         screenshotCompareWidth = 232
         screenshotCompareHeight = 159
 
-//        minigunner = gameClient.addGDIMinigunnerAtMapSquare(21,9)
         minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x ,mcvLocation.y - 3)
         gameClient.deleteGdiMinigunnerById(minigunner.id)
 
-//        minigunner = gameClient.addGDIMinigunnerAtMapSquare(22,9)
         minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x + 1,mcvLocation.y - 3)
         gameClient.deleteGdiMinigunnerById(minigunner.id)
 
+        then:
+        assertScreenshotMatches(testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
+
+        when:  "Test scenario 4"
+        testScenarioNumber = 4
+        startX = 408
+        startY = 129
+        screenshotCompareWidth = 232
+        screenshotCompareHeight = 159
+
+        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x - 1,mcvLocation.y - 3)
+        gameClient.deleteGdiMinigunnerById(minigunner.id)
 
         then:
         assertScreenshotMatches(testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
+
 
 //        when:
 //        startX = 419
