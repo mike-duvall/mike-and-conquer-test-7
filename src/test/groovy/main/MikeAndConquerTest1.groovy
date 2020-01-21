@@ -148,6 +148,7 @@ class MikeAndConquerTest1 extends Specification {
         int screenshotCompareWidth
         int screenshotCompareHeight
         int testScenarioNumber
+
         // Add bogus minigunner to not delete so game state stays in "Playing"
         gameClient.addGDIMinigunnerAtMapSquare(4,5)
         Point mcvLocation = new Point(21,12)
@@ -210,6 +211,35 @@ class MikeAndConquerTest1 extends Specification {
 
         then:
         assertScreenshotMatches(testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
+
+
+        when:  "Test scenario 5"
+        testScenarioNumber = 5
+        startX = 503
+        startY = 158
+        screenshotCompareWidth = 145
+        screenshotCompareHeight = 130
+
+        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x + 2,mcvLocation.y - 3)
+        gameClient.deleteGdiMinigunnerById(minigunner.id)
+
+        then:
+        assertScreenshotMatches(testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
+
+        when:  "Test scenario 6"
+        testScenarioNumber = 6
+        startX = 527
+        startY = 167
+        screenshotCompareWidth = 121
+        screenshotCompareHeight = 121
+
+        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x + 3,mcvLocation.y - 3)
+        gameClient.deleteGdiMinigunnerById(minigunner.id)
+
+        then:
+        assertScreenshotMatches(testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
+
+
 
 
 //        when:
