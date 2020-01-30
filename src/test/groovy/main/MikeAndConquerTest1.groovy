@@ -255,6 +255,23 @@ class MikeAndConquerTest1 extends Specification {
         assertScreenshotMatches(testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
 
 
+        when:  "Test scenario 8"
+        testScenarioNumber = 8
+        startX = 532
+        startY = 170
+        screenshotCompareWidth = 116
+        screenshotCompareHeight = 149
+
+        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x + 5,mcvLocation.y - 3)
+        gameClient.deleteGdiMinigunnerById(minigunner.id)
+
+        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x + 5,mcvLocation.y - 2)
+        gameClient.deleteGdiMinigunnerById(minigunner.id)
+
+
+        then:
+        assertScreenshotMatches(testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
+
 //        when:
 //        startX = 419
 //        startY = 113
