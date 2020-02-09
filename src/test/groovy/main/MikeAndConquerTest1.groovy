@@ -271,25 +271,34 @@ class MikeAndConquerTest1 extends Specification {
 
         then:
         assertScreenshotMatches(testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
+        true
 
-//        when:
-//        startX = 419
-//        startY = 113
-//        screenshotCompareWidth = 182
-//        screenshotCompareHeight = 158
-//
-//        index = 4
-//        minigunner = gameClient.addGDIMinigunnerAtMapSquare(21,9)
-//        gameClient.deleteGdiMinigunnerById(minigunner.id)
-//
-//        minigunner = gameClient.addGDIMinigunnerAtMapSquare(21,8)
-//        gameClient.deleteGdiMinigunnerById(minigunner.id)
-//
-//        minigunner = gameClient.addGDIMinigunnerAtMapSquare(20,7)
-//        gameClient.deleteGdiMinigunnerById(minigunner.id)
-//
-//        then:
-//        assertScreenshotMatches(index, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
+        when:
+        testScenarioNumber = 9
+        startX = 519
+        startY = 72
+        screenshotCompareWidth = 129
+        screenshotCompareHeight = 121
+
+        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x + 5,mcvLocation.y - 4)
+        gameClient.deleteGdiMinigunnerById(minigunner.id)
+
+        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x + 5,mcvLocation.y - 5)
+        gameClient.deleteGdiMinigunnerById(minigunner.id)
+
+        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x + 5,mcvLocation.y - 6)
+        gameClient.deleteGdiMinigunnerById(minigunner.id)
+
+        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x + 5,mcvLocation.y - 7)
+        gameClient.deleteGdiMinigunnerById(minigunner.id)
+
+        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x + 4,mcvLocation.y - 7)
+        gameClient.deleteGdiMinigunnerById(minigunner.id)
+
+        then:
+        assertScreenshotMatches(testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
+
+
 
 
 
@@ -361,7 +370,10 @@ class MikeAndConquerTest1 extends Specification {
 
     void writeImageToFileInBuildDirectory(BufferedImage bufferedImage, String fileName) {
         String relPath = getClass().getProtectionDomain().getCodeSource().getLocation().getFile();
-        File targetDir = new File(relPath+"../../../../build/screenshot");
+        File targetDir = new File(relPath+"../../../../build/screenshot")
+        // TODO:  come up with more reliable way to find this path
+        // Seems to work differently between IntelliJ versions
+//        File targetDir = new File(relPath+"../../../build/screenshot")
         if(!targetDir.exists()) {
             targetDir.mkdir();
         }
