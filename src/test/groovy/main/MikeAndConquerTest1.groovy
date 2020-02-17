@@ -151,6 +151,7 @@ class MikeAndConquerTest1 extends Specification {
 
         // Add bogus minigunner to not delete so game state stays in "Playing"
         gameClient.addGDIMinigunnerAtMapSquare(4,5)
+        MCV mcv = gameClient.addMCVAtMapSquare(21,12)
         Point mcvLocation = new Point(21,12)
 
 
