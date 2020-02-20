@@ -88,221 +88,452 @@ class MikeAndConquerTest1 extends Specification {
     }
 
 
-////    @Ignore
+
+//    @Ignore
 //    def "screenshot of opening game map shroud" () {
 //
 //        given:
-//        int screenshotCompareWidth = 216
-//        int screenshotCompareHeight = 96
+//        ResetOptions resetOptions = new ResetOptions(true)
+//        gameClient.resetGame(resetOptions)
 //
-//        // move mouse out of screenshot
-//        gameClient.moveMouseToWorldCoordinates(new Point(screenshotCompareWidth + 50,screenshotCompareHeight + 50))
+//        int startX
+//        int startY
+//        int screenshotCompareWidth
+//        int screenshotCompareHeight
+//        int testScenarioNumber
 //
-//        File imageFile = new File(
-//                getClass().getClassLoader().getResource("real-game-shroud-1-start-x408-y240-216x96.png").getFile()
-//        );
-//        BufferedImage realGameScreenshot = ImageIO.read(imageFile)
+//        // Add bogus minigunner to not delete so game state stays in "Playing"
+//        gameClient.addGDIMinigunnerAtMapSquare(4,5)
+//        MCV mcv = gameClient.addMCVAtMapSquare(21,12)
+//        Point mcvLocation = new Point(21,12)
 //
 //
-//        when:
-//        BufferedImage fullScreenShot = gameClient.getScreenshot()
+//
+//        when: "Test scenario 1"
+//        testScenarioNumber = 1
+//        startX = 408
+//        startY = 129
+//        screenshotCompareWidth = 232
+//        screenshotCompareHeight = 159
+//        // TODO:  Update this test to place MCV at map coordinates 22,13.
+//        //  Currently it's happening in main game via: AddMCVAtMapSquareCoordinates(new Point(21,12));
+//
 //
 //        then:
-//        BufferedImage screenshotSubImage = fullScreenShot.getSubimage(408,240,screenshotCompareWidth,screenshotCompareHeight)
+//        assertScreenshotMatches(testScenarioNumber, startX, startY, screenshotCompareWidth, screenshotCompareHeight)
+//        true
 //
-//        writeImageToFileInBuildDirectory(screenshotSubImage, "mike-and-conquer-actual-shroud-1-start-x408-y240-216x96.png" )
-//        writeImageToFileInBuildDirectory(realGameScreenshot, "real-game-copied-shroud-1-start-x408-y240-216x96.png" )
+//        when: "Test scenario 2"
+//        testScenarioNumber = 2
+//        startX = 408
+//        startY = 129
+//        screenshotCompareWidth = 232
+//        screenshotCompareHeight = 159
 //
-//        and:
-//        assert ImageUtil.imagesAreEqual(screenshotSubImage, realGameScreenshot)
-//
-//        when:
-//        Minigunner minigunner = gameClient.addGDIMinigunnerAtMapSquare(21,12)
+//        Minigunner minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x, mcvLocation.y - 2)
 //        gameClient.deleteGdiMinigunnerById(minigunner.id)
 //
-//        and:
-//        imageFile = new File(
-//                getClass().getClassLoader().getResource("real-game-shroud-2-start-x408-y240-216x96.png").getFile()
-//        );
-//        realGameScreenshot = ImageIO.read(imageFile)
+//        then:
+//        assertScreenshotMatches(testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
+//        true
 //
-//        and:
-//        fullScreenShot = gameClient.getScreenshot()
-//        screenshotSubImage = fullScreenShot.getSubimage(408,240,screenshotCompareWidth,screenshotCompareHeight)
+//        when:  "Test scenario 3"
+//        testScenarioNumber = 3
+//        startX = 408
+//        startY = 129
+//        screenshotCompareWidth = 232
+//        screenshotCompareHeight = 159
+//
+//        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x ,mcvLocation.y - 3)
+//        gameClient.deleteGdiMinigunnerById(minigunner.id)
+//
+//        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x + 1,mcvLocation.y - 3)
+//        gameClient.deleteGdiMinigunnerById(minigunner.id)
 //
 //        then:
-//        writeImageToFileInBuildDirectory(screenshotSubImage, "mike-and-conquer-actual-shroud-2-start-x408-y240-216x96.png" )
-//        writeImageToFileInBuildDirectory(realGameScreenshot, "real-game-copied-shroud-2-start-x408-y240-216x96.png" )
-//        assert ImageUtil.imagesAreEqual(screenshotSubImage, realGameScreenshot)
+//        assertScreenshotMatches(testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
+//
+//        when:  "Test scenario 4"
+//        testScenarioNumber = 4
+//        startX = 408
+//        startY = 129
+//        screenshotCompareWidth = 232
+//        screenshotCompareHeight = 159
+//
+//        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x - 1,mcvLocation.y - 3)
+//        gameClient.deleteGdiMinigunnerById(minigunner.id)
+//
+//        then:
+//        assertScreenshotMatches(testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
 //
 //
+//        when:  "Test scenario 5"
+//        testScenarioNumber = 5
+//        startX = 503
+//        startY = 158
+//        screenshotCompareWidth = 145
+//        screenshotCompareHeight = 130
 //
+//        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x + 2,mcvLocation.y - 3)
+//        gameClient.deleteGdiMinigunnerById(minigunner.id)
+//
+//        then:
+//        assertScreenshotMatches(testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
+//
+//        when:  "Test scenario 6"
+//        testScenarioNumber = 6
+//        startX = 527
+//        startY = 167
+//        screenshotCompareWidth = 121
+//        screenshotCompareHeight = 121
+//
+//        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x + 3,mcvLocation.y - 3)
+//        gameClient.deleteGdiMinigunnerById(minigunner.id)
+//
+//        then:
+//        assertScreenshotMatches(testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
+//
+//
+//        when:  "Test scenario 7"
+//        testScenarioNumber = 7
+//        //startX = 506
+//        startX = 507
+//        startY = 165
+//        screenshotCompareWidth = 141
+//        screenshotCompareHeight = 123
+//
+//        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x + 4,mcvLocation.y - 3)
+//        gameClient.deleteGdiMinigunnerById(minigunner.id)
+//
+//        then:
+//        assertScreenshotMatches(testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
+//
+//
+//        when:  "Test scenario 8"
+//        testScenarioNumber = 8
+//        startX = 532
+//        startY = 170
+//        screenshotCompareWidth = 116
+//        screenshotCompareHeight = 149
+//
+//        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x + 5,mcvLocation.y - 3)
+//        gameClient.deleteGdiMinigunnerById(minigunner.id)
+//
+//        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x + 5,mcvLocation.y - 2)
+//        gameClient.deleteGdiMinigunnerById(minigunner.id)
+//
+//
+//        then:
+//        assertScreenshotMatches(testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
+//        true
+//
+//        when:
+//        testScenarioNumber = 9
+//        startX = 519
+//        startY = 72
+//        screenshotCompareWidth = 129
+//        screenshotCompareHeight = 121
+//
+//        // n,n, n,n,n, west
+//
+//        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x + 5,mcvLocation.y - 4)
+//        gameClient.deleteGdiMinigunnerById(minigunner.id)
+//
+//        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x + 5,mcvLocation.y - 5)
+//        gameClient.deleteGdiMinigunnerById(minigunner.id)
+//
+//        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x + 5,mcvLocation.y - 6)
+//        gameClient.deleteGdiMinigunnerById(minigunner.id)
+//
+//        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x + 5,mcvLocation.y - 7)
+//        gameClient.deleteGdiMinigunnerById(minigunner.id)
+//
+//        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x + 4,mcvLocation.y - 7)
+//        gameClient.deleteGdiMinigunnerById(minigunner.id)
+//
+//        then:
+//        assertScreenshotMatches(testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
 //    }
 
-//    @Ignore
-    def "screenshot of opening game map shroud" () {
 
+    def "Shroud screenshot scenario 1"() {
         given:
-        int startX
-        int startY
-        int screenshotCompareWidth
-        int screenshotCompareHeight
-        int testScenarioNumber
-
+        ResetOptions resetOptions = new ResetOptions(true)
+        gameClient.resetGame(resetOptions)
         // Add bogus minigunner to not delete so game state stays in "Playing"
         gameClient.addGDIMinigunnerAtMapSquare(4,5)
-        MCV mcv = gameClient.addMCVAtMapSquare(21,12)
+
         Point mcvLocation = new Point(21,12)
-
-
+        gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
 
         when: "Test scenario 1"
-        testScenarioNumber = 1
-        startX = 408
-        startY = 129
-        screenshotCompareWidth = 232
-        screenshotCompareHeight = 159
-        // TODO:  Update this test to place MCV at map coordinates 22,13.
-        //  Currently it's happening in main game via: AddMCVAtMapSquareCoordinates(new Point(21,12));
-
+        int testScenarioNumber = 1
+        int startX = 408
+        int startY = 129
+        int screenshotCompareWidth = 232
+        int screenshotCompareHeight = 159
 
         then:
-        assertScreenshotMatches(testScenarioNumber, startX, startY, screenshotCompareWidth, screenshotCompareHeight)
-        true
+        assertScreenshotMatches(testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
+    }
+
+
+
+    def "Shroud screenshot scenario 2"() {
+        given:
+        ResetOptions resetOptions = new ResetOptions(true)
+        gameClient.resetGame(resetOptions)
+        // Add bogus minigunner to not delete so game state stays in "Playing"
+        gameClient.addGDIMinigunnerAtMapSquare(4,5)
+
+        Point mcvLocation = new Point(21,12)
+        gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
 
         when: "Test scenario 2"
-        testScenarioNumber = 2
-        startX = 408
-        startY = 129
-        screenshotCompareWidth = 232
-        screenshotCompareHeight = 159
+        int testScenarioNumber = 2
+        int startX = 408
+        int startY = 129
+        int screenshotCompareWidth = 232
+        int screenshotCompareHeight = 159
 
-        Minigunner minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x, mcvLocation.y - 2)
-        gameClient.deleteGdiMinigunnerById(minigunner.id)
+        def movements = [MovementDirection.NORTH, MovementDirection.NORTH]
+
+        doMinigunnerPlacements(mcvLocation, movements)
 
         then:
         assertScreenshotMatches(testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
-        true
+    }
+
+
+
+    def "Shroud screenshot scenario 3"() {
+        given:
+        ResetOptions resetOptions = new ResetOptions(true)
+        gameClient.resetGame(resetOptions)
+        gameClient.addGDIMinigunnerAtMapSquare(4,5)
+
+        Point mcvLocation = new Point(21,12)
+        gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
 
         when:  "Test scenario 3"
-        testScenarioNumber = 3
-        startX = 408
-        startY = 129
-        screenshotCompareWidth = 232
-        screenshotCompareHeight = 159
+        int testScenarioNumber = 3
+        int startX = 408
+        int startY = 129
+        int screenshotCompareWidth = 232
+        int screenshotCompareHeight = 159
 
-        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x ,mcvLocation.y - 3)
-        gameClient.deleteGdiMinigunnerById(minigunner.id)
-
-        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x + 1,mcvLocation.y - 3)
-        gameClient.deleteGdiMinigunnerById(minigunner.id)
+        def movements = [MovementDirection.NORTH, MovementDirection.NORTH, MovementDirection.NORTH, MovementDirection.EAST]
+        doMinigunnerPlacements(mcvLocation, movements)
 
         then:
         assertScreenshotMatches(testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
+    }
+
+    def "Shroud screenshot scenario 4"() {
+        given:
+        ResetOptions resetOptions = new ResetOptions(true)
+        gameClient.resetGame(resetOptions)
+        gameClient.addGDIMinigunnerAtMapSquare(4,5)
+
+        Point mcvLocation = new Point(21,12)
+        gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
 
         when:  "Test scenario 4"
-        testScenarioNumber = 4
-        startX = 408
-        startY = 129
-        screenshotCompareWidth = 232
-        screenshotCompareHeight = 159
+        int testScenarioNumber = 4
+        int startX = 408
+        int startY = 129
+        int screenshotCompareWidth = 232
+        int screenshotCompareHeight = 159
 
-        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x - 1,mcvLocation.y - 3)
-        gameClient.deleteGdiMinigunnerById(minigunner.id)
+        def movements = [MovementDirection.NORTH, MovementDirection.NORTH, MovementDirection.NORTH, MovementDirection.EAST, MovementDirection.WEST, MovementDirection.WEST]
+        doMinigunnerPlacements(mcvLocation, movements)
 
         then:
         assertScreenshotMatches(testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
+    }
 
+    def "Shroud screenshot scenario 5"() {
+        given:
+        ResetOptions resetOptions = new ResetOptions(true)
+        gameClient.resetGame(resetOptions)
+        gameClient.addGDIMinigunnerAtMapSquare(4,5)
+
+        Point mcvLocation = new Point(21,12)
+        gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
 
         when:  "Test scenario 5"
-        testScenarioNumber = 5
-        startX = 503
-        startY = 158
-        screenshotCompareWidth = 145
-        screenshotCompareHeight = 130
+        int testScenarioNumber = 5
+        int startX = 503
+        int startY = 158
+        int screenshotCompareWidth = 145
+        int screenshotCompareHeight = 130
 
-        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x + 2,mcvLocation.y - 3)
-        gameClient.deleteGdiMinigunnerById(minigunner.id)
+        def movements = [MovementDirection.NORTH, MovementDirection.NORTH, MovementDirection.NORTH, MovementDirection.EAST, MovementDirection.WEST, MovementDirection.WEST,
+        MovementDirection.EAST, MovementDirection.EAST, MovementDirection.EAST]
+        doMinigunnerPlacements(mcvLocation, movements)
 
         then:
         assertScreenshotMatches(testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
+    }
+
+
+    def "Shroud screenshot scenario 6"() {
+        given:
+        ResetOptions resetOptions = new ResetOptions(true)
+        gameClient.resetGame(resetOptions)
+        gameClient.addGDIMinigunnerAtMapSquare(4,5)
+
+        Point mcvLocation = new Point(21,12)
+        gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
 
         when:  "Test scenario 6"
-        testScenarioNumber = 6
-        startX = 527
-        startY = 167
-        screenshotCompareWidth = 121
-        screenshotCompareHeight = 121
+        int testScenarioNumber = 6
+        int startX = 527
+        int startY = 167
+        int screenshotCompareWidth = 121
+        int screenshotCompareHeight = 121
 
-        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x + 3,mcvLocation.y - 3)
-        gameClient.deleteGdiMinigunnerById(minigunner.id)
+        def movements = [MovementDirection.NORTH, MovementDirection.NORTH, MovementDirection.NORTH, MovementDirection.EAST, MovementDirection.WEST, MovementDirection.WEST,
+                         MovementDirection.EAST, MovementDirection.EAST, MovementDirection.EAST, MovementDirection.EAST]
+        doMinigunnerPlacements(mcvLocation, movements)
 
         then:
         assertScreenshotMatches(testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
 
+
+    }
+
+
+    def "Shroud screenshot scenario 7"() {
+        given:
+        ResetOptions resetOptions = new ResetOptions(true)
+        gameClient.resetGame(resetOptions)
+        gameClient.addGDIMinigunnerAtMapSquare(4,5)
+
+        Point mcvLocation = new Point(21,12)
+        gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
 
         when:  "Test scenario 7"
-        testScenarioNumber = 7
-        //startX = 506
-        startX = 507
-        startY = 165
-        screenshotCompareWidth = 141
-        screenshotCompareHeight = 123
+        int testScenarioNumber = 7
+        int startX = 507
+        int startY = 165
+        int screenshotCompareWidth = 141
+        int screenshotCompareHeight = 123
 
-        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x + 4,mcvLocation.y - 3)
-        gameClient.deleteGdiMinigunnerById(minigunner.id)
+        def movements = [MovementDirection.NORTH, MovementDirection.NORTH, MovementDirection.NORTH,  MovementDirection.EAST,
+                         MovementDirection.EAST, MovementDirection.EAST,MovementDirection.EAST]
+
+        doMinigunnerPlacements(mcvLocation, movements)
 
         then:
         assertScreenshotMatches(testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
 
+    }
+
+    def "Shroud screenshot scenario 8"() {
+        given:
+        ResetOptions resetOptions = new ResetOptions(true)
+        gameClient.resetGame(resetOptions)
+        gameClient.addGDIMinigunnerAtMapSquare(4,5)
+
+        Point mcvLocation = new Point(21,12)
+        gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
 
         when:  "Test scenario 8"
-        testScenarioNumber = 8
-        startX = 532
-        startY = 170
-        screenshotCompareWidth = 116
-        screenshotCompareHeight = 149
+        int testScenarioNumber = 8
+        int startX = 532
+        int startY = 170
+        int screenshotCompareWidth = 116
+        int screenshotCompareHeight = 149
 
-        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x + 5,mcvLocation.y - 3)
-        gameClient.deleteGdiMinigunnerById(minigunner.id)
+        def movements = [MovementDirection.NORTH, MovementDirection.NORTH, MovementDirection.NORTH,  MovementDirection.EAST,
+                         MovementDirection.EAST, MovementDirection.EAST,MovementDirection.EAST, MovementDirection.EAST, MovementDirection.SOUTH]
 
-        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x + 5,mcvLocation.y - 2)
-        gameClient.deleteGdiMinigunnerById(minigunner.id)
-
+        doMinigunnerPlacements(mcvLocation, movements)
 
         then:
         assertScreenshotMatches(testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
-        true
+
+    }
+
+
+
+    def "Shroud screenshot scenario 9"() {
+        given:
+        ResetOptions resetOptions = new ResetOptions(true)
+        gameClient.resetGame(resetOptions)
+        gameClient.addGDIMinigunnerAtMapSquare(4,5)
+
+        Point mcvLocation = new Point(21,12)
+        gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
 
         when:
-        testScenarioNumber = 9
-        startX = 519
-        startY = 72
-        screenshotCompareWidth = 129
-        screenshotCompareHeight = 121
+        int testScenarioNumber = 9
+        int startX = 519
+        int startY = 72
+        int screenshotCompareWidth = 129
+        int screenshotCompareHeight = 121
 
-        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x + 5,mcvLocation.y - 4)
-        gameClient.deleteGdiMinigunnerById(minigunner.id)
+        def movements = [MovementDirection.NORTH, MovementDirection.NORTH, MovementDirection.NORTH,  MovementDirection.EAST,
+                         MovementDirection.EAST, MovementDirection.EAST,MovementDirection.EAST, MovementDirection.EAST, MovementDirection.SOUTH,
+        MovementDirection.NORTH, MovementDirection.NORTH,MovementDirection.NORTH,MovementDirection.NORTH,MovementDirection.NORTH,MovementDirection.WEST ]
 
-        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x + 5,mcvLocation.y - 5)
-        gameClient.deleteGdiMinigunnerById(minigunner.id)
-
-        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x + 5,mcvLocation.y - 6)
-        gameClient.deleteGdiMinigunnerById(minigunner.id)
-
-        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x + 5,mcvLocation.y - 7)
-        gameClient.deleteGdiMinigunnerById(minigunner.id)
-
-        minigunner = gameClient.addGDIMinigunnerAtMapSquare(mcvLocation.x + 4,mcvLocation.y - 7)
-        gameClient.deleteGdiMinigunnerById(minigunner.id)
+        doMinigunnerPlacements(mcvLocation, movements)
 
         then:
         assertScreenshotMatches(testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
 
+    }
 
 
+    def "Shroud screenshot scenario 10"() {
+        given:
+        ResetOptions resetOptions = new ResetOptions(true)
+        gameClient.resetGame(resetOptions)
+        gameClient.addGDIMinigunnerAtMapSquare(4,5)
+
+        Point mcvLocation = new Point(21,12)
+        gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
+
+        when:
+        int testScenarioNumber = 10
+        int startX = 525
+        int startY = 67
+        int screenshotCompareWidth = 123
+        int screenshotCompareHeight = 102
+
+        def movements = [MovementDirection.NORTH, MovementDirection.NORTH, MovementDirection.NORTH,  MovementDirection.EAST,
+                         MovementDirection.EAST, MovementDirection.EAST,MovementDirection.EAST, MovementDirection.EAST,
+                         MovementDirection.NORTH,
+                         MovementDirection.NORTH, MovementDirection.NORTH,MovementDirection.WEST, MovementDirection.WEST, MovementDirection.NORTH ]
+
+        doMinigunnerPlacements(mcvLocation, movements)
+
+        then:
+        assertScreenshotMatches(testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
+
+    }
 
 
+    private void doMinigunnerPlacements(Point mcvLocation, List<MovementDirection> movements) {
+        Point currentLocation = mcvLocation
+        movements.each { movementDirection ->
+            if (movementDirection == MovementDirection.NORTH) {
+                currentLocation.y--
+            }
+            else if (movementDirection == MovementDirection.EAST) {
+                currentLocation.x++
+            }
+            else if (movementDirection == MovementDirection.WEST) {
+                currentLocation.x--
+            }
+            else if (movementDirection == MovementDirection.SOUTH) {
+                currentLocation.y++
+            }
+
+            Minigunner minigunner = gameClient.addGDIMinigunnerAtMapSquare(currentLocation.x, currentLocation.y)
+            gameClient.deleteGdiMinigunnerById(minigunner.id)
+        }
     }
 
     void assertScreenshotMatches(int testScenarioNumber, int startX, int startY, int screenshotCompareWidth, int screenshotCompareHeight) {

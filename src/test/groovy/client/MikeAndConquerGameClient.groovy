@@ -6,6 +6,7 @@ import main.MCV
 import main.Minigunner
 import main.MinigunnerId
 import main.Point
+import main.ResetOptions
 import main.Sandbag
 import main.Util
 import org.apache.http.params.CoreConnectionPNames
@@ -35,8 +36,14 @@ class MikeAndConquerGameClient {
     }
 
     void resetGame() {
+        ResetOptions resetOptions = new ResetOptions(false)
+        resetGame(resetOptions)
+    }
+
+    void resetGame(ResetOptions resetOptions) {
         def resp = restClient.post(
                 path: '/mac/resetGame',
+                body: resetOptions,
                 requestContentType: 'application/json' )
 
         assert resp.status == 204
