@@ -514,6 +514,35 @@ class MikeAndConquerTest1 extends Specification {
 
     }
 
+    def "Shroud screenshot scenario 11"() {
+        given:
+        ResetOptions resetOptions = new ResetOptions(true)
+        gameClient.resetGame(resetOptions)
+        gameClient.addGDIMinigunnerAtMapSquare(4,5)
+
+        Point mcvLocation = new Point(21,12)
+        gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
+
+        when:
+        int testScenarioNumber = 11
+        int startX = 310
+        int startY = 92
+        int screenshotCompareWidth = 157
+        int screenshotCompareHeight = 183
+
+        def movements = [MovementDirection.NORTH, MovementDirection.NORTH, MovementDirection.NORTH,  MovementDirection.NORTH,
+                         MovementDirection.WEST, MovementDirection.NORTH,MovementDirection.WEST, MovementDirection.NORTH,
+                         MovementDirection.WEST, MovementDirection.WEST, MovementDirection.WEST,MovementDirection.WEST,
+                         MovementDirection.SOUTH, MovementDirection.SOUTH ]
+
+        doMinigunnerPlacements(mcvLocation, movements)
+
+        then:
+        assertScreenshotMatches(testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
+
+    }
+
+
 
     private void doMinigunnerPlacements(Point mcvLocation, List<MovementDirection> movements) {
         Point currentLocation = mcvLocation
