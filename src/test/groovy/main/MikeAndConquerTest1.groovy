@@ -568,6 +568,32 @@ class MikeAndConquerTest1 extends Specification {
         assertScreenshotMatches(testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
     }
 
+    def "Shroud screenshot scenario 13"() {
+        given:
+        ResetOptions resetOptions = new ResetOptions(true)
+        gameClient.resetGame(resetOptions)
+        gameClient.addGDIMinigunnerAtMapSquare(4,5)
+
+        Point mcvLocation = new Point(21,12)
+        gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
+
+        when:
+        int testScenarioNumber = 13
+        int startX = 303
+        int startY = 87
+        int screenshotCompareWidth = 302
+        int screenshotCompareHeight = 189
+
+        def movements = [MovementDirection.NORTH, MovementDirection.NORTH, MovementDirection.NORTH,  MovementDirection.NORTH,
+                         MovementDirection.NORTHWEST, MovementDirection.NORTHWEST,
+                         MovementDirection.WEST, MovementDirection.WEST, MovementDirection.WEST, MovementDirection.WEST,
+                         MovementDirection.SOUTH, ]
+
+        doMinigunnerPlacements(mcvLocation, movements)
+
+        then:
+        assertScreenshotMatches(testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
+    }
 
 
 
@@ -577,15 +603,32 @@ class MikeAndConquerTest1 extends Specification {
             if (movementDirection == MovementDirection.NORTH) {
                 currentLocation.y--
             }
+            else if (movementDirection == MovementDirection.NORTHEAST) {
+                currentLocation.x++
+                currentLocation.y--
+            }
             else if (movementDirection == MovementDirection.EAST) {
                 currentLocation.x++
             }
-            else if (movementDirection == MovementDirection.WEST) {
-                currentLocation.x--
+            else if (movementDirection == MovementDirection.SOUTHEAST) {
+                currentLocation.x++
+                currentLocation.y++
             }
             else if (movementDirection == MovementDirection.SOUTH) {
                 currentLocation.y++
             }
+            else if (movementDirection == MovementDirection.SOUTHWEST) {
+                currentLocation.x--
+                currentLocation.y++
+            }
+            else if (movementDirection == MovementDirection.WEST) {
+                currentLocation.x--
+            }
+            else if (movementDirection == MovementDirection.NORTHWEST) {
+                currentLocation.x--
+                currentLocation.y--
+            }
+
 
             Minigunner minigunner = gameClient.addGDIMinigunnerAtMapSquare(currentLocation.x, currentLocation.y)
             gameClient.deleteGdiMinigunnerById(minigunner.id)

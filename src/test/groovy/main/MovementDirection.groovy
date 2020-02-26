@@ -3,8 +3,13 @@ package main
 enum MovementDirection {
 
     NORTH,
+    NORTHEAST,
     EAST,
+    SOUTHEAST,
     SOUTH,
-    WEST
+    SOUTHWEST,
+    WEST,
+    NORTHWEST
+
 
 }
