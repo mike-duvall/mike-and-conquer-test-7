@@ -22,8 +22,8 @@ class ShroudTests extends Specification {
         String host = remoteHost
 
         int port = 11369
-        //boolean useTimeouts = true
-        boolean useTimeouts = false
+        boolean useTimeouts = true
+//        boolean useTimeouts = false
         gameClient = new MikeAndConquerGameClient(host, port, useTimeouts )
         gameClient.resetGame()
         gameClient.leftClickInWorldCoordinates(1,1)  // to get mouse clicks in default state
@@ -371,7 +371,7 @@ class ShroudTests extends Specification {
     }
 
 
-    @Ignore
+
     def "Shroud screenshot scenario 14"() {
         given:
         ResetOptions resetOptions = new ResetOptions(true)
