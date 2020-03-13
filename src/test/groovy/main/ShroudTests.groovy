@@ -400,6 +400,33 @@ class ShroudTests extends Specification {
     }
 
 
+    def "Shroud screenshot scenario 15"() {
+        given:
+        ResetOptions resetOptions = new ResetOptions(true)
+        gameClient.resetGame(resetOptions)
+        gameClient.addGDIMinigunnerAtMapSquare(4,5)
+
+        Point mcvLocation = new Point(21,12)
+        gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
+
+        when:
+        int testScenarioNumber = 15
+        int startX = 311
+        int startY = 93
+        int screenshotCompareWidth = 190
+        int screenshotCompareHeight = 242
+
+        def movements = [MovementDirection.NORTH, MovementDirection.NORTH, MovementDirection.NORTH,  MovementDirection.NORTH,
+                         MovementDirection.NORTHWEST, MovementDirection.NORTHWEST,
+                         MovementDirection.WEST, MovementDirection.WEST, MovementDirection.WEST, MovementDirection.WEST,
+                         MovementDirection.SOUTH, MovementDirection.SOUTH, MovementDirection.SOUTH]
+
+        doMinigunnerPlacements(mcvLocation, movements)
+
+        then:
+        assertScreenshotMatches(testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
+    }
+
 
     private void doMinigunnerPlacements(Point mcvLocation, List<MovementDirection> movements) {
         Point currentLocation = mcvLocation
