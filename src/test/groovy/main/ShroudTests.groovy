@@ -1,33 +1,29 @@
 package main
 
 import client.MikeAndConquerGameClient
-import groovyx.net.http.HttpResponseException
-import spock.lang.Ignore
 import spock.lang.Specification
-import spock.lang.Unroll
-import spock.util.concurrent.PollingConditions
 
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
 
 
-class ShroudTests extends Specification {
+class ShroudTests extends MikeAndConquerTestBase {
 
-    MikeAndConquerGameClient gameClient
-
-    def setup() {
-        String localhost = "localhost"
-        String remoteHost = "192.168.0.146"
-//        String host = localhost
-        String host = remoteHost
-
-        int port = 11369
-        boolean useTimeouts = true
-//        boolean useTimeouts = false
-        gameClient = new MikeAndConquerGameClient(host, port, useTimeouts )
-        gameClient.resetGame()
-        gameClient.leftClickInWorldCoordinates(1,1)  // to get mouse clicks in default state
-    }
+//    MikeAndConquerGameClient gameClient
+//
+//    def setup() {
+//        String localhost = "localhost"
+//        String remoteHost = "192.168.0.146"
+////        String host = localhost
+//        String host = remoteHost
+//
+//        int port = 11369
+//        boolean useTimeouts = true
+////        boolean useTimeouts = false
+//        gameClient = new MikeAndConquerGameClient(host, port, useTimeouts )
+//        gameClient.resetGame()
+//        gameClient.leftClickInWorldCoordinates(1,1)  // to get mouse clicks in default state
+//    }
 
 
 
@@ -548,9 +544,6 @@ class ShroudTests extends Specification {
 
     }
 
-
-
-
     void writeImageToFileInBuildDirectory(BufferedImage bufferedImage, String fileName) {
         String relPath = getClass().getProtectionDomain().getCodeSource().getLocation().getFile();
         File targetDir = new File(relPath+"../../../../build/screenshot")
@@ -567,199 +560,5 @@ class ShroudTests extends Specification {
 
 
 
-
-    def assertMinigunnerIsAtScreenPosition(Minigunner minigunner, int screenX, int screenY)
-    {
-        int leeway = 4
-        assert (minigunner.screenX >= screenX - leeway) && (minigunner.screenX <= screenX + leeway)
-        assert (minigunner.screenY >= screenY - leeway) && (minigunner.screenY <= screenY + leeway)
-    }
-
-    def assertMinigunnerIsAtDestination(Minigunner minigunner)
-    {
-        int leeway = 4
-        assert (minigunner.x >= minigunner.destinationX - leeway) && (minigunner.x <= minigunner.destinationX + leeway)
-        assert (minigunner.y >= minigunner.destinationY - leeway) && (minigunner.y <= minigunner.destinationY + leeway)
-    }
-
-    def assertMinigunnerIsAtDesignatedDestinationInMapSquareCoordinates(Minigunner minigunner,int mapSquareX, int mapSquareY)
-    {
-        Point worldCoordinates = Util.convertWorldCoordinatesToMapSquareCoordinates(mapSquareX, mapSquareY)
-
-        int destinationX = worldCoordinates.x
-        int destinationY = worldCoordinates.y
-        int leeway = 15
-        assert (minigunner.x >= destinationX - leeway) && (minigunner.x <= destinationX + leeway)
-        assert (minigunner.y >= destinationY - leeway) && (minigunner.y <= destinationY + leeway)
-    }
-
-
-
-    def assertMinigunnerIsAtDesignatedDestination(Minigunner minigunner,int destinationX, int destinationY)
-    {
-        int leeway = 15
-        assert (minigunner.x >= destinationX - leeway) && (minigunner.x <= destinationX + leeway)
-        assert (minigunner.y >= destinationY - leeway) && (minigunner.y <= destinationY + leeway)
-    }
-
-
-
-    def assertNodMinigunnerDies(int id) {
-        def conditions = new PollingConditions(timeout: 80, initialDelay: 1.5, factor: 1.25)
-        conditions.eventually {
-            def expectedDeadMinigunner = gameClient.getNodMinigunnerById(id)
-            assert expectedDeadMinigunner.health == 0
-        }
-        return true
-    }
-
-
-    def assertGdiMinigunnerDies(int id) {
-        def conditions = new PollingConditions(timeout: 80, initialDelay: 1.5, factor: 1.25)
-        conditions.eventually {
-            def expectedDeadMinigunner = gameClient.getGdiMinigunnerById(id)
-            assert expectedDeadMinigunner.health == 0
-        }
-        return true
-    }
-
-
-    def assertGameStateGoesToMissionFailed() {
-        String expectedGameState = "Mission Failed"
-
-        def conditions = new PollingConditions(timeout: 10, initialDelay: 1.5, factor: 1.25)
-        conditions.eventually {
-            String gameState = gameClient.getGameState()
-            assert gameState == expectedGameState
-        }
-
-        return true
-    }
-
-
-    def assertGameStateGoesToGameOver() {
-        String expectedGameState = "Game Over"
-
-        def conditions = new PollingConditions(timeout: 10, initialDelay: 1.5, factor: 1.25)
-        conditions.eventually {
-            String gameState = gameClient.getGameState()
-            assert gameState == expectedGameState
-        }
-
-        return true
-    }
-
-
-    Point createRandomMinigunnerPosition()
-    {
-        Random rand = new Random()
-
-        int minX = 10
-        int minY = 10
-
-
-        // Capping max so it will fit on screen
-        int maxX = 600
-        int maxY = 400
-
-        int randomX = rand.nextInt(maxX) + minX
-        int randomY = rand.nextInt(maxY) + minY
-
-        Point point = new Point()
-        point.x = randomX
-        point.y = randomY
-        return point
-
-    }
-
-    Minigunner createRandomGDIMinigunner() {
-        int numTiesTried = 0
-        int maxTimesToTry = 10
-
-        while(true) {
-            try {
-               Point randomPosition = createRandomMinigunnerPosition()
-               return gameClient.addGDIMinigunnerAtWorldCoordinates(randomPosition.x, randomPosition.y)
-            }
-            catch(HttpResponseException e) {
-                if(numTiesTried < maxTimesToTry) {
-                    if (e.response.responseData["Message"] == "Cannot create on blocking terrain") {
-                        numTiesTried++
-                    }
-                    print e
-                    println "::" + e.response.responseData["Message"]
-                }
-                else {
-                    print e
-                    println "::" + e.response.responseData["Message"]
-                    throw e
-                }
-            }
-        }
-
-    }
-
-    Minigunner createGDIMinigunnerAtLocation(int x, int y) {
-        try {
-            Point position = new Point(x,y)
-            return gameClient.addGDIMinigunnerAtWorldCoordinates(position.x, position.y)
-        }
-        catch(HttpResponseException e) {
-            print e
-            println "::" + e.response.responseData["Message"]
-            throw e
-        }
-    }
-
-    Minigunner createNodMinigunnerAtLocation(int x, int y, boolean aiIsOn) {
-        try {
-            Point position = new Point(x,y)
-            return gameClient.addNodMinigunnerAtWorldCoordinates(position.x, position.y,aiIsOn)
-        }
-        catch(HttpResponseException e) {
-            print e
-            println "::" + e.response.responseData["Message"]
-            throw e
-        }
-    }
-
-
-    // TODO:  Unduplicate this retry code
-    Minigunner createRandomNodMinigunner(boolean aiIsOn) {
-        int numTiesTried = 0
-        int maxTimesToTry = 10
-
-        while(true) {
-            try {
-                Point randomPosition = createRandomMinigunnerPosition()
-                return gameClient.addNodMinigunnerAtWorldCoordinates(randomPosition.x, randomPosition.y, aiIsOn)
-            }
-            catch(HttpResponseException e) {
-                if(numTiesTried < maxTimesToTry) {
-                    if (e.response.responseData["Message"] == "Cannot create on blocking terrain") {
-                        numTiesTried++
-                    }
-                    print e
-                    println "::" + e.response.responseData["Message"]
-                }
-                else {
-                    print e
-                    println "::" + e.response.responseData["Message"]
-                    throw e
-                }
-            }
-        }
-
-    }
-
-    Minigunner createRandomNodMinigunnerWithAiTurnedOff() {
-        boolean aiIsOn = false
-        return createRandomNodMinigunner(aiIsOn)
-    }
-
-    Minigunner createRandomNodMinigunnerWithAiTurnedOn() {
-        boolean aiIsOn = true
-        return createRandomNodMinigunner(aiIsOn)
-    }
 
 }

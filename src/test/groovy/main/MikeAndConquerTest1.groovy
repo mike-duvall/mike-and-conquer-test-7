@@ -11,23 +11,23 @@ import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
 
 
-class MikeAndConquerTest1 extends Specification {
+class MikeAndConquerTest1 extends MikeAndConquerTestBase {
 
-    MikeAndConquerGameClient gameClient
-
-    def setup() {
-        String localhost = "localhost"
-        String remoteHost = "192.168.0.146"
-//        String host = localhost
-        String host = remoteHost
-
-        int port = 11369
-        //boolean useTimeouts = true
-        boolean useTimeouts = false
-        gameClient = new MikeAndConquerGameClient(host, port, useTimeouts )
-        gameClient.resetGame()
-        gameClient.leftClickInWorldCoordinates(1,1)  // to get mouse clicks in default state
-    }
+//    MikeAndConquerGameClient gameClient
+//
+//    def setup() {
+//        String localhost = "localhost"
+//        String remoteHost = "192.168.0.146"
+////        String host = localhost
+//        String host = remoteHost
+//
+//        int port = 11369
+//        //boolean useTimeouts = true
+//        boolean useTimeouts = false
+//        gameClient = new MikeAndConquerGameClient(host, port, useTimeouts )
+//        gameClient.resetGame()
+//        gameClient.leftClickInWorldCoordinates(1,1)  // to get mouse clicks in default state
+//    }
 
     def "top left corner of screenshot of game should match equivalent reference screenshot of real command and conquer" () {
 
@@ -90,43 +90,6 @@ class MikeAndConquerTest1 extends Specification {
 
 
 
-    private void doMinigunnerPlacements(Point mcvLocation, List<MovementDirection> movements) {
-        Point currentLocation = mcvLocation
-        movements.each { movementDirection ->
-            if (movementDirection == MovementDirection.NORTH) {
-                currentLocation.y--
-            }
-            else if (movementDirection == MovementDirection.NORTHEAST) {
-                currentLocation.x++
-                currentLocation.y--
-            }
-            else if (movementDirection == MovementDirection.EAST) {
-                currentLocation.x++
-            }
-            else if (movementDirection == MovementDirection.SOUTHEAST) {
-                currentLocation.x++
-                currentLocation.y++
-            }
-            else if (movementDirection == MovementDirection.SOUTH) {
-                currentLocation.y++
-            }
-            else if (movementDirection == MovementDirection.SOUTHWEST) {
-                currentLocation.x--
-                currentLocation.y++
-            }
-            else if (movementDirection == MovementDirection.WEST) {
-                currentLocation.x--
-            }
-            else if (movementDirection == MovementDirection.NORTHWEST) {
-                currentLocation.x--
-                currentLocation.y--
-            }
-
-
-            Minigunner minigunner = gameClient.addGDIMinigunnerAtMapSquare(currentLocation.x, currentLocation.y)
-            gameClient.deleteGdiMinigunnerById(minigunner.id)
-        }
-    }
 
     void assertScreenshotMatches(int testScenarioNumber, int startX, int startY, int screenshotCompareWidth, int screenshotCompareHeight) {
 
@@ -153,43 +116,6 @@ class MikeAndConquerTest1 extends Specification {
 
 
     }
-
-//    void assertScreenshotMatches(int index, int startX, int startY, int screenshotCompareWidth, int screenshotCompareHeight) {
-//        gameClient.moveMouseToWorldCoordinates(new Point(startX + screenshotCompareWidth + 50,startY + screenshotCompareHeight + 50))
-//
-//        String realGameFilename = "real-game-shroud-" + index + "-start-x" + startX + "-y" + startY + "-" + screenshotCompareWidth + "x" + screenshotCompareHeight + ".png"
-//
-////        File imageFile = new File(
-////                getClass().getClassLoader().getResource("real-game-shroud-1-start-x408-y240-216x96.png").getFile()
-////        );
-//        File imageFile = new File(
-//                getClass().getClassLoader().getResource(realGameFilename).getFile()
-//        );
-//
-//        BufferedImage realGameScreenshot = ImageIO.read(imageFile)
-//
-//
-//        when:
-//        BufferedImage fullScreenShot = gameClient.getScreenshot()
-//
-//        then:
-//        BufferedImage screenshotSubImage = fullScreenShot.getSubimage(startX,startY,screenshotCompareWidth,screenshotCompareHeight)
-//
-//        String realGameCopiedFilename = realGameFilename.replaceAll("real-game-shroud", "real-game-shroud-copied")
-//        String mikeAndConquerCopiedFilename = realGameFilename.replaceAll("real-game-shroud", "mike-and-conquer-shroud-actual")
-//
-////        writeImageToFileInBuildDirectory(screenshotSubImage, "mike-and-conquer-actual-shroud-1-start-x408-y240-216x96.png" )
-////        writeImageToFileInBuildDirectory(realGameScreenshot, "real-game-copied-shroud-1-start-x408-y240-216x96.png" )
-//        writeImageToFileInBuildDirectory(realGameScreenshot, realGameCopiedFilename )
-//        writeImageToFileInBuildDirectory(screenshotSubImage, mikeAndConquerCopiedFilename )
-//
-//        and:
-//        assert ImageUtil.imagesAreEqual(screenshotSubImage, realGameScreenshot)
-//
-//
-//    }
-
-
 
 
     void writeImageToFileInBuildDirectory(BufferedImage bufferedImage, String fileName) {
