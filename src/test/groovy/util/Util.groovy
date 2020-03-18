@@ -1,5 +1,6 @@
-package main
+package util
 
+import domain.Point
 
 
 class Util {

@@ -1,9 +1,12 @@
 package main
 
-import client.MikeAndConquerGameClient
+
 import groovyx.net.http.HttpResponseException
+import domain.Minigunner
+import domain.Point
+import util.ImageUtil
+import util.Util
 import spock.lang.Ignore
-import spock.lang.Specification
 import spock.lang.Unroll
 import spock.util.concurrent.PollingConditions
 
@@ -11,23 +14,8 @@ import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
 
 
-class MikeAndConquerTest1 extends MikeAndConquerTestBase {
+class MiscTests extends MikeAndConquerTestBase {
 
-//    MikeAndConquerGameClient gameClient
-//
-//    def setup() {
-//        String localhost = "localhost"
-//        String remoteHost = "192.168.0.146"
-////        String host = localhost
-//        String host = remoteHost
-//
-//        int port = 11369
-//        //boolean useTimeouts = true
-//        boolean useTimeouts = false
-//        gameClient = new MikeAndConquerGameClient(host, port, useTimeouts )
-//        gameClient.resetGame()
-//        gameClient.leftClickInWorldCoordinates(1,1)  // to get mouse clicks in default state
-//    }
 
     def "top left corner of screenshot of game should match equivalent reference screenshot of real command and conquer" () {
 

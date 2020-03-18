@@ -2,13 +2,13 @@ package client
 
 import groovyx.net.http.HttpResponseException
 import groovyx.net.http.RESTClient
-import main.MCV
-import main.Minigunner
-import main.MinigunnerId
-import main.Point
-import main.ResetOptions
-import main.Sandbag
-import main.Util
+import domain.MCV
+import domain.Minigunner
+import domain.MinigunnerId
+import domain.Point
+import domain.ResetOptions
+import domain.Sandbag
+import util.Util
 import org.apache.http.params.CoreConnectionPNames
 
 import javax.imageio.ImageIO

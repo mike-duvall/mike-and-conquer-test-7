@@ -1,4 +1,4 @@
-package main
+package domain
 
 class MinigunnerId {
     int id
