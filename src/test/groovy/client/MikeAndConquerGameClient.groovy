@@ -2,11 +2,13 @@ package client
 
 import groovyx.net.http.HttpResponseException
 import groovyx.net.http.RESTClient
-import main.Minigunner
-import main.MinigunnerId
-import main.Point
-import main.Sandbag
-import main.Util
+import domain.MCV
+import domain.Minigunner
+import domain.MinigunnerId
+import domain.Point
+import domain.ResetOptions
+import domain.Sandbag
+import util.Util
 import org.apache.http.params.CoreConnectionPNames
 
 import javax.imageio.ImageIO
@@ -20,6 +22,7 @@ class MikeAndConquerGameClient {
 
     private static final String GDI_MINIGUNNERS_BASE_URL = '/mac/gdiMinigunners'
     private static final String NOD_MINIGUNNERS_BASE_URL = '/mac/nodMinigunners'
+    private static final String MCV_BASE_URL = '/mac/MCV'
 
 
     MikeAndConquerGameClient(String host, int port, boolean useTimeouts = true) {
@@ -33,8 +36,14 @@ class MikeAndConquerGameClient {
     }
 
     void resetGame() {
+        ResetOptions resetOptions = new ResetOptions(false)
+        resetGame(resetOptions)
+    }
+
+    void resetGame(ResetOptions resetOptions) {
         def resp = restClient.post(
                 path: '/mac/resetGame',
+                body: resetOptions,
                 requestContentType: 'application/json' )
 
         assert resp.status == 204
@@ -164,6 +173,47 @@ class MikeAndConquerGameClient {
         int worldY = (y * Util.mapSquareWidth) + halfMapSquareWidth
 
         return addGDIMinigunnerAtWorldCoordinates(worldX, worldY)
+    }
+
+    MCV addMCVAtMapSquare(int x, int y) {
+        int halfMapSquareWidth = Util.mapSquareWidth / 2
+        int worldX = (x * Util.mapSquareWidth) + halfMapSquareWidth
+        int worldY = (y * Util.mapSquareWidth) + halfMapSquareWidth
+
+        MCV inputMCV = new MCV()
+        inputMCV.x = worldX
+        inputMCV.y = worldY
+        def resp = restClient.post(
+                path: MCV_BASE_URL,
+                body:   inputMCV ,
+                requestContentType: 'application/json' )
+
+        assert resp.status == 200
+
+        MCV createdMCV = new MCV()
+//        createdMCV.id = resp.responseData.id
+        createdMCV.x = resp.responseData.x
+        createdMCV.y = resp.responseData.y
+
+        return createdMCV
+    }
+
+
+
+    def deleteGdiMinigunnerById(int minigunnerId) {
+
+        MinigunnerId minigunnerId1 = new MinigunnerId()
+        minigunnerId1.id = minigunnerId
+
+        String aPath = GDI_MINIGUNNERS_BASE_URL + '/' + minigunnerId
+
+        def resp = restClient.delete(
+                path: aPath,
+                requestContentType: 'application/json' )
+
+        assert resp.status == 204
+
+
     }
 
     Minigunner addNodMinigunnerAtWorldCoordinates(int minigunnerX, int minigunnerY, boolean aiIsOn) {

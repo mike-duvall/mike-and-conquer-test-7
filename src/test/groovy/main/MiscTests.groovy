@@ -1,9 +1,12 @@
 package main
 
-import client.MikeAndConquerGameClient
+
 import groovyx.net.http.HttpResponseException
+import domain.Minigunner
+import domain.Point
+import util.ImageUtil
+import util.Util
 import spock.lang.Ignore
-import spock.lang.Specification
 import spock.lang.Unroll
 import spock.util.concurrent.PollingConditions
 
@@ -11,23 +14,8 @@ import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
 
 
-class MikeAndConquerTest1 extends Specification {
+class MiscTests extends MikeAndConquerTestBase {
 
-    MikeAndConquerGameClient gameClient
-
-    def setup() {
-        String localhost = "localhost"
-        String remoteHost = "192.168.0.146"
-//        String host = localhost
-        String host = remoteHost
-
-        int port = 11369
-        //boolean useTimeouts = true
-        boolean useTimeouts = false
-        gameClient = new MikeAndConquerGameClient(host, port, useTimeouts )
-        gameClient.resetGame()
-        gameClient.leftClickInWorldCoordinates(1,1)  // to get mouse clicks in default state
-    }
 
     def "top left corner of screenshot of game should match equivalent reference screenshot of real command and conquer" () {
 
@@ -88,57 +76,7 @@ class MikeAndConquerTest1 extends Specification {
     }
 
 
-    @Ignore
-    def "screenshot of opening game map shroud" () {
 
-        given:
-        int screenshotCompareWidth = 216
-        int screenshotCompareHeight = 96
-
-        // move mouse out of screenshot
-        gameClient.moveMouseToWorldCoordinates(new Point(screenshotCompareWidth + 50,screenshotCompareHeight + 50))
-
-        File imageFile = new File(
-                getClass().getClassLoader().getResource("real-game-shroud-1-start-x408-y240-216x96.png").getFile()
-        );
-        BufferedImage realGameScreenshot = ImageIO.read(imageFile)
-
-
-        when:
-        BufferedImage fullScreenShot = gameClient.getScreenshot()
-
-        then:
-        BufferedImage screenshotSubImage = fullScreenShot.getSubimage(408,240,screenshotCompareWidth,screenshotCompareHeight)
-//        BufferedImage screenshotSubImage = fullScreenShot
-
-        writeImageToFileInBuildDirectory(screenshotSubImage, "mike-and-conquer-actual-shroud-1-start-x408-y240-216x96.png" )
-        writeImageToFileInBuildDirectory(realGameScreenshot, "real-game-copied-shroud-1-start-x408-y240-216x96.png" )
-
-        and:
-        assert ImageUtil.imagesAreEqual(screenshotSubImage, realGameScreenshot)
-
-        when:
-        Minigunner minigunner = gameClient.addGDIMinigunnerAtMapSquare(21,12)
-//        gameClient.deleteGdiMinigunnerById(minigunner.id)
-
-        then:
-        true
-
-
-    }
-
-
-
-    void writeImageToFileInBuildDirectory(BufferedImage bufferedImage, String fileName) {
-        String relPath = getClass().getProtectionDomain().getCodeSource().getLocation().getFile();
-        File targetDir = new File(relPath+"../../../../build/screenshot");
-        if(!targetDir.exists()) {
-            targetDir.mkdir();
-        }
-        String absPath = targetDir.getAbsolutePath()
-        File outputfile = new File(absPath + "\\" + fileName);
-        ImageIO.write(bufferedImage, "png", outputfile);
-    }
 
     def "clicking nod mingunner should not initiate attack unless gdi minigunner is selected" () {
 
@@ -633,7 +571,7 @@ class MikeAndConquerTest1 extends Specification {
 
 
     def assertGdiMinigunnerDies(int id) {
-        def conditions = new PollingConditions(timeout: 80, initialDelay: 1.5, factor: 1.25)
+        def conditions = new PollingConditions(timeout: 100, initialDelay: 1.5, factor: 1.25)
         conditions.eventually {
             def expectedDeadMinigunner = gameClient.getGdiMinigunnerById(id)
             assert expectedDeadMinigunner.health == 0
@@ -645,7 +583,7 @@ class MikeAndConquerTest1 extends Specification {
     def assertGameStateGoesToMissionFailed() {
         String expectedGameState = "Mission Failed"
 
-        def conditions = new PollingConditions(timeout: 10, initialDelay: 1.5, factor: 1.25)
+        def conditions = new PollingConditions(timeout: 15, initialDelay: 1.5, factor: 1.25)
         conditions.eventually {
             String gameState = gameClient.getGameState()
             assert gameState == expectedGameState
