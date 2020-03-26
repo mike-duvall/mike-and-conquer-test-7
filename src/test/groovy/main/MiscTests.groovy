@@ -1,6 +1,6 @@
 package main
 
-
+import domain.MCV
 import groovyx.net.http.HttpResponseException
 import domain.Minigunner
 import domain.Point
@@ -400,6 +400,43 @@ class MiscTests extends MikeAndConquerTestBase {
     }
 
 
+    def "should be able to move an MCV" () {
+        given:
+        int destinationX = 300
+        int destinationY = 100
+//        Minigunner createdMinigunner1 = createRandomGDIMinigunner()
+        Point mcvLocation = new Point(21,12)
+        MCV anMCV = gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
+
+
+        when:
+//        gameClient.leftClickMinigunner(createdMinigunner1.id)
+        gameClient.leftClickMCV(666)
+
+        and:
+        gameClient.leftClickInWorldCoordinates(destinationX, destinationY )
+
+        then:
+        def conditions = new PollingConditions(timeout: 60, initialDelay: 1.5, factor: 1.25)
+        conditions.eventually {
+//            Minigunner retrievedMinigunner = gameClient.getGdiMinigunnerById(createdMinigunner1.id)
+//            assertMinigunnerIsAtDesignatedDestination(retrievedMinigunner, minigunner1DestinationX, minigunner1DestinationY)
+//            assert retrievedMinigunner.health != 0
+            MCV retrievedMCV = gameClient.getMCV()
+            assertMCVIsAtDesignatedDestination(retrievedMCV, destinationX, destinationY)
+//            assert retrievedMCV.health != 0
+        }
+
+        and:
+        String gameState = gameClient.getGameState()
+        String expectedGameState = "Playing"  // not sure if Playing is correct state
+
+        assert gameState == expectedGameState
+    }
+
+
+
+
     @Ignore
     def "minigunner should be able to navigate around simple sandbag obstacle" () {
         given:
@@ -558,6 +595,12 @@ class MiscTests extends MikeAndConquerTestBase {
         assert (minigunner.y >= destinationY - leeway) && (minigunner.y <= destinationY + leeway)
     }
 
+    def assertMCVIsAtDesignatedDestination(MCV mcv,int destinationX, int destinationY)
+    {
+        int leeway = 15
+        assert (mcv.x >= destinationX - leeway) && (mcv.x <= destinationX + leeway)
+        assert (mcv.y >= destinationY - leeway) && (mcv.y <= destinationY + leeway)
+    }
 
 
     def assertNodMinigunnerDies(int id) {

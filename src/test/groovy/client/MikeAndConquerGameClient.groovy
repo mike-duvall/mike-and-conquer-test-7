@@ -98,6 +98,19 @@ class MikeAndConquerGameClient {
     }
 
 
+    void leftClickMCV(int mcvId) {
+        MinigunnerId minigunnerId1 = new MinigunnerId()
+        minigunnerId1.id = mcvId
+
+
+        def resp = restClient.post(
+                path: '/mac/leftClickMCV',
+                body: minigunnerId1,
+                requestContentType: 'application/json' )
+
+        assert resp.status == 200
+    }
+
 
     void rightClick(int mouseX, int mouseY) {
         Point point = new Point()
@@ -250,6 +263,37 @@ class MikeAndConquerGameClient {
         minigunner.destinationX = resp.responseData.destinationX
         minigunner.destinationY = resp.responseData.destinationY
         return minigunner
+    }
+
+    MCV getMCV() {
+        def resp
+        try {
+            resp = restClient.get(path: MCV_BASE_URL)
+        }
+        catch(HttpResponseException e) {
+            if(e.statusCode == 404) {
+                return null
+            }
+            else {
+                throw e
+            }
+        }
+        if( resp.status == 404) {
+            return null
+        }
+        assert resp.status == 200  // HTTP response code; 404 means not found, etc.
+        MCV mcv = new MCV()
+        mcv.x = resp.responseData.x
+        mcv.y = resp.responseData.y
+//        minigunner.screenX = resp.responseData.screenX
+//        minigunner.screenY = resp.responseData.screenY
+//        minigunner.health = resp.responseData.health
+//        minigunner.id = resp.responseData.id
+//        minigunner.selected = resp.responseData.selected
+//        minigunner.destinationX = resp.responseData.destinationX
+//        minigunner.destinationY = resp.responseData.destinationY
+        return mcv
+
     }
 
     BufferedImage  getScreenshot() {
