@@ -346,6 +346,49 @@ class MiscTests extends MikeAndConquerTestBase {
 
     }
 
+    def "should set mouse cursor correctly when MCV is selected" () {
+
+        given:
+//        Minigunner gdiMinigunner = createRandomGDIMinigunner()
+
+        Point mcvLocation = new Point(21,12)
+        MCV anMCV = gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
+
+
+        Point mountainSquareLocation = new Point(79,20)
+        Point clearSquare = new Point(10,10)
+
+        when:
+//        gameClient.leftClickMinigunner(gdiMinigunner.id)
+        gameClient.leftClickMCV(666)
+
+        and:
+        gameClient.moveMouseToWorldCoordinates(mountainSquareLocation)
+
+        then:
+        String mouseCursorState = gameClient.getMouseCursorState()
+        assert mouseCursorState == "MovementNoteAllowedCursor"
+
+        when:
+        gameClient.moveMouseToWorldCoordinates(clearSquare)
+        mouseCursorState = gameClient.getMouseCursorState()
+
+        then:
+        assert mouseCursorState == "MoveToLocationCursor"
+
+
+
+        when:
+        gameClient.rightClick(20,20)
+        mouseCursorState = gameClient.getMouseCursorState()
+
+        then:
+        assert mouseCursorState == "DefaultArrowCursor"
+
+    }
+
+
+
     def "should be able to move two separate GDI minigunners" () {
         given:
         int minigunner1DestinationX = 300
@@ -404,13 +447,11 @@ class MiscTests extends MikeAndConquerTestBase {
         given:
         int destinationX = 300
         int destinationY = 100
-//        Minigunner createdMinigunner1 = createRandomGDIMinigunner()
         Point mcvLocation = new Point(21,12)
         MCV anMCV = gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
 
 
         when:
-//        gameClient.leftClickMinigunner(createdMinigunner1.id)
         gameClient.leftClickMCV(666)
 
         and:
@@ -419,9 +460,6 @@ class MiscTests extends MikeAndConquerTestBase {
         then:
         def conditions = new PollingConditions(timeout: 60, initialDelay: 1.5, factor: 1.25)
         conditions.eventually {
-//            Minigunner retrievedMinigunner = gameClient.getGdiMinigunnerById(createdMinigunner1.id)
-//            assertMinigunnerIsAtDesignatedDestination(retrievedMinigunner, minigunner1DestinationX, minigunner1DestinationY)
-//            assert retrievedMinigunner.health != 0
             MCV retrievedMCV = gameClient.getMCV()
             assertMCVIsAtDesignatedDestination(retrievedMCV, destinationX, destinationY)
 //            assert retrievedMCV.health != 0
