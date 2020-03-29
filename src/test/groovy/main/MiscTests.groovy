@@ -349,8 +349,6 @@ class MiscTests extends MikeAndConquerTestBase {
     def "should set mouse cursor correctly when MCV is selected" () {
 
         given:
-//        Minigunner gdiMinigunner = createRandomGDIMinigunner()
-
         Point mcvLocation = new Point(21,12)
         MCV anMCV = gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
 
@@ -359,7 +357,6 @@ class MiscTests extends MikeAndConquerTestBase {
         Point clearSquare = new Point(10,10)
 
         when:
-//        gameClient.leftClickMinigunner(gdiMinigunner.id)
         gameClient.leftClickMCV(666)
 
         and:
@@ -376,7 +373,13 @@ class MiscTests extends MikeAndConquerTestBase {
         then:
         assert mouseCursorState == "MoveToLocationCursor"
 
+        when:
+        Point mcvInWorldCoordinates = Util.convertMapSqaureCoordinatesToWorldCoordinates(mcvLocation.x, mcvLocation.y)
+        gameClient.moveMouseToWorldCoordinates(mcvInWorldCoordinates)
+        mouseCursorState = gameClient.getMouseCursorState()
 
+        then:
+        assert mouseCursorState == "BuildConstructionYardCursor"
 
         when:
         gameClient.rightClick(20,20)
@@ -615,7 +618,7 @@ class MiscTests extends MikeAndConquerTestBase {
 
     def assertMinigunnerIsAtDesignatedDestinationInMapSquareCoordinates(Minigunner minigunner,int mapSquareX, int mapSquareY)
     {
-        Point worldCoordinates = Util.convertWorldCoordinatesToMapSquareCoordinates(mapSquareX, mapSquareY)
+        Point worldCoordinates = Util.convertMapSqaureCoordinatesToWorldCoordinates(mapSquareX, mapSquareY)
 
         int destinationX = worldCoordinates.x
         int destinationY = worldCoordinates.y

@@ -64,7 +64,7 @@ class MikeAndConquerGameClient {
 
 
     void leftClickInMapSquareCoordinates(int x, int y) {
-        Point worldCoordinates = Util.convertWorldCoordinatesToMapSquareCoordinates(x,y)
+        Point worldCoordinates = Util.convertMapSqaureCoordinatesToWorldCoordinates(x,y)
         def resp = restClient.post(
                 path: '/mac/leftClickInWorldCoordinates',
                 body: worldCoordinates,
