@@ -1,6 +1,6 @@
 package main
 
-
+import domain.MCV
 import groovyx.net.http.HttpResponseException
 import domain.Minigunner
 import domain.Point
@@ -346,6 +346,52 @@ class MiscTests extends MikeAndConquerTestBase {
 
     }
 
+    def "should set mouse cursor correctly when MCV is selected" () {
+
+        given:
+        Point mcvLocation = new Point(21,12)
+        MCV anMCV = gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
+
+
+        Point mountainSquareLocation = new Point(79,20)
+        Point clearSquare = new Point(10,10)
+
+        when:
+        gameClient.leftClickMCV(666)
+
+        and:
+        gameClient.moveMouseToWorldCoordinates(mountainSquareLocation)
+
+        then:
+        String mouseCursorState = gameClient.getMouseCursorState()
+        assert mouseCursorState == "MovementNoteAllowedCursor"
+
+        when:
+        gameClient.moveMouseToWorldCoordinates(clearSquare)
+        mouseCursorState = gameClient.getMouseCursorState()
+
+        then:
+        assert mouseCursorState == "MoveToLocationCursor"
+
+        when:
+        Point mcvInWorldCoordinates = Util.convertMapSqaureCoordinatesToWorldCoordinates(mcvLocation.x, mcvLocation.y)
+        gameClient.moveMouseToWorldCoordinates(mcvInWorldCoordinates)
+        mouseCursorState = gameClient.getMouseCursorState()
+
+        then:
+        assert mouseCursorState == "BuildConstructionYardCursor"
+
+        when:
+        gameClient.rightClick(20,20)
+        mouseCursorState = gameClient.getMouseCursorState()
+
+        then:
+        assert mouseCursorState == "DefaultArrowCursor"
+
+    }
+
+
+
     def "should be able to move two separate GDI minigunners" () {
         given:
         int minigunner1DestinationX = 300
@@ -398,6 +444,38 @@ class MiscTests extends MikeAndConquerTestBase {
 
         assert gameState == expectedGameState
     }
+
+
+    def "should be able to move an MCV" () {
+        given:
+        int destinationX = 300
+        int destinationY = 100
+        Point mcvLocation = new Point(21,12)
+        MCV anMCV = gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
+
+
+        when:
+        gameClient.leftClickMCV(666)
+
+        and:
+        gameClient.leftClickInWorldCoordinates(destinationX, destinationY )
+
+        then:
+        def conditions = new PollingConditions(timeout: 60, initialDelay: 1.5, factor: 1.25)
+        conditions.eventually {
+            MCV retrievedMCV = gameClient.getMCV()
+            assertMCVIsAtDesignatedDestination(retrievedMCV, destinationX, destinationY)
+//            assert retrievedMCV.health != 0
+        }
+
+        and:
+        String gameState = gameClient.getGameState()
+        String expectedGameState = "Playing"  // not sure if Playing is correct state
+
+        assert gameState == expectedGameState
+    }
+
+
 
 
     @Ignore
@@ -540,7 +618,7 @@ class MiscTests extends MikeAndConquerTestBase {
 
     def assertMinigunnerIsAtDesignatedDestinationInMapSquareCoordinates(Minigunner minigunner,int mapSquareX, int mapSquareY)
     {
-        Point worldCoordinates = Util.convertWorldCoordinatesToMapSquareCoordinates(mapSquareX, mapSquareY)
+        Point worldCoordinates = Util.convertMapSqaureCoordinatesToWorldCoordinates(mapSquareX, mapSquareY)
 
         int destinationX = worldCoordinates.x
         int destinationY = worldCoordinates.y
@@ -558,6 +636,12 @@ class MiscTests extends MikeAndConquerTestBase {
         assert (minigunner.y >= destinationY - leeway) && (minigunner.y <= destinationY + leeway)
     }
 
+    def assertMCVIsAtDesignatedDestination(MCV mcv,int destinationX, int destinationY)
+    {
+        int leeway = 15
+        assert (mcv.x >= destinationX - leeway) && (mcv.x <= destinationX + leeway)
+        assert (mcv.y >= destinationY - leeway) && (mcv.y <= destinationY + leeway)
+    }
 
 
     def assertNodMinigunnerDies(int id) {
