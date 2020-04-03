@@ -1,5 +1,6 @@
 package client
 
+import domain.GDIConstructionYard
 import groovyx.net.http.HttpResponseException
 import groovyx.net.http.RESTClient
 import domain.MCV
@@ -23,6 +24,7 @@ class MikeAndConquerGameClient {
     private static final String GDI_MINIGUNNERS_BASE_URL = '/mac/gdiMinigunners'
     private static final String NOD_MINIGUNNERS_BASE_URL = '/mac/nodMinigunners'
     private static final String MCV_BASE_URL = '/mac/MCV'
+    private static final String GDI_CONSTRUCTION_YARD = '/mac/GDIConstructionYard'
 
 
     MikeAndConquerGameClient(String host, int port, boolean useTimeouts = true) {
@@ -264,6 +266,44 @@ class MikeAndConquerGameClient {
         minigunner.destinationY = resp.responseData.destinationY
         return minigunner
     }
+
+    GDIConstructionYard getGDIConstructionYard() {
+
+        String aPath = GDI_CONSTRUCTION_YARD
+        def resp
+        try {
+            resp = restClient.get(path: aPath)
+        }
+        catch(HttpResponseException e) {
+            if(e.statusCode == 404) {
+                return null
+            }
+            else {
+                throw e
+            }
+        }
+        if( resp.status == 404) {
+            return null
+        }
+        assert resp.status == 200  // HTTP response code; 404 means not found, etc.
+//        Minigunner minigunner = new Minigunner()
+//        minigunner.x = resp.responseData.x
+//        minigunner.y = resp.responseData.y
+//        minigunner.screenX = resp.responseData.screenX
+//        minigunner.screenY = resp.responseData.screenY
+//        minigunner.health = resp.responseData.health
+//        minigunner.id = resp.responseData.id
+//        minigunner.selected = resp.responseData.selected
+//        minigunner.destinationX = resp.responseData.destinationX
+//        minigunner.destinationY = resp.responseData.destinationY
+//        return minigunner
+        GDIConstructionYard gdiConstructionYard = new GDIConstructionYard()
+        gdiConstructionYard.x = resp.responseData.x
+        gdiConstructionYard.y = resp.responseData.y
+        return gdiConstructionYard
+    }
+
+
 
     MCV getMCV() {
         def resp

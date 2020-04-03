@@ -1,5 +1,6 @@
 package main
 
+import domain.GDIConstructionYard
 import domain.MCV
 import groovyx.net.http.HttpResponseException
 import domain.Minigunner
@@ -387,6 +388,42 @@ class MiscTests extends MikeAndConquerTestBase {
 
         then:
         assert mouseCursorState == "DefaultArrowCursor"
+
+    }
+
+
+    def "should be able to build construction yard from MCV"() {
+        given:
+        Point mcvLocation = new Point(21,12)
+        MCV anMCV = gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
+
+        when:
+        GDIConstructionYard constructionYard = gameClient.getGDIConstructionYard()
+
+        then:
+        assert constructionYard == null
+
+        when:
+        gameClient.leftClickMCV(666)
+
+        then:
+        String mouseCursorState = gameClient.getMouseCursorState()
+        assert mouseCursorState == "BuildConstructionYardCursor"
+
+        when:
+        gameClient.leftClickMCV(666)
+
+        and:
+        constructionYard = gameClient.getGDIConstructionYard()
+        anMCV = gameClient.getMCV()
+
+        then:
+        assert constructionYard != null
+        Point mcvLocationInWorldCoordinates = Util.convertMapSqaureCoordinatesToWorldCoordinates(mcvLocation.x, mcvLocation.y)
+        assert constructionYard.x == mcvLocationInWorldCoordinates.x
+        assert constructionYard.y == mcvLocationInWorldCoordinates.y
+
+        assert anMCV == null
 
     }
 
