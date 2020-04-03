@@ -24,7 +24,7 @@ class MikeAndConquerGameClient {
     private static final String GDI_MINIGUNNERS_BASE_URL = '/mac/gdiMinigunners'
     private static final String NOD_MINIGUNNERS_BASE_URL = '/mac/nodMinigunners'
     private static final String MCV_BASE_URL = '/mac/MCV'
-    private static final String GDI_CONSTRUCTINO_YARD = '/mac/GDIConstructionYard'
+    private static final String GDI_CONSTRUCTION_YARD = '/mac/GDIConstructionYard'
 
 
     MikeAndConquerGameClient(String host, int port, boolean useTimeouts = true) {
@@ -269,7 +269,7 @@ class MikeAndConquerGameClient {
 
     GDIConstructionYard getGDIConstructionYard() {
 
-        String aPath = GDI_CONSTRUCTINO_YARD
+        String aPath = GDI_CONSTRUCTION_YARD
         def resp
         try {
             resp = restClient.get(path: aPath)
