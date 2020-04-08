@@ -2,6 +2,7 @@ package client
 
 import domain.GDIConstructionYard
 import domain.Sidebar
+import domain.SidebarItem
 import groovyx.net.http.HttpResponseException
 import groovyx.net.http.RESTClient
 import domain.MCV
@@ -65,6 +66,19 @@ class MikeAndConquerGameClient {
 
         assert resp.status == 200
     }
+
+    void leftClickSidebar(String sidebarItemString) {
+
+        SidebarItem sidebarItem = new SidebarItem(sidebarItemString)
+
+        def resp = restClient.post(
+                path: '/mac/leftClickSidebar',
+                body: sidebarItem,
+                requestContentType: 'application/json' )
+
+        assert resp.status == 200
+    }
+
 
 
     void leftClickInMapSquareCoordinates(int x, int y) {

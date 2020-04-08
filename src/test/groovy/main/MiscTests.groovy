@@ -468,6 +468,13 @@ class MiscTests extends MikeAndConquerTestBase {
         assert sidebar.buildMinigunnerEnabled == false
 
 
+        when:
+        gameClient.leftClickSidebar("Barracks")
+
+        then:
+        true
+
+
 
 
     }
