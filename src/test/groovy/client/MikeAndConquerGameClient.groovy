@@ -1,5 +1,6 @@
 package client
 
+import domain.GDIBarracks
 import domain.GDIConstructionYard
 import domain.Sidebar
 import domain.SidebarItem
@@ -319,6 +320,42 @@ class MikeAndConquerGameClient {
         return gdiConstructionYard
     }
 
+
+    GDIBarracks getGDIBarracks() {
+
+
+        def resp
+        try {
+            resp = restClient.get(path: '/mac/GDIBarracks')
+        }
+        catch(HttpResponseException e) {
+            if(e.statusCode == 404) {
+                return null
+            }
+            else {
+                throw e
+            }
+        }
+        if( resp.status == 404) {
+            return null
+        }
+        assert resp.status == 200  // HTTP response code; 404 means not found, etc.
+//        Minigunner minigunner = new Minigunner()
+//        minigunner.x = resp.responseData.x
+//        minigunner.y = resp.responseData.y
+//        minigunner.screenX = resp.responseData.screenX
+//        minigunner.screenY = resp.responseData.screenY
+//        minigunner.health = resp.responseData.health
+//        minigunner.id = resp.responseData.id
+//        minigunner.selected = resp.responseData.selected
+//        minigunner.destinationX = resp.responseData.destinationX
+//        minigunner.destinationY = resp.responseData.destinationY
+//        return minigunner
+        GDIBarracks gdiBarracks = new GDIBarracks()
+        gdiBarracks.x = resp.responseData.x
+        gdiBarracks.y = resp.responseData.y
+        return gdiBarracks
+    }
 
 
     MCV getMCV() {

@@ -1,5 +1,6 @@
 package main
 
+import domain.GDIBarracks
 import domain.GDIConstructionYard
 import domain.MCV
 import domain.Sidebar
@@ -471,11 +472,14 @@ class MiscTests extends MikeAndConquerTestBase {
         when:
         gameClient.leftClickSidebar("Barracks")
 
+        and:
+        sleep(8000)
+
         then:
-        true
-
-
-
+        GDIBarracks gdiBarracks = gameClient.getGDIBarracks()
+        assert gdiBarracks != null
+        assert gdiBarracks.x == 576
+        assert gdiBarracks.y == 300
 
     }
 
