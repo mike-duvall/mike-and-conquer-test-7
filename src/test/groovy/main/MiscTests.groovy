@@ -1,7 +1,9 @@
 package main
 
+import domain.GDIBarracks
 import domain.GDIConstructionYard
 import domain.MCV
+import domain.Sidebar
 import groovyx.net.http.HttpResponseException
 import domain.Minigunner
 import domain.Point
@@ -424,8 +426,63 @@ class MiscTests extends MikeAndConquerTestBase {
         assert constructionYard.y == mcvLocationInWorldCoordinates.y
 
         assert anMCV == null
+    }
+
+
+    def "should be able to build construction yard, then barracks, then minigunner"() {
+        given:
+        Point mcvLocation = new Point(21,12)
+        MCV anMCV = gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
+
+
+        when:
+        Sidebar sidebar = gameClient.getSidebar()
+
+        then:
+        assert sidebar != null
+        assert sidebar.buildBarracksEnabled == false
+        assert sidebar.buildMinigunnerEnabled == false
+
+        when:
+        gameClient.leftClickMCV(666)
+        gameClient.leftClickMCV(666)
+
+        then:
+        GDIConstructionYard constructionYard = gameClient.getGDIConstructionYard()
+        assert constructionYard != null
+        Point mcvLocationInWorldCoordinates = Util.convertMapSqaureCoordinatesToWorldCoordinates(mcvLocation.x, mcvLocation.y)
+        assert constructionYard.x == mcvLocationInWorldCoordinates.x
+        assert constructionYard.y == mcvLocationInWorldCoordinates.y
+
+        when:
+        anMCV = gameClient.getMCV()
+
+        then:
+        assert anMCV == null
+
+        when:
+        sidebar = gameClient.getSidebar()
+
+        then:
+        assert sidebar != null
+        assert sidebar.buildBarracksEnabled == true
+        assert sidebar.buildMinigunnerEnabled == false
+
+
+        when:
+        gameClient.leftClickSidebar("Barracks")
+
+        and:
+        sleep(8000)
+
+        then:
+        GDIBarracks gdiBarracks = gameClient.getGDIBarracks()
+        assert gdiBarracks != null
+        assert gdiBarracks.x == 576
+        assert gdiBarracks.y == 300
 
     }
+
 
 
 

@@ -1,6 +1,9 @@
 package client
 
+import domain.GDIBarracks
 import domain.GDIConstructionYard
+import domain.Sidebar
+import domain.SidebarItem
 import groovyx.net.http.HttpResponseException
 import groovyx.net.http.RESTClient
 import domain.MCV
@@ -25,6 +28,7 @@ class MikeAndConquerGameClient {
     private static final String NOD_MINIGUNNERS_BASE_URL = '/mac/nodMinigunners'
     private static final String MCV_BASE_URL = '/mac/MCV'
     private static final String GDI_CONSTRUCTION_YARD = '/mac/GDIConstructionYard'
+    private static final String SIDEBAR_BASE_URL = '/mac/Sidebar'
 
 
     MikeAndConquerGameClient(String host, int port, boolean useTimeouts = true) {
@@ -63,6 +67,19 @@ class MikeAndConquerGameClient {
 
         assert resp.status == 200
     }
+
+    void leftClickSidebar(String sidebarItemString) {
+
+        SidebarItem sidebarItem = new SidebarItem(sidebarItemString)
+
+        def resp = restClient.post(
+                path: '/mac/leftClickSidebar',
+                body: sidebarItem,
+                requestContentType: 'application/json' )
+
+        assert resp.status == 200
+    }
+
 
 
     void leftClickInMapSquareCoordinates(int x, int y) {
@@ -304,6 +321,42 @@ class MikeAndConquerGameClient {
     }
 
 
+    GDIBarracks getGDIBarracks() {
+
+
+        def resp
+        try {
+            resp = restClient.get(path: '/mac/GDIBarracks')
+        }
+        catch(HttpResponseException e) {
+            if(e.statusCode == 404) {
+                return null
+            }
+            else {
+                throw e
+            }
+        }
+        if( resp.status == 404) {
+            return null
+        }
+        assert resp.status == 200  // HTTP response code; 404 means not found, etc.
+//        Minigunner minigunner = new Minigunner()
+//        minigunner.x = resp.responseData.x
+//        minigunner.y = resp.responseData.y
+//        minigunner.screenX = resp.responseData.screenX
+//        minigunner.screenY = resp.responseData.screenY
+//        minigunner.health = resp.responseData.health
+//        minigunner.id = resp.responseData.id
+//        minigunner.selected = resp.responseData.selected
+//        minigunner.destinationX = resp.responseData.destinationX
+//        minigunner.destinationY = resp.responseData.destinationY
+//        return minigunner
+        GDIBarracks gdiBarracks = new GDIBarracks()
+        gdiBarracks.x = resp.responseData.x
+        gdiBarracks.y = resp.responseData.y
+        return gdiBarracks
+    }
+
 
     MCV getMCV() {
         def resp
@@ -325,16 +378,33 @@ class MikeAndConquerGameClient {
         MCV mcv = new MCV()
         mcv.x = resp.responseData.x
         mcv.y = resp.responseData.y
-//        minigunner.screenX = resp.responseData.screenX
-//        minigunner.screenY = resp.responseData.screenY
-//        minigunner.health = resp.responseData.health
-//        minigunner.id = resp.responseData.id
-//        minigunner.selected = resp.responseData.selected
-//        minigunner.destinationX = resp.responseData.destinationX
-//        minigunner.destinationY = resp.responseData.destinationY
         return mcv
+    }
+
+    Sidebar getSidebar() {
+        def resp
+        try {
+            resp = restClient.get(path: SIDEBAR_BASE_URL)
+        }
+        catch(HttpResponseException e) {
+            if(e.statusCode == 404) {
+                return null
+            }
+            else {
+                throw e
+            }
+        }
+        if( resp.status == 404) {
+            return null
+        }
+        assert resp.status == 200  // HTTP response code; 404 means not found, etc.
+        Sidebar sidebar = new Sidebar()
+        sidebar.buildMinigunnerEnabled = resp.responseData.buildMinigunnerEnabled
+        sidebar.buildBarracksEnabled = resp.responseData.buildBarracksEnabled
+        return sidebar
 
     }
+
 
     BufferedImage  getScreenshot() {
         def resp = restClient.get( path : '/mac/screenshot' )
