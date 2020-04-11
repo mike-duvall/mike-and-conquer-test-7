@@ -468,19 +468,48 @@ class MiscTests extends MikeAndConquerTestBase {
         assert sidebar.buildBarracksEnabled == true
         assert sidebar.buildMinigunnerEnabled == false
 
-
         when:
         gameClient.leftClickSidebar("Barracks")
 
-        and:
-        sleep(8000)
+        then:
+        assertGDIBarracksExistsAtLocation(576, 300)
+
+        when:
+        sidebar = gameClient.getSidebar()
 
         then:
-        GDIBarracks gdiBarracks = gameClient.getGDIBarracks()
-        assert gdiBarracks != null
-        assert gdiBarracks.x == 576
-        assert gdiBarracks.y == 300
+        assert sidebar != null
+        assert sidebar.buildBarracksEnabled == true
+        assert sidebar.buildMinigunnerEnabled == true
 
+        when:
+        gameClient.leftClickSidebar("Minigunner")
+
+        then:
+        assertOneMinigunnerExists()
+    }
+
+
+    def assertOneMinigunnerExists() {
+        def conditions = new PollingConditions(timeout: 80, initialDelay: 1.5, factor: 1.25)
+        conditions.eventually {
+            List<Minigunner> minigunners = gameClient.getGdiMinigunners()
+            assert minigunners != null
+            assert minigunners.size() == 1
+        }
+        return true
+
+    }
+
+    def assertGDIBarracksExistsAtLocation(int x, int y) {
+        def conditions = new PollingConditions(timeout: 80, initialDelay: 1.5, factor: 1.25)
+        conditions.eventually {
+            GDIBarracks gdiBarracks = gameClient.getGDIBarracks()
+            assert gdiBarracks != null
+            assert gdiBarracks.x == x
+            assert gdiBarracks.y == y
+        }
+        return true
     }
 
 
