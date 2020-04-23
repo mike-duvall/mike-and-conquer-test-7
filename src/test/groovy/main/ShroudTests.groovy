@@ -5,21 +5,21 @@ import domain.Minigunner
 import domain.MovementDirection
 import domain.Point
 import domain.ResetOptions
-import util.ImageUtil
-
-import javax.imageio.ImageIO
-import java.awt.image.BufferedImage
 
 
 class ShroudTests extends MikeAndConquerTestBase {
 
-    def "Shroud screenshot scenario 1"() {
-        given:
+
+    def setup() {
         ResetOptions resetOptions = new ResetOptions(true)
         gameClient.resetGame(resetOptions)
         // Add bogus minigunner to not delete so game state stays in "Playing"
         gameClient.addGDIMinigunnerAtMapSquare(4,5)
 
+    }
+
+    def "Shroud screenshot scenario 1"() {
+        given:
         Point mcvLocation = new Point(21,12)
         gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
 
@@ -34,15 +34,8 @@ class ShroudTests extends MikeAndConquerTestBase {
         assertScreenshotMatches(testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
     }
 
-
-
     def "Shroud screenshot scenario 2"() {
         given:
-        ResetOptions resetOptions = new ResetOptions(true)
-        gameClient.resetGame(resetOptions)
-        // Add bogus minigunner to not delete so game state stays in "Playing"
-        gameClient.addGDIMinigunnerAtMapSquare(4,5)
-
         Point mcvLocation = new Point(21,12)
         gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
 
@@ -65,10 +58,6 @@ class ShroudTests extends MikeAndConquerTestBase {
 
     def "Shroud screenshot scenario 3"() {
         given:
-        ResetOptions resetOptions = new ResetOptions(true)
-        gameClient.resetGame(resetOptions)
-        gameClient.addGDIMinigunnerAtMapSquare(4,5)
-
         Point mcvLocation = new Point(21,12)
         gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
 
@@ -88,10 +77,6 @@ class ShroudTests extends MikeAndConquerTestBase {
 
     def "Shroud screenshot scenario 4"() {
         given:
-        ResetOptions resetOptions = new ResetOptions(true)
-        gameClient.resetGame(resetOptions)
-        gameClient.addGDIMinigunnerAtMapSquare(4,5)
-
         Point mcvLocation = new Point(21,12)
         gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
 
@@ -111,10 +96,6 @@ class ShroudTests extends MikeAndConquerTestBase {
 
     def "Shroud screenshot scenario 5"() {
         given:
-        ResetOptions resetOptions = new ResetOptions(true)
-        gameClient.resetGame(resetOptions)
-        gameClient.addGDIMinigunnerAtMapSquare(4,5)
-
         Point mcvLocation = new Point(21,12)
         gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
 
@@ -136,10 +117,6 @@ class ShroudTests extends MikeAndConquerTestBase {
 
     def "Shroud screenshot scenario 6"() {
         given:
-        ResetOptions resetOptions = new ResetOptions(true)
-        gameClient.resetGame(resetOptions)
-        gameClient.addGDIMinigunnerAtMapSquare(4,5)
-
         Point mcvLocation = new Point(21,12)
         gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
 
@@ -163,10 +140,6 @@ class ShroudTests extends MikeAndConquerTestBase {
 
     def "Shroud screenshot scenario 7"() {
         given:
-        ResetOptions resetOptions = new ResetOptions(true)
-        gameClient.resetGame(resetOptions)
-        gameClient.addGDIMinigunnerAtMapSquare(4,5)
-
         Point mcvLocation = new Point(21,12)
         gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
 
@@ -189,10 +162,6 @@ class ShroudTests extends MikeAndConquerTestBase {
 
     def "Shroud screenshot scenario 8"() {
         given:
-        ResetOptions resetOptions = new ResetOptions(true)
-        gameClient.resetGame(resetOptions)
-        gameClient.addGDIMinigunnerAtMapSquare(4,5)
-
         Point mcvLocation = new Point(21,12)
         gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
 
@@ -217,10 +186,6 @@ class ShroudTests extends MikeAndConquerTestBase {
 
     def "Shroud screenshot scenario 9"() {
         given:
-        ResetOptions resetOptions = new ResetOptions(true)
-        gameClient.resetGame(resetOptions)
-        gameClient.addGDIMinigunnerAtMapSquare(4,5)
-
         Point mcvLocation = new Point(21,12)
         gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
 
@@ -245,10 +210,6 @@ class ShroudTests extends MikeAndConquerTestBase {
 
     def "Shroud screenshot scenario 10"() {
         given:
-        ResetOptions resetOptions = new ResetOptions(true)
-        gameClient.resetGame(resetOptions)
-        gameClient.addGDIMinigunnerAtMapSquare(4,5)
-
         Point mcvLocation = new Point(21,12)
         gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
 
@@ -273,10 +234,6 @@ class ShroudTests extends MikeAndConquerTestBase {
 
     def "Shroud screenshot scenario 11"() {
         given:
-        ResetOptions resetOptions = new ResetOptions(true)
-        gameClient.resetGame(resetOptions)
-        gameClient.addGDIMinigunnerAtMapSquare(4,5)
-
         Point mcvLocation = new Point(21,12)
         gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
 
@@ -300,10 +257,6 @@ class ShroudTests extends MikeAndConquerTestBase {
 
     def "Shroud screenshot scenario 12"() {
         given:
-        ResetOptions resetOptions = new ResetOptions(true)
-        gameClient.resetGame(resetOptions)
-        gameClient.addGDIMinigunnerAtMapSquare(4,5)
-
         Point mcvLocation = new Point(21,12)
         gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
 
@@ -327,10 +280,6 @@ class ShroudTests extends MikeAndConquerTestBase {
 
     def "Shroud screenshot scenario 13"() {
         given:
-        ResetOptions resetOptions = new ResetOptions(true)
-        gameClient.resetGame(resetOptions)
-        gameClient.addGDIMinigunnerAtMapSquare(4,5)
-
         Point mcvLocation = new Point(21,12)
         gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
 
@@ -356,10 +305,6 @@ class ShroudTests extends MikeAndConquerTestBase {
 
     def "Shroud screenshot scenario 14"() {
         given:
-        ResetOptions resetOptions = new ResetOptions(true)
-        gameClient.resetGame(resetOptions)
-        gameClient.addGDIMinigunnerAtMapSquare(4,5)
-
         Point mcvLocation = new Point(21,12)
         gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
 
@@ -384,10 +329,6 @@ class ShroudTests extends MikeAndConquerTestBase {
 
     def "Shroud screenshot scenario 15"() {
         given:
-        ResetOptions resetOptions = new ResetOptions(true)
-        gameClient.resetGame(resetOptions)
-        gameClient.addGDIMinigunnerAtMapSquare(4,5)
-
         Point mcvLocation = new Point(21,12)
         gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
 
@@ -411,10 +352,6 @@ class ShroudTests extends MikeAndConquerTestBase {
 
     def "Shroud screenshot scenario 16"() {
         given:
-        ResetOptions resetOptions = new ResetOptions(true)
-        gameClient.resetGame(resetOptions)
-        gameClient.addGDIMinigunnerAtMapSquare(4,5)
-
         Point mcvLocation = new Point(21,12)
         gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
 
@@ -438,10 +375,6 @@ class ShroudTests extends MikeAndConquerTestBase {
 
     def "Shroud screenshot scenario 17"() {
         given:
-        ResetOptions resetOptions = new ResetOptions(true)
-        gameClient.resetGame(resetOptions)
-        gameClient.addGDIMinigunnerAtMapSquare(4,5)
-
         Point mcvLocation = new Point(21,12)
         gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
 

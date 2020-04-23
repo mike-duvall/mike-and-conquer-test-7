@@ -78,9 +78,6 @@ class MiscTests extends MikeAndConquerTestBase {
 
     }
 
-
-
-
     def "clicking nod mingunner should not initiate attack unless gdi minigunner is selected" () {
 
         given:
@@ -131,26 +128,6 @@ class MiscTests extends MikeAndConquerTestBase {
         assertGdiMinigunnerDies(gdiMinigunner2.id)
         assertGdiMinigunnerDies(gdiMinigunner3.id)
         assertGameStateGoesToMissionFailed()
-    }
-
-
-    def "should be able to move to and attack target through obstacle" () {
-
-        given:
-        Minigunner gdiMinigunner = createGDIMinigunnerAtLocation(82,369)
-        Minigunner nodMinigunner = createNodMinigunnerAtLocation(346,320, false)
-
-        when:
-        gameClient.leftClickMinigunner(gdiMinigunner.id)
-
-        and:
-        gameClient.leftClickMinigunner(nodMinigunner.id)
-
-        then:
-        assertNodMinigunnerDies(nodMinigunner.id)
-
-        and:
-        assertGameStateGoesToGameOver()
     }
 
 
@@ -212,8 +189,6 @@ class MiscTests extends MikeAndConquerTestBase {
         selectionBoxLeftmostX   | selectionBoxBottommostY   | selectionBoxRightmostX    | selectionBoxTopmostY    // Bottom left to top right
 
     }
-
-
 
     def "two gdi minigunners attack two nod minigunners" () {
         given:
@@ -305,7 +280,6 @@ class MiscTests extends MikeAndConquerTestBase {
 
     }
 
-
     def "should set mouse cursor correctly when minigunner is selected" () {
 
         given:
@@ -339,7 +313,6 @@ class MiscTests extends MikeAndConquerTestBase {
         then:
         assert mouseCursorState == "AttackEnemyCursor"
 
-
         when:
         gameClient.rightClick(20,20)
         mouseCursorState = gameClient.getMouseCursorState()
@@ -354,7 +327,6 @@ class MiscTests extends MikeAndConquerTestBase {
         given:
         Point mcvLocation = new Point(21,12)
         MCV anMCV = gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
-
 
         Point mountainSquareLocation = new Point(79,20)
         Point clearSquare = new Point(10,10)
@@ -393,47 +365,10 @@ class MiscTests extends MikeAndConquerTestBase {
 
     }
 
-
-    def "should be able to build construction yard from MCV"() {
-        given:
-        Point mcvLocation = new Point(21,12)
-        MCV anMCV = gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
-
-        when:
-        GDIConstructionYard constructionYard = gameClient.getGDIConstructionYard()
-
-        then:
-        assert constructionYard == null
-
-        when:
-        gameClient.leftClickMCV(666)
-
-        then:
-        String mouseCursorState = gameClient.getMouseCursorState()
-        assert mouseCursorState == "BuildConstructionYardCursor"
-
-        when:
-        gameClient.leftClickMCV(666)
-
-        and:
-        constructionYard = gameClient.getGDIConstructionYard()
-        anMCV = gameClient.getMCV()
-
-        then:
-        assert constructionYard != null
-        Point mcvLocationInWorldCoordinates = Util.convertMapSqaureCoordinatesToWorldCoordinates(mcvLocation.x, mcvLocation.y)
-        assert constructionYard.x == mcvLocationInWorldCoordinates.x
-        assert constructionYard.y == mcvLocationInWorldCoordinates.y
-
-        assert anMCV == null
-    }
-
-
     def "should be able to build construction yard, then barracks, then minigunner"() {
         given:
         Point mcvLocation = new Point(21,12)
         MCV anMCV = gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
-
 
         when:
         Sidebar sidebar = gameClient.getSidebar()
@@ -487,29 +422,6 @@ class MiscTests extends MikeAndConquerTestBase {
 
         then:
         assertOneMinigunnerExists()
-    }
-
-
-    def assertOneMinigunnerExists() {
-        def conditions = new PollingConditions(timeout: 80, initialDelay: 1.5, factor: 1.25)
-        conditions.eventually {
-            List<Minigunner> minigunners = gameClient.getGdiMinigunners()
-            assert minigunners != null
-            assert minigunners.size() == 1
-        }
-        return true
-
-    }
-
-    def assertGDIBarracksExistsAtLocation(int x, int y) {
-        def conditions = new PollingConditions(timeout: 80, initialDelay: 1.5, factor: 1.25)
-        conditions.eventually {
-            GDIBarracks gdiBarracks = gameClient.getGDIBarracks()
-            assert gdiBarracks != null
-            assert gdiBarracks.x == x
-            assert gdiBarracks.y == y
-        }
-        return true
     }
 
 
@@ -721,6 +633,29 @@ class MiscTests extends MikeAndConquerTestBase {
 
         where:
         i << (1..45)
+    }
+
+
+    def assertOneMinigunnerExists() {
+        def conditions = new PollingConditions(timeout: 80, initialDelay: 1.5, factor: 1.25)
+        conditions.eventually {
+            List<Minigunner> minigunners = gameClient.getGdiMinigunners()
+            assert minigunners != null
+            assert minigunners.size() == 1
+        }
+        return true
+
+    }
+
+    def assertGDIBarracksExistsAtLocation(int x, int y) {
+        def conditions = new PollingConditions(timeout: 80, initialDelay: 1.5, factor: 1.25)
+        conditions.eventually {
+            GDIBarracks gdiBarracks = gameClient.getGDIBarracks()
+            assert gdiBarracks != null
+            assert gdiBarracks.x == x
+            assert gdiBarracks.y == y
+        }
+        return true
     }
 
 
