@@ -401,6 +401,10 @@ class MikeAndConquerGameClient {
         Sidebar sidebar = new Sidebar()
         sidebar.buildMinigunnerEnabled = resp.responseData.buildMinigunnerEnabled
         sidebar.buildBarracksEnabled = resp.responseData.buildBarracksEnabled
+        sidebar.barracksIsBuilding = resp.responseData.barracksIsBuilding
+        sidebar.barracksReadyToPlace = resp.responseData.barracksReadyToPlace
+
+
         return sidebar
 
     }

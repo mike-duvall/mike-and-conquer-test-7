@@ -407,6 +407,15 @@ class MiscTests extends MikeAndConquerTestBase {
         gameClient.leftClickSidebar("Barracks")
 
         then:
+        assertBarracksIsBuilding()
+
+        and:
+        assertBarracksIsReadyToPlace()
+
+        when:
+        gameClient.leftClickSidebar("Barracks")
+
+        then:
         assertGDIBarracksExistsAtLocation(576, 300)
 
         when:
@@ -424,6 +433,16 @@ class MiscTests extends MikeAndConquerTestBase {
         assertOneMinigunnerExists()
     }
 
+
+    def assertBarracksIsReadyToPlace() {
+        def conditions = new PollingConditions(timeout: 80, initialDelay: 1.5, factor: 1.25)
+        conditions.eventually {
+            Sidebar sidebar = gameClient.getSidebar()
+            assert sidebar.barracksReadyToPlace == true
+        }
+        return true
+
+    }
 
 
 
@@ -658,6 +677,15 @@ class MiscTests extends MikeAndConquerTestBase {
         return true
     }
 
+
+    def assertBarracksIsBuilding() {
+        def conditions = new PollingConditions(timeout: 80, initialDelay: 1.5, factor: 1.25)
+        conditions.eventually {
+            Sidebar sidebar = gameClient.getSidebar()
+            assert sidebar.barracksIsBuilding == true
+        }
+        return true
+    }
 
 
     def assertMinigunnerIsAtScreenPosition(Minigunner minigunner, int screenX, int screenY)
