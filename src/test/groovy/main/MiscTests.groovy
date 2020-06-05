@@ -146,11 +146,13 @@ class MiscTests extends MikeAndConquerTestBase {
         Minigunner gdiMinigunner2 = createGDIMinigunnerAtLocation(92,380)
 
         Minigunner gdiMinigunner3 = createGDIMinigunnerAtLocation(230,300)
+        Minigunner gdiMinigunner4 = createGDIMinigunnerAtLocation(82,300)
 
         then:
         assert gdiMinigunner1.selected == false
         assert gdiMinigunner2.selected == false
         assert gdiMinigunner3.selected == false
+        assert gdiMinigunner4.selected == false
 
         when:
         gameClient.dragSelect(dragStartX, dragStartY, dragEndX, dragEndY)
@@ -159,12 +161,14 @@ class MiscTests extends MikeAndConquerTestBase {
         gdiMinigunner1 = gameClient.getGdiMinigunnerById(gdiMinigunner1.id)
         gdiMinigunner2 = gameClient.getGdiMinigunnerById(gdiMinigunner2.id)
         gdiMinigunner3 = gameClient.getGdiMinigunnerById(gdiMinigunner3.id)
+        gdiMinigunner4 = gameClient.getGdiMinigunnerById(gdiMinigunner4.id)
 
 
         then:
         assert gdiMinigunner1.selected == true
         assert gdiMinigunner2.selected == true
         assert gdiMinigunner3.selected == false
+        assert gdiMinigunner4.selected == false
 
         when:
         gameClient.rightClick(10,10)
@@ -286,15 +290,24 @@ class MiscTests extends MikeAndConquerTestBase {
         Minigunner gdiMinigunner = createRandomGDIMinigunner()
         Point mountainSquareLocation = new Point(79,20)
         Point clearSquare = new Point(10,10)
+        Point overMapButNotOverTerrain = new Point(675,20)
+
 
         when:
         gameClient.leftClickMinigunner(gdiMinigunner.id)
 
         and:
-        gameClient.moveMouseToWorldCoordinates(mountainSquareLocation)
+        gameClient.moveMouseToWorldCoordinates(overMapButNotOverTerrain)
 
         then:
         String mouseCursorState = gameClient.getMouseCursorState()
+        assert mouseCursorState == "MovementNoteAllowedCursor"
+
+        when:
+        gameClient.moveMouseToWorldCoordinates(mountainSquareLocation)
+        mouseCursorState = gameClient.getMouseCursorState()
+
+        then:
         assert mouseCursorState == "MovementNoteAllowedCursor"
 
         when:
@@ -319,6 +332,46 @@ class MiscTests extends MikeAndConquerTestBase {
 
         then:
         assert mouseCursorState == "DefaultArrowCursor"
+
+    }
+
+    def "should set mouse cursor correctly when unit is NOT selected" () {
+
+        given:
+        Minigunner gdiMinigunner = createRandomGDIMinigunner()
+        Point mountainSquareLocation = new Point(79,20)
+        Point clearSquare = new Point(10,10)
+
+        when:
+        gameClient.moveMouseToWorldCoordinates(mountainSquareLocation)
+
+        then:
+        String mouseCursorState = gameClient.getMouseCursorState()
+        assert mouseCursorState == "DefaultArrowCursor"
+
+        when:
+        gameClient.moveMouseToWorldCoordinates(clearSquare)
+        mouseCursorState = gameClient.getMouseCursorState()
+
+        then:
+        assert mouseCursorState == "DefaultArrowCursor"
+
+
+        when:
+        Minigunner nodMinigunner = createRandomNodMinigunnerWithAiTurnedOff()
+        gameClient.moveMouseToWorldCoordinates(new Point(nodMinigunner.x, nodMinigunner.y))
+        mouseCursorState = gameClient.getMouseCursorState()
+
+        then:
+        assert mouseCursorState == "DefaultArrowCursor"
+
+        when:
+        gameClient.rightClick(20,20)
+        mouseCursorState = gameClient.getMouseCursorState()
+
+        then:
+        assert mouseCursorState == "DefaultArrowCursor"
+
 
     }
 
@@ -432,6 +485,79 @@ class MiscTests extends MikeAndConquerTestBase {
         then:
         assertOneMinigunnerExists()
     }
+
+    def "should be able to build construction yard, then barracks, then minigunner, when minigunner is selected"() {
+        given:
+        Point mcvLocation = new Point(21,12)
+        MCV anMCV = gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
+        Minigunner minigunner = gameClient.addGDIMinigunnerAtMapSquare(18,10)
+
+        when:
+        Sidebar sidebar = gameClient.getSidebar()
+
+        then:
+        assert sidebar != null
+        assert sidebar.buildBarracksEnabled == false
+        assert sidebar.buildMinigunnerEnabled == false
+
+        when:
+        gameClient.leftClickMCV(666)
+        gameClient.leftClickMCV(666)
+
+        then:
+        GDIConstructionYard constructionYard = gameClient.getGDIConstructionYard()
+        assert constructionYard != null
+        Point mcvLocationInWorldCoordinates = Util.convertMapSqaureCoordinatesToWorldCoordinates(mcvLocation.x, mcvLocation.y)
+        assert constructionYard.x == mcvLocationInWorldCoordinates.x
+        assert constructionYard.y == mcvLocationInWorldCoordinates.y
+
+        when:
+        anMCV = gameClient.getMCV()
+
+        then:
+        assert anMCV == null
+
+        when:
+        sidebar = gameClient.getSidebar()
+
+        then:
+        assert sidebar != null
+        assert sidebar.buildBarracksEnabled == true
+        assert sidebar.buildMinigunnerEnabled == false
+
+        when:
+        gameClient.leftClickMinigunner(minigunner.id)
+
+        and:
+        gameClient.leftClickSidebar("Barracks")
+
+        then:
+        assertBarracksIsBuilding()
+
+        and:
+        assertBarracksIsReadyToPlace()
+
+        when:
+        gameClient.leftClickSidebar("Barracks")
+
+        then:
+        assertGDIBarracksExistsAtLocation(576, 300)
+
+        when:
+        sidebar = gameClient.getSidebar()
+
+        then:
+        assert sidebar != null
+        assert sidebar.buildBarracksEnabled == true
+        assert sidebar.buildMinigunnerEnabled == true
+
+        when:
+        gameClient.leftClickSidebar("Minigunner")
+
+        then:
+        assertOneMinigunnerExists()
+    }
+
 
 
     def assertBarracksIsReadyToPlace() {
