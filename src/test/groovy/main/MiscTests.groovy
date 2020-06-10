@@ -410,6 +410,14 @@ class MiscTests extends MikeAndConquerTestBase {
         assert mouseCursorState == "BuildConstructionYardCursor"
 
         when:
+        Minigunner nodMinigunner = createRandomNodMinigunnerWithAiTurnedOff()
+        gameClient.moveMouseToWorldCoordinates(new Point(nodMinigunner.x, nodMinigunner.y))
+        mouseCursorState = gameClient.getMouseCursorState()
+
+        then:
+        assert mouseCursorState == "MoveToLocationCursor"
+
+        when:
         gameClient.rightClick(20,20)
         mouseCursorState = gameClient.getMouseCursorState()
 
