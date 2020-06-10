@@ -36,8 +36,8 @@ class MikeAndConquerGameClient {
         restClient = new RESTClient(hostUrl)
 
         if(useTimeouts) {
-            restClient.client.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT, new Integer(3000))
-            restClient.client.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, new Integer(3000))
+            restClient.client.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT, new Integer(5000))
+            restClient.client.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, new Integer(5000))
         }
     }
 
@@ -199,7 +199,7 @@ class MikeAndConquerGameClient {
     }
 
 
-    def addGDIMinigunnerAtMapSquare(int x, int y) {
+    Minigunner addGDIMinigunnerAtMapSquare(int x, int y) {
         int halfMapSquareWidth = Util.mapSquareWidth / 2
         int worldX = (x * Util.mapSquareWidth) + halfMapSquareWidth
         int worldY = (y * Util.mapSquareWidth) + halfMapSquareWidth
@@ -401,6 +401,10 @@ class MikeAndConquerGameClient {
         Sidebar sidebar = new Sidebar()
         sidebar.buildMinigunnerEnabled = resp.responseData.buildMinigunnerEnabled
         sidebar.buildBarracksEnabled = resp.responseData.buildBarracksEnabled
+        sidebar.barracksIsBuilding = resp.responseData.barracksIsBuilding
+        sidebar.barracksReadyToPlace = resp.responseData.barracksReadyToPlace
+
+
         return sidebar
 
     }
