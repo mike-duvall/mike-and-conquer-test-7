@@ -402,7 +402,7 @@ class MiscTests extends MikeAndConquerTestBase {
         assert mouseCursorState == "MoveToLocationCursor"
 
         when:
-        Point mcvInWorldCoordinates = Util.convertMapSqaureCoordinatesToWorldCoordinates(mcvLocation.x, mcvLocation.y)
+        Point mcvInWorldCoordinates = Util.convertMapSquareCoordinatesToWorldCoordinates(mcvLocation.x, mcvLocation.y)
         gameClient.moveMouseToWorldCoordinates(mcvInWorldCoordinates)
         mouseCursorState = gameClient.getMouseCursorState()
 
@@ -446,7 +446,7 @@ class MiscTests extends MikeAndConquerTestBase {
         then:
         GDIConstructionYard constructionYard = gameClient.getGDIConstructionYard()
         assert constructionYard != null
-        Point mcvLocationInWorldCoordinates = Util.convertMapSqaureCoordinatesToWorldCoordinates(mcvLocation.x, mcvLocation.y)
+        Point mcvLocationInWorldCoordinates = Util.convertMapSquareCoordinatesToWorldCoordinates(mcvLocation.x, mcvLocation.y)
         assert constructionYard.x == mcvLocationInWorldCoordinates.x
         assert constructionYard.y == mcvLocationInWorldCoordinates.y
 
@@ -475,6 +475,10 @@ class MiscTests extends MikeAndConquerTestBase {
 
         when:
         gameClient.leftClickSidebar("Barracks")
+
+        and:
+        gameClient.moveMouseToMapSquareCoordinates(new Point(23,11))
+        gameClient.leftClickInMapSquareCoordinates(23,11)
 
         then:
         assertGDIBarracksExistsAtLocation(576, 300)
@@ -515,7 +519,7 @@ class MiscTests extends MikeAndConquerTestBase {
         then:
         GDIConstructionYard constructionYard = gameClient.getGDIConstructionYard()
         assert constructionYard != null
-        Point mcvLocationInWorldCoordinates = Util.convertMapSqaureCoordinatesToWorldCoordinates(mcvLocation.x, mcvLocation.y)
+        Point mcvLocationInWorldCoordinates = Util.convertMapSquareCoordinatesToWorldCoordinates(mcvLocation.x, mcvLocation.y)
         assert constructionYard.x == mcvLocationInWorldCoordinates.x
         assert constructionYard.y == mcvLocationInWorldCoordinates.y
 
@@ -838,7 +842,7 @@ class MiscTests extends MikeAndConquerTestBase {
 
     def assertMinigunnerIsAtDesignatedDestinationInMapSquareCoordinates(Minigunner minigunner,int mapSquareX, int mapSquareY)
     {
-        Point worldCoordinates = Util.convertMapSqaureCoordinatesToWorldCoordinates(mapSquareX, mapSquareY)
+        Point worldCoordinates = Util.convertMapSquareCoordinatesToWorldCoordinates(mapSquareX, mapSquareY)
 
         int destinationX = worldCoordinates.x
         int destinationY = worldCoordinates.y
@@ -856,12 +860,12 @@ class MiscTests extends MikeAndConquerTestBase {
         assert (minigunner.y >= destinationY - leeway) && (minigunner.y <= destinationY + leeway)
     }
 
-    def assertMCVIsAtDesignatedDestination(MCV mcv,int destinationX, int destinationY)
-    {
-        int leeway = 15
-        assert (mcv.x >= destinationX - leeway) && (mcv.x <= destinationX + leeway)
-        assert (mcv.y >= destinationY - leeway) && (mcv.y <= destinationY + leeway)
-    }
+//    def assertMCVIsAtDesignatedDestination(MCV mcv,int destinationX, int destinationY)
+//    {
+//        int leeway = 15
+//        assert (mcv.x >= destinationX - leeway) && (mcv.x <= destinationX + leeway)
+//        assert (mcv.y >= destinationY - leeway) && (mcv.y <= destinationY + leeway)
+//    }
 
 
     def assertNodMinigunnerDies(int id) {
