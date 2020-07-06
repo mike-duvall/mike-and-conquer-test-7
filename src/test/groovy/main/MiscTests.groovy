@@ -784,27 +784,7 @@ class MiscTests extends MikeAndConquerTestBase {
     }
 
 
-    def assertOneMinigunnerExists() {
-        def conditions = new PollingConditions(timeout: 80, initialDelay: 1.5, factor: 1.25)
-        conditions.eventually {
-            List<Minigunner> minigunners = gameClient.getGdiMinigunners()
-            assert minigunners != null
-            assert minigunners.size() == 1
-        }
-        return true
 
-    }
-
-    def assertGDIBarracksExistsAtLocation(int x, int y) {
-        def conditions = new PollingConditions(timeout: 80, initialDelay: 1.5, factor: 1.25)
-        conditions.eventually {
-            GDIBarracks gdiBarracks = gameClient.getGDIBarracks()
-            assert gdiBarracks != null
-            assert gdiBarracks.x == x
-            assert gdiBarracks.y == y
-        }
-        return true
-    }
 
 
 

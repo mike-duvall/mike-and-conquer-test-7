@@ -1,5 +1,6 @@
 package main
 
+import domain.GDIBarracks
 import domain.GDIConstructionYard
 import domain.MCV
 import domain.Point
@@ -148,6 +149,15 @@ class UnitPlacementTests extends MikeAndConquerTestBase {
         gameClient.leftClickInMapSquareCoordinates(16,5)
 
         and:
+        assertGDIBarracksExists()
+
+        and:
+        GDIBarracks barracks = gameClient.getGDIBarracks()
+
+        assert barracks.x == 408
+        assert barracks.y == 144
+
+        and:
         testScenarioNumber = 1
         scenarioPrefix = 'barracks-placed'
         startX = 387
@@ -157,6 +167,22 @@ class UnitPlacementTests extends MikeAndConquerTestBase {
 
         then:
         assertScreenshotMatches(scenarioPrefix, testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
+
+
+        when:
+        sidebar = gameClient.getSidebar()
+
+        then:
+        assert sidebar != null
+        assert sidebar.buildBarracksEnabled == true
+        assert sidebar.buildMinigunnerEnabled == true
+
+        when:
+        gameClient.leftClickSidebar("Minigunner")
+
+        then:
+        assertOneMinigunnerExists()
+
 
 
     }
