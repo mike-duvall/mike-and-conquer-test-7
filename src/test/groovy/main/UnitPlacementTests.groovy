@@ -132,6 +132,31 @@ class UnitPlacementTests extends MikeAndConquerTestBase {
         then:
         assertScreenshotMatches(scenarioPrefix, testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
 
+        when:
+        gameClient.leftClickSidebar("Barracks")
+
+        then:
+        assertBarracksIsBuilding()
+
+        and:
+        assertBarracksIsReadyToPlace()
+
+        when:
+        gameClient.leftClickSidebar("Barracks")
+
+        and:
+        gameClient.leftClickInMapSquareCoordinates(16,5)
+
+        and:
+        testScenarioNumber = 1
+        scenarioPrefix = 'barracks-placed'
+        startX = 387
+        startY = 118
+        screenshotCompareWidth = 47
+        screenshotCompareHeight = 6
+
+        then:
+        assertScreenshotMatches(scenarioPrefix, testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
 
 
     }

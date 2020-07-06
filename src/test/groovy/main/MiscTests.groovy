@@ -572,15 +572,6 @@ class MiscTests extends MikeAndConquerTestBase {
 
 
 
-    def assertBarracksIsReadyToPlace() {
-        def conditions = new PollingConditions(timeout: 80, initialDelay: 1.5, factor: 1.25)
-        conditions.eventually {
-            Sidebar sidebar = gameClient.getSidebar()
-            assert sidebar.barracksReadyToPlace == true
-        }
-        return true
-
-    }
 
 
 
@@ -816,14 +807,6 @@ class MiscTests extends MikeAndConquerTestBase {
     }
 
 
-    def assertBarracksIsBuilding() {
-        def conditions = new PollingConditions(timeout: 80, initialDelay: 1.5, factor: 1.25)
-        conditions.eventually {
-            Sidebar sidebar = gameClient.getSidebar()
-            assert sidebar.barracksIsBuilding == true
-        }
-        return true
-    }
 
 
     def assertMinigunnerIsAtScreenPosition(Minigunner minigunner, int screenX, int screenY)

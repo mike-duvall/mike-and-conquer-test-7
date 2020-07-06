@@ -3,7 +3,9 @@ package main
 import client.MikeAndConquerGameClient
 import domain.MCV
 import domain.Point
+import domain.Sidebar
 import spock.lang.Specification
+import spock.util.concurrent.PollingConditions
 import util.ImageUtil
 
 import javax.imageio.ImageIO
@@ -81,6 +83,26 @@ class MikeAndConquerTestBase extends Specification {
         int leeway = 15
         assert (mcv.x >= destinationX - leeway) && (mcv.x <= destinationX + leeway)
         assert (mcv.y >= destinationY - leeway) && (mcv.y <= destinationY + leeway)
+    }
+
+
+    def assertBarracksIsBuilding() {
+        def conditions = new PollingConditions(timeout: 80, initialDelay: 1.5, factor: 1.25)
+        conditions.eventually {
+            Sidebar sidebar = gameClient.getSidebar()
+            assert sidebar.barracksIsBuilding == true
+        }
+        return true
+    }
+
+    def assertBarracksIsReadyToPlace() {
+        def conditions = new PollingConditions(timeout: 80, initialDelay: 1.5, factor: 1.25)
+        conditions.eventually {
+            Sidebar sidebar = gameClient.getSidebar()
+            assert sidebar.barracksReadyToPlace == true
+        }
+        return true
+
     }
 
 
