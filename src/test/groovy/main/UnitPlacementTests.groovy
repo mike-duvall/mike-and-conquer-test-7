@@ -89,10 +89,8 @@ class UnitPlacementTests extends MikeAndConquerTestBase {
         int screenshotCompareWidth = 73
         int screenshotCompareHeight = 57
 
-
         then:
         assertScreenshotMatches(scenarioPrefix, testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
-
 
         when:
         gameClient.leftClickMCV(666)
@@ -122,6 +120,17 @@ class UnitPlacementTests extends MikeAndConquerTestBase {
         assert sidebar != null
         assert sidebar.buildBarracksEnabled == true
         assert sidebar.buildMinigunnerEnabled == false
+
+        when:
+        testScenarioNumber = 1
+        scenarioPrefix = 'construction-yard-placed'
+        startX = 340
+        startY = 117
+        screenshotCompareWidth = 43
+        screenshotCompareHeight = 22
+
+        then:
+        assertScreenshotMatches(scenarioPrefix, testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
 
 
 
