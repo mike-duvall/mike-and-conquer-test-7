@@ -3,14 +3,14 @@ package main
 import domain.GDIBarracks
 import domain.GDIConstructionYard
 import domain.MCV
+import domain.Minigunner
 import domain.Point
 import domain.ResetOptions
 import domain.Sidebar
-import spock.util.concurrent.PollingConditions
 import util.Util
 
 
-class UnitPlacementTests extends MikeAndConquerTestBase {
+class BuldingPlacementTests extends MikeAndConquerTestBase {
 
 
     def setup() {
@@ -18,69 +18,28 @@ class UnitPlacementTests extends MikeAndConquerTestBase {
         gameClient.resetGame(resetOptions)
         // Add bogus minigunner to not delete so game state stays in "Playing"
         gameClient.addGDIMinigunnerAtMapSquare(4,5)
-
     }
 
-//    def "MCV and barracks placement scenario 1"() {
-//        given:
-//        int destinationX = 350
-//        int destinationY = 150
-//
-//        Point mcvLocation = new Point(21,12)
-//        gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
-//
-//        when:
-//        gameClient.leftClickMCV(666)
-//
-//        and:
-//        gameClient.leftClickInWorldCoordinates(destinationX, destinationY )
-//
-//        and:
-//        gameClient.rightClick(200,200)
-//
-//        then:
-//        def conditions = new PollingConditions(timeout: 60, initialDelay: 1.5, factor: 1.25)
-//        conditions.eventually {
-//            MCV retrievedMCV = gameClient.getMCV()
-//            assertMCVIsAtDesignatedDestination(retrievedMCV, destinationX, destinationY)
-//            }
-//
-//        when: "Test scenario 1"
-//        int testScenarioNumber = 1
-//        String scenarioPrefix = 'mcv'
-//        int startX = 306
-//        int startY = 124
-//        int screenshotCompareWidth = 73
-//        int screenshotCompareHeight = 57
-//
-//
-//        then:
-//        assertScreenshotMatches(scenarioPrefix, testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
-//    }
 
-    def "MCV and barracks placement scenario 1"() {
+    def "should be able to build construction yard, then barracks, then minigunner"() {
         given:
-        int destinationX = 350
-        int destinationY = 150
+        int mcvDestinationX = 350
+        int mcvDestinationY = 150
 
-        Point macStartLocation = new Point(16,8)
-        gameClient.addMCVAtMapSquare(macStartLocation.x, macStartLocation.y)
+        Point mcvStartLocation = new Point(16,8)
+        gameClient.addMCVAtMapSquare(mcvStartLocation.x, mcvStartLocation.y)
 
         when:
         gameClient.leftClickMCV(666)
 
         and:
-        gameClient.leftClickInWorldCoordinates(destinationX, destinationY )
+        gameClient.leftClickInWorldCoordinates(mcvDestinationX, mcvDestinationY )
 
         and:
         gameClient.rightClick(200,200)
 
         then:
-        def conditions = new PollingConditions(timeout: 60, initialDelay: 1.5, factor: 1.25)
-        conditions.eventually {
-            MCV retrievedMCV = gameClient.getMCV()
-            assertMCVIsAtDesignatedDestination(retrievedMCV, destinationX, destinationY)
-        }
+        assertMCVArrivesAtDestination(mcvDestinationX, mcvDestinationY)
 
         when: "Test scenario 1"
         int testScenarioNumber = 1
@@ -101,7 +60,7 @@ class UnitPlacementTests extends MikeAndConquerTestBase {
         GDIConstructionYard constructionYard = gameClient.getGDIConstructionYard()
         assert constructionYard != null
 
-        Point expectedConstructionyardMapSquareLocation = Util.convertWorldCoordinatesToMapSquareCoordinates(destinationX, destinationY)
+        Point expectedConstructionyardMapSquareLocation = Util.convertWorldCoordinatesToMapSquareCoordinates(mcvDestinationX, mcvDestinationY)
         Point expectedConstructionYardLocationInWorldCoordinates = Util.convertMapSquareCoordinatesToWorldCoordinates(expectedConstructionyardMapSquareLocation.x,
                 expectedConstructionyardMapSquareLocation.y)
 
@@ -168,7 +127,6 @@ class UnitPlacementTests extends MikeAndConquerTestBase {
         then:
         assertScreenshotMatches(scenarioPrefix, testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
 
-
         when:
         sidebar = gameClient.getSidebar()
 
@@ -182,10 +140,34 @@ class UnitPlacementTests extends MikeAndConquerTestBase {
 
         then:
         assertOneMinigunnerExists()
+    }
 
 
+
+    def "should be able to build barracks when a minigunner is selected"() {
+        given:
+        Point mcvLocation = new Point(21,12)
+        gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
+        Minigunner minigunner = gameClient.addGDIMinigunnerAtMapSquare(18,10)
+
+        when:
+        gameClient.leftClickMCV(666)
+        gameClient.leftClickMCV(666)
+
+        and:
+        gameClient.leftClickMinigunner(minigunner.id)
+
+        and:
+        gameClient.leftClickSidebar("Barracks")
+
+        then:
+        assertBarracksIsBuilding()
+
+        and:
+        assertBarracksIsReadyToPlace()
 
     }
+
 
 
 

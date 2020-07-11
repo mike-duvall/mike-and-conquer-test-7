@@ -80,11 +80,23 @@ class MikeAndConquerTestBase extends Specification {
     }
 
 
+    def assertMCVArrivesAtDestination(int mcvDestinationX, int mcvDestinationY) {
+        def conditions = new PollingConditions(timeout: 60, initialDelay: 1.5, factor: 1.25)
+        conditions.eventually {
+            MCV retrievedMCV = gameClient.getMCV()
+            assertMCVIsAtDesignatedDestination(retrievedMCV, mcvDestinationX, mcvDestinationY)
+        }
+        return true
+
+    }
+
+
     def assertMCVIsAtDesignatedDestination(MCV mcv, int destinationX, int destinationY)
     {
         int leeway = 15
         assert (mcv.x >= destinationX - leeway) && (mcv.x <= destinationX + leeway)
         assert (mcv.y >= destinationY - leeway) && (mcv.y <= destinationY + leeway)
+        return true
     }
 
 
