@@ -665,13 +665,6 @@ class MiscTests extends MikeAndConquerTestBase {
         assert (minigunner.y >= destinationY - leeway) && (minigunner.y <= destinationY + leeway)
     }
 
-//    def assertMCVIsAtDesignatedDestination(MCV mcv,int destinationX, int destinationY)
-//    {
-//        int leeway = 15
-//        assert (mcv.x >= destinationX - leeway) && (mcv.x <= destinationX + leeway)
-//        assert (mcv.y >= destinationY - leeway) && (mcv.y <= destinationY + leeway)
-//    }
-
 
     def assertNodMinigunnerDies(int id) {
         def conditions = new PollingConditions(timeout: 80, initialDelay: 1.5, factor: 1.25)
