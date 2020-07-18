@@ -1,9 +1,6 @@
 package main
 
-import domain.GDIBarracks
-import domain.GDIConstructionYard
 import domain.MCV
-import domain.Sidebar
 import groovyx.net.http.HttpResponseException
 import domain.Minigunner
 import domain.Point
@@ -402,7 +399,7 @@ class MiscTests extends MikeAndConquerTestBase {
         assert mouseCursorState == "MoveToLocationCursor"
 
         when:
-        Point mcvInWorldCoordinates = Util.convertMapSqaureCoordinatesToWorldCoordinates(mcvLocation.x, mcvLocation.y)
+        Point mcvInWorldCoordinates = Util.convertMapSquareCoordinatesToWorldCoordinates(mcvLocation.x, mcvLocation.y)
         gameClient.moveMouseToWorldCoordinates(mcvInWorldCoordinates)
         mouseCursorState = gameClient.getMouseCursorState()
 
@@ -426,157 +423,10 @@ class MiscTests extends MikeAndConquerTestBase {
 
     }
 
-    def "should be able to build construction yard, then barracks, then minigunner"() {
-        given:
-        Point mcvLocation = new Point(21,12)
-        MCV anMCV = gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
-
-        when:
-        Sidebar sidebar = gameClient.getSidebar()
-
-        then:
-        assert sidebar != null
-        assert sidebar.buildBarracksEnabled == false
-        assert sidebar.buildMinigunnerEnabled == false
-
-        when:
-        gameClient.leftClickMCV(666)
-        gameClient.leftClickMCV(666)
-
-        then:
-        GDIConstructionYard constructionYard = gameClient.getGDIConstructionYard()
-        assert constructionYard != null
-        Point mcvLocationInWorldCoordinates = Util.convertMapSqaureCoordinatesToWorldCoordinates(mcvLocation.x, mcvLocation.y)
-        assert constructionYard.x == mcvLocationInWorldCoordinates.x
-        assert constructionYard.y == mcvLocationInWorldCoordinates.y
-
-        when:
-        anMCV = gameClient.getMCV()
-
-        then:
-        assert anMCV == null
-
-        when:
-        sidebar = gameClient.getSidebar()
-
-        then:
-        assert sidebar != null
-        assert sidebar.buildBarracksEnabled == true
-        assert sidebar.buildMinigunnerEnabled == false
-
-        when:
-        gameClient.leftClickSidebar("Barracks")
-
-        then:
-        assertBarracksIsBuilding()
-
-        and:
-        assertBarracksIsReadyToPlace()
-
-        when:
-        gameClient.leftClickSidebar("Barracks")
-
-        then:
-        assertGDIBarracksExistsAtLocation(576, 300)
-
-        when:
-        sidebar = gameClient.getSidebar()
-
-        then:
-        assert sidebar != null
-        assert sidebar.buildBarracksEnabled == true
-        assert sidebar.buildMinigunnerEnabled == true
-
-        when:
-        gameClient.leftClickSidebar("Minigunner")
-
-        then:
-        assertOneMinigunnerExists()
-    }
-
-    def "should be able to build construction yard, then barracks, then minigunner, when minigunner is selected"() {
-        given:
-        Point mcvLocation = new Point(21,12)
-        MCV anMCV = gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
-        Minigunner minigunner = gameClient.addGDIMinigunnerAtMapSquare(18,10)
-
-        when:
-        Sidebar sidebar = gameClient.getSidebar()
-
-        then:
-        assert sidebar != null
-        assert sidebar.buildBarracksEnabled == false
-        assert sidebar.buildMinigunnerEnabled == false
-
-        when:
-        gameClient.leftClickMCV(666)
-        gameClient.leftClickMCV(666)
-
-        then:
-        GDIConstructionYard constructionYard = gameClient.getGDIConstructionYard()
-        assert constructionYard != null
-        Point mcvLocationInWorldCoordinates = Util.convertMapSqaureCoordinatesToWorldCoordinates(mcvLocation.x, mcvLocation.y)
-        assert constructionYard.x == mcvLocationInWorldCoordinates.x
-        assert constructionYard.y == mcvLocationInWorldCoordinates.y
-
-        when:
-        anMCV = gameClient.getMCV()
-
-        then:
-        assert anMCV == null
-
-        when:
-        sidebar = gameClient.getSidebar()
-
-        then:
-        assert sidebar != null
-        assert sidebar.buildBarracksEnabled == true
-        assert sidebar.buildMinigunnerEnabled == false
-
-        when:
-        gameClient.leftClickMinigunner(minigunner.id)
-
-        and:
-        gameClient.leftClickSidebar("Barracks")
-
-        then:
-        assertBarracksIsBuilding()
-
-        and:
-        assertBarracksIsReadyToPlace()
-
-        when:
-        gameClient.leftClickSidebar("Barracks")
-
-        then:
-        assertGDIBarracksExistsAtLocation(576, 300)
-
-        when:
-        sidebar = gameClient.getSidebar()
-
-        then:
-        assert sidebar != null
-        assert sidebar.buildBarracksEnabled == true
-        assert sidebar.buildMinigunnerEnabled == true
-
-        when:
-        gameClient.leftClickSidebar("Minigunner")
-
-        then:
-        assertOneMinigunnerExists()
-    }
 
 
 
-    def assertBarracksIsReadyToPlace() {
-        def conditions = new PollingConditions(timeout: 80, initialDelay: 1.5, factor: 1.25)
-        conditions.eventually {
-            Sidebar sidebar = gameClient.getSidebar()
-            assert sidebar.barracksReadyToPlace == true
-        }
-        return true
 
-    }
 
 
 
@@ -609,7 +459,7 @@ class MiscTests extends MikeAndConquerTestBase {
         println "createdMinigunner2.x=" + createdMinigunner2.y
 
         then:
-        def conditions = new PollingConditions(timeout: 60, initialDelay: 1.5, factor: 1.25)
+        def conditions = new PollingConditions(timeout: 70, initialDelay: 1.5, factor: 1.25)
         conditions.eventually {
             Minigunner retrievedMinigunner = gameClient.getGdiMinigunnerById(createdMinigunner1.id)
             assertMinigunnerIsAtDesignatedDestination(retrievedMinigunner, minigunner1DestinationX, minigunner1DestinationY)
@@ -641,7 +491,6 @@ class MiscTests extends MikeAndConquerTestBase {
         Point mcvLocation = new Point(21,12)
         MCV anMCV = gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
 
-
         when:
         gameClient.leftClickMCV(666)
 
@@ -649,12 +498,7 @@ class MiscTests extends MikeAndConquerTestBase {
         gameClient.leftClickInWorldCoordinates(destinationX, destinationY )
 
         then:
-        def conditions = new PollingConditions(timeout: 60, initialDelay: 1.5, factor: 1.25)
-        conditions.eventually {
-            MCV retrievedMCV = gameClient.getMCV()
-            assertMCVIsAtDesignatedDestination(retrievedMCV, destinationX, destinationY)
-//            assert retrievedMCV.health != 0
-        }
+        assertMCVArrivesAtDestination(destinationX,destinationY )
 
         and:
         String gameState = gameClient.getGameState()
@@ -662,8 +506,6 @@ class MiscTests extends MikeAndConquerTestBase {
 
         assert gameState == expectedGameState
     }
-
-
 
 
     @Ignore
@@ -789,39 +631,6 @@ class MiscTests extends MikeAndConquerTestBase {
     }
 
 
-    def assertOneMinigunnerExists() {
-        def conditions = new PollingConditions(timeout: 80, initialDelay: 1.5, factor: 1.25)
-        conditions.eventually {
-            List<Minigunner> minigunners = gameClient.getGdiMinigunners()
-            assert minigunners != null
-            assert minigunners.size() == 1
-        }
-        return true
-
-    }
-
-    def assertGDIBarracksExistsAtLocation(int x, int y) {
-        def conditions = new PollingConditions(timeout: 80, initialDelay: 1.5, factor: 1.25)
-        conditions.eventually {
-            GDIBarracks gdiBarracks = gameClient.getGDIBarracks()
-            assert gdiBarracks != null
-            assert gdiBarracks.x == x
-            assert gdiBarracks.y == y
-        }
-        return true
-    }
-
-
-    def assertBarracksIsBuilding() {
-        def conditions = new PollingConditions(timeout: 80, initialDelay: 1.5, factor: 1.25)
-        conditions.eventually {
-            Sidebar sidebar = gameClient.getSidebar()
-            assert sidebar.barracksIsBuilding == true
-        }
-        return true
-    }
-
-
     def assertMinigunnerIsAtScreenPosition(Minigunner minigunner, int screenX, int screenY)
     {
         int leeway = 4
@@ -838,7 +647,7 @@ class MiscTests extends MikeAndConquerTestBase {
 
     def assertMinigunnerIsAtDesignatedDestinationInMapSquareCoordinates(Minigunner minigunner,int mapSquareX, int mapSquareY)
     {
-        Point worldCoordinates = Util.convertMapSqaureCoordinatesToWorldCoordinates(mapSquareX, mapSquareY)
+        Point worldCoordinates = Util.convertMapSquareCoordinatesToWorldCoordinates(mapSquareX, mapSquareY)
 
         int destinationX = worldCoordinates.x
         int destinationY = worldCoordinates.y
@@ -854,13 +663,6 @@ class MiscTests extends MikeAndConquerTestBase {
         int leeway = 15
         assert (minigunner.x >= destinationX - leeway) && (minigunner.x <= destinationX + leeway)
         assert (minigunner.y >= destinationY - leeway) && (minigunner.y <= destinationY + leeway)
-    }
-
-    def assertMCVIsAtDesignatedDestination(MCV mcv,int destinationX, int destinationY)
-    {
-        int leeway = 15
-        assert (mcv.x >= destinationX - leeway) && (mcv.x <= destinationX + leeway)
-        assert (mcv.y >= destinationY - leeway) && (mcv.y <= destinationY + leeway)
     }
 
 

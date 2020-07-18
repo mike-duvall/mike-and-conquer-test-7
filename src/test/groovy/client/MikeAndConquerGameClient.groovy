@@ -83,7 +83,7 @@ class MikeAndConquerGameClient {
 
 
     void leftClickInMapSquareCoordinates(int x, int y) {
-        Point worldCoordinates = Util.convertMapSqaureCoordinatesToWorldCoordinates(x,y)
+        Point worldCoordinates = Util.convertMapSquareCoordinatesToWorldCoordinates(x,y)
         def resp = restClient.post(
                 path: '/mac/leftClickInWorldCoordinates',
                 body: worldCoordinates,
@@ -93,8 +93,18 @@ class MikeAndConquerGameClient {
     }
 
 
-    void moveMouseToWorldCoordinates(Point point) {
+    void moveMouseToMapSquareCoordinates(Point point) {
+        Point worldCoordinates = Util.convertMapSquareCoordinatesToWorldCoordinates(point.x, point.y)
+        def resp = restClient.post(
+                path: '/mac/moveMouseToWorldCoordinates',
+                body: worldCoordinates,
+                requestContentType: 'application/json' )
 
+        assert resp.status == 200
+    }
+
+
+    void moveMouseToWorldCoordinates(Point point) {
         def resp = restClient.post(
                 path: '/mac/moveMouseToWorldCoordinates',
                 body: point,

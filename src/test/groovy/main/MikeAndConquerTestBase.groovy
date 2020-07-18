@@ -1,8 +1,13 @@
 package main
 
 import client.MikeAndConquerGameClient
+import domain.GDIBarracks
+import domain.MCV
+import domain.Minigunner
 import domain.Point
+import domain.Sidebar
 import spock.lang.Specification
+import spock.util.concurrent.PollingConditions
 import util.ImageUtil
 
 import javax.imageio.ImageIO
@@ -28,11 +33,14 @@ class MikeAndConquerTestBase extends Specification {
     }
 
 
-    void assertScreenshotMatches(int testScenarioNumber, int startX, int startY, int screenshotCompareWidth, int screenshotCompareHeight) {
 
+
+    void assertScreenshotMatches(String scenarioPrefix, int testScenarioNumber, int startX, int startY, int screenshotCompareWidth, int screenshotCompareHeight) {
+
+        // Move cursor so it's not in the screenshot
         gameClient.moveMouseToWorldCoordinates(new Point(startX + screenshotCompareWidth + 50,startY + screenshotCompareHeight + 50))
 
-        String realGameFilename = "real-game-shroud-" + testScenarioNumber + "-start-x" + startX + "-y" + startY + "-" + screenshotCompareWidth + "x" + screenshotCompareHeight + ".png"
+        String realGameFilename = "real-game-" + scenarioPrefix + "-" + testScenarioNumber + "-start-x" + startX + "-y" + startY + "-" + screenshotCompareWidth + "x" + screenshotCompareHeight + ".png"
 
         File imageFile = new File(
                 getClass().getClassLoader().getResource(realGameFilename).getFile()
@@ -43,15 +51,18 @@ class MikeAndConquerTestBase extends Specification {
         BufferedImage fullScreenShot = gameClient.getScreenshot()
         BufferedImage screenshotSubImage = fullScreenShot.getSubimage(startX,startY,screenshotCompareWidth,screenshotCompareHeight)
 
-        String realGameCopiedFilename = realGameFilename.replaceAll("real-game-shroud", "real-game-shroud-copied")
-        String mikeAndConquerCopiedFilename = realGameFilename.replaceAll("real-game-shroud", "mike-and-conquer-shroud-actual")
+        String realGameCopiedFilename = realGameFilename.replaceAll("real-game", "copied-real-game")
+        String mikeAndConquerCopiedFilename = realGameFilename.replaceAll("real-game", "actual-mike-and-conquer")
 
         writeImageToFileInBuildDirectory(realGameScreenshot, realGameCopiedFilename )
         writeImageToFileInBuildDirectory(screenshotSubImage, mikeAndConquerCopiedFilename )
 
         assert ImageUtil.imagesAreEqual(screenshotSubImage, realGameScreenshot)
+    }
 
 
+    void assertScreenshotMatches(int testScenarioNumber, int startX, int startY, int screenshotCompareWidth, int screenshotCompareHeight) {
+        assertScreenshotMatches('shroud', testScenarioNumber,startX,startY,screenshotCompareWidth, screenshotCompareHeight)
     }
 
     void writeImageToFileInBuildDirectory(BufferedImage bufferedImage, String fileName) {
@@ -68,6 +79,77 @@ class MikeAndConquerTestBase extends Specification {
         ImageIO.write(bufferedImage, "png", outputfile);
     }
 
+
+    def assertMCVArrivesAtDestination(int mcvDestinationX, int mcvDestinationY) {
+        def conditions = new PollingConditions(timeout: 60, initialDelay: 1.5, factor: 1.25)
+        conditions.eventually {
+            MCV retrievedMCV = gameClient.getMCV()
+            assertMCVIsAtDesignatedDestination(retrievedMCV, mcvDestinationX, mcvDestinationY)
+        }
+        return true
+
+    }
+
+
+    def assertMCVIsAtDesignatedDestination(MCV mcv, int destinationX, int destinationY)
+    {
+        int leeway = 15
+        assert (mcv.x >= destinationX - leeway) && (mcv.x <= destinationX + leeway)
+        assert (mcv.y >= destinationY - leeway) && (mcv.y <= destinationY + leeway)
+        return true
+    }
+
+
+    def assertBarracksIsBuilding() {
+        def conditions = new PollingConditions(timeout: 80, initialDelay: 1.5, factor: 1.25)
+        conditions.eventually {
+            Sidebar sidebar = gameClient.getSidebar()
+            assert sidebar.barracksIsBuilding == true
+        }
+        return true
+    }
+
+    def assertBarracksIsReadyToPlace() {
+        def conditions = new PollingConditions(timeout: 80, initialDelay: 1.5, factor: 1.25)
+        conditions.eventually {
+            Sidebar sidebar = gameClient.getSidebar()
+            assert sidebar.barracksReadyToPlace == true
+        }
+        return true
+
+    }
+
+    def assertGDIBarracksExists() {
+        def conditions = new PollingConditions(timeout: 80, initialDelay: 1.5, factor: 1.25)
+        conditions.eventually {
+            GDIBarracks gdiBarracks = gameClient.getGDIBarracks()
+            assert gdiBarracks != null
+        }
+        return true
+    }
+
+
+    def assertGDIBarracksExistsAtLocation(int x, int y) {
+        def conditions = new PollingConditions(timeout: 80, initialDelay: 1.5, factor: 1.25)
+        conditions.eventually {
+            GDIBarracks gdiBarracks = gameClient.getGDIBarracks()
+            assert gdiBarracks != null
+            assert gdiBarracks.x == x
+            assert gdiBarracks.y == y
+        }
+        return true
+    }
+
+    def assertOneMinigunnerExists() {
+        def conditions = new PollingConditions(timeout: 80, initialDelay: 1.5, factor: 1.25)
+        conditions.eventually {
+            List<Minigunner> minigunners = gameClient.getGdiMinigunners()
+            assert minigunners != null
+            assert minigunners.size() == 1
+        }
+        return true
+
+    }
 
 
 
