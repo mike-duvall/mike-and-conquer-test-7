@@ -459,7 +459,7 @@ class MiscTests extends MikeAndConquerTestBase {
         println "createdMinigunner2.x=" + createdMinigunner2.y
 
         then:
-        def conditions = new PollingConditions(timeout: 60, initialDelay: 1.5, factor: 1.25)
+        def conditions = new PollingConditions(timeout: 70, initialDelay: 1.5, factor: 1.25)
         conditions.eventually {
             Minigunner retrievedMinigunner = gameClient.getGdiMinigunnerById(createdMinigunner1.id)
             assertMinigunnerIsAtDesignatedDestination(retrievedMinigunner, minigunner1DestinationX, minigunner1DestinationY)
