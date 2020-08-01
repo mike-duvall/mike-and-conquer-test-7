@@ -407,14 +407,6 @@ class MiscTests extends MikeAndConquerTestBase {
         assert mouseCursorState == "BuildConstructionYardCursor"
 
         when:
-        Minigunner nodMinigunner = createRandomNodMinigunnerWithAiTurnedOff()
-        gameClient.moveMouseToWorldCoordinates(new Point(nodMinigunner.x, nodMinigunner.y))
-        mouseCursorState = gameClient.getMouseCursorState()
-
-        then:
-        assert mouseCursorState == "MoveToLocationCursor"
-
-        when:
         gameClient.rightClick(20,20)
         mouseCursorState = gameClient.getMouseCursorState()
 
@@ -467,7 +459,7 @@ class MiscTests extends MikeAndConquerTestBase {
         }
 
         and:
-        def conditions2 = new PollingConditions(timeout: 60, initialDelay: 1.5, factor: 1.25)
+        def conditions2 = new PollingConditions(timeout: 90, initialDelay: 1.5, factor: 1.25)
         conditions2.eventually {
             def retrievedMinigunner = gameClient.getGdiMinigunnerById(createdMinigunner2.id)
             assertMinigunnerIsAtDesignatedDestination(retrievedMinigunner, minigunner2DestinationX, minigunner2DestinationY)
@@ -667,7 +659,7 @@ class MiscTests extends MikeAndConquerTestBase {
 
 
     def assertNodMinigunnerDies(int id) {
-        def conditions = new PollingConditions(timeout: 80, initialDelay: 1.5, factor: 1.25)
+        def conditions = new PollingConditions(timeout: 90, initialDelay: 1.5, factor: 1.25)
         conditions.eventually {
             def expectedDeadMinigunner = gameClient.getNodMinigunnerById(id)
             assert expectedDeadMinigunner.health == 0
