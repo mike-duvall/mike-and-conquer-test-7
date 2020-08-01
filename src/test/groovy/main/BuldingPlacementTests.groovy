@@ -105,6 +105,21 @@ class BuldingPlacementTests extends MikeAndConquerTestBase {
         gameClient.leftClickSidebar("Barracks")
 
         and:
+        gameClient.moveMouseToMapSquareCoordinates( new Point(15,3))
+
+        and:
+        testScenarioNumber = 1
+        scenarioPrefix = 'barracks-placement-indicator'
+        startX = 344
+        startY = 105
+        screenshotCompareWidth = 70
+        screenshotCompareHeight = 46
+
+        then:
+        assertScreenshotMatchesWithoutMovingCursor(scenarioPrefix, testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
+
+
+        when:
         gameClient.leftClickInMapSquareCoordinates(16,5)
 
         and:

@@ -32,13 +32,7 @@ class MikeAndConquerTestBase extends Specification {
         gameClient.leftClickInWorldCoordinates(1,1)  // to get mouse clicks in default state
     }
 
-
-
-
-    void assertScreenshotMatches(String scenarioPrefix, int testScenarioNumber, int startX, int startY, int screenshotCompareWidth, int screenshotCompareHeight) {
-
-        // Move cursor so it's not in the screenshot
-        gameClient.moveMouseToWorldCoordinates(new Point(startX + screenshotCompareWidth + 50,startY + screenshotCompareHeight + 50))
+    void assertScreenshotMatchesWithoutMovingCursor(String scenarioPrefix, int testScenarioNumber, int startX, int startY, int screenshotCompareWidth, int screenshotCompareHeight) {
 
         String realGameFilename = "real-game-" + scenarioPrefix + "-" + testScenarioNumber + "-start-x" + startX + "-y" + startY + "-" + screenshotCompareWidth + "x" + screenshotCompareHeight + ".png"
 
@@ -58,6 +52,16 @@ class MikeAndConquerTestBase extends Specification {
         writeImageToFileInBuildDirectory(screenshotSubImage, mikeAndConquerCopiedFilename )
 
         assert ImageUtil.imagesAreEqual(screenshotSubImage, realGameScreenshot)
+    }
+
+
+
+    void assertScreenshotMatches(String scenarioPrefix, int testScenarioNumber, int startX, int startY, int screenshotCompareWidth, int screenshotCompareHeight) {
+
+        // Move cursor so it's not in the screenshot
+        gameClient.moveMouseToWorldCoordinates(new Point(startX + screenshotCompareWidth + 50,startY + screenshotCompareHeight + 50))
+
+        assertScreenshotMatchesWithoutMovingCursor(scenarioPrefix, testScenarioNumber, startX, startY, screenshotCompareWidth, screenshotCompareHeight)
     }
 
 
