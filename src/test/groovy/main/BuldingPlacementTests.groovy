@@ -126,12 +126,6 @@ class BuldingPlacementTests extends MikeAndConquerTestBase {
         assertGDIBarracksExists()
 
         and:
-        GDIBarracks barracks = gameClient.getGDIBarracks()
-
-        assert barracks.x == 408
-        assert barracks.y == 144
-
-        and:
         testScenarioNumber = 1
         scenarioPrefix = 'barracks-placed'
         startX = 387
