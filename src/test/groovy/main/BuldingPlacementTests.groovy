@@ -177,6 +177,27 @@ class BuldingPlacementTests extends MikeAndConquerTestBase {
 
     }
 
+    def "should place sandbags and nod turrets in correct location"() {
+
+        given:
+        gameClient.addSandbag(12,16,2)
+        gameClient.addSandbag(13,16,9)
+        gameClient.addSandbag(13,15,6)
+        gameClient.addSandbag(14,15,8)
+
+        when: "Test scenario 1"
+        int testScenarioNumber = 1
+        String scenarioPrefix = 'sandbag-placement'
+        int startX = 291
+        int startY = 359
+        int screenshotCompareWidth = 46
+        int screenshotCompareHeight = 58
+
+        then:
+        assertScreenshotMatches(scenarioPrefix, testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
+
+    }
+
 
 
 
