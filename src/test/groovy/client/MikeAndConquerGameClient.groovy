@@ -2,6 +2,7 @@ package client
 
 import domain.GDIBarracks
 import domain.GDIConstructionYard
+import domain.NodTurret
 import domain.Sidebar
 import domain.SidebarItem
 import groovyx.net.http.HttpResponseException
@@ -29,6 +30,7 @@ class MikeAndConquerGameClient {
     private static final String MCV_BASE_URL = '/mac/MCV'
     private static final String GDI_CONSTRUCTION_YARD = '/mac/GDIConstructionYard'
     private static final String SIDEBAR_BASE_URL = '/mac/Sidebar'
+    private static final String NOD_TURRET_BASE_URL = '/mac/NodTurret'
 
 
     MikeAndConquerGameClient(String host, int port, boolean useTimeouts = true) {
@@ -515,5 +517,60 @@ class MikeAndConquerGameClient {
         assert resp.status == 200
 
 
+    }
+
+
+    NodTurret getNodTurretById(int id) {
+
+        String aPath = NOD_TURRET_BASE_URL + '/' + id
+        def resp
+        try {
+            resp = restClient.get(path: aPath)
+        }
+        catch(HttpResponseException e) {
+            if(e.statusCode == 404) {
+                return null
+            }
+            else {
+                throw e
+            }
+        }
+        if( resp.status == 404) {
+            return null
+        }
+        assert resp.status == 200  // HTTP response code; 404 means not found, etc.
+
+        NodTurret nodTurret = new NodTurret(
+                resp.responseData.x,
+                resp.responseData.y,
+                resp.responseData.direction,
+                resp.responseData.type
+        )
+
+        nodTurret.id = resp.responseData.id
+
+        return nodTurret
+
+    }
+
+
+    def addNodTurret(int x, int y, float direction,  int type) {
+        NodTurret inputNodTurret = new NodTurret(x,y,direction, type)
+
+        def resp = restClient.post(
+                path: '/mac/nodTurret',
+                body: inputNodTurret,
+                requestContentType: 'application/json' )
+        assert resp.status == 200
+
+        NodTurret returnedNodTurret = new NodTurret(
+                resp.responseData.x,
+                resp.responseData.y,
+                resp.responseData.direction,
+                resp.responseData.type
+        )
+
+        returnedNodTurret.id = resp.responseData.id
+        return returnedNodTurret
     }
 }

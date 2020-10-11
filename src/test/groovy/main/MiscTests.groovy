@@ -1,6 +1,7 @@
 package main
 
 import domain.MCV
+import domain.NodTurret
 import groovyx.net.http.HttpResponseException
 import domain.Minigunner
 import domain.Point
@@ -415,13 +416,6 @@ class MiscTests extends MikeAndConquerTestBase {
 
     }
 
-
-
-
-
-
-
-
     def "should be able to move two separate GDI minigunners" () {
         given:
         int minigunner1DestinationX = 300
@@ -622,6 +616,46 @@ class MiscTests extends MikeAndConquerTestBase {
         i << (1..45)
     }
 
+    def "Nod Turret should turn to aim at minigunner" () {
+        when:
+        NodTurret nodTurret = gameClient.addNodTurret(20,12, 90.0, 0)
+
+        then:
+        assert nodTurret.direction == 90.0
+
+        when:
+        gameClient.addGDIMinigunnerAtMapSquare(20, 9)
+
+        then:
+        assertNodTurretIsNearDirection(nodTurret.id, 45.0)
+        assertNodTurretHasDirection(nodTurret.id, 0.0)
+
+    }
+
+
+    def assertNodTurretIsNearDirection(int nodTurretId, float direction) {
+        def conditions = new PollingConditions(timeout: 20, initialDelay: 0, factor: 1.25)
+        conditions.eventually {
+            NodTurret nodTurret = gameClient.getNodTurretById(nodTurretId)
+            float upsilon = 15.0
+            float lowValue = direction - upsilon
+            float highValue = direction + upsilon
+            println "Checking if nodTurret.direction: ${nodTurret.direction} is betweens ${lowValue} and ${highValue}"
+            assert (nodTurret.direction > lowValue) && (nodTurret.direction < highValue)
+        }
+        return true
+    }
+
+
+
+    def assertNodTurretHasDirection(int nodTurretId, float direction) {
+        def conditions = new PollingConditions(timeout: 20, initialDelay: 1.5, factor: 1.25)
+        conditions.eventually {
+            NodTurret nodTurret = gameClient.getNodTurretById(nodTurretId)
+            assert nodTurret.direction == direction
+        }
+        return true
+    }
 
     def assertMinigunnerIsAtScreenPosition(Minigunner minigunner, int screenX, int screenY)
     {

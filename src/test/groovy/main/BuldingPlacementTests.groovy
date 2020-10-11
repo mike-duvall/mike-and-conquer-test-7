@@ -177,7 +177,7 @@ class BuldingPlacementTests extends MikeAndConquerTestBase {
 
     }
 
-    def "should place sandbags and nod turrets in correct location"() {
+    def "should place sandbags in correct location"() {
 
         given:
         gameClient.addSandbag(12,16,2)
@@ -198,6 +198,36 @@ class BuldingPlacementTests extends MikeAndConquerTestBase {
 
     }
 
+    def "should place sandbags Nod turrets in correct location"() {
+
+        given:
+        gameClient.addSandbag(12,16,2)
+        gameClient.addSandbag(13,16,9)
+        gameClient.addSandbag(13,15,6)
+        gameClient.addSandbag(14,15,8)
+
+        and:
+        float direction = 90.0 - 11.25
+        gameClient.addNodTurret(11,16,direction, 0)
+        gameClient.addNodTurret(14,16,direction, 2)
+
+//        Minigunner minigunner = gameClient.addGDIMinigunnerAtMapSquare(18, 14)
+//
+//        gameClient.leftClickMinigunner(minigunner.id)
+//        gameClient.leftClickInMapSquareCoordinates(14,12)
+
+        when: "Test scenario 1"
+        int testScenarioNumber = 1
+        String scenarioPrefix = 'nod-turret-placement'
+        int startX = 263
+        int startY = 362
+        int screenshotCompareWidth = 100
+        int screenshotCompareHeight = 52
+
+        then:
+        assertScreenshotMatches(scenarioPrefix, testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
+
+    }
 
 
 
