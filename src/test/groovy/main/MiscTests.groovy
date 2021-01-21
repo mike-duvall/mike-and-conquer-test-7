@@ -129,6 +129,31 @@ class MiscTests extends MikeAndConquerTestBase {
     }
 
 
+    def "Nod Turret kills GDI minigunner"() {
+        given:
+        Minigunner gdiMinigunner = createGDIMinigunnerAtLocation(420,250)
+
+        when:
+        float direction = 90.0 - 11.25
+        gameClient.addNodTurret(14,12,direction, 0)
+
+        and:
+        gdiMinigunner = gameClient.getGdiMinigunnerById(gdiMinigunner.id)
+
+        then:
+        assert gdiMinigunner.health == 50
+
+        then:
+        assertGdiMinigunnerHealthGoesTo(gdiMinigunner.id, 40)
+        assertGdiMinigunnerHealthGoesTo(gdiMinigunner.id, 30)
+        assertGdiMinigunnerHealthGoesTo(gdiMinigunner.id, 20)
+        assertGdiMinigunnerHealthGoesTo(gdiMinigunner.id, 10)
+
+        then:
+        assertGdiMinigunnerDies(gdiMinigunner.id)
+    }
+
+
     // Unfortunately, these have to be static(or @Shared) to be accessible in the "where" block
     // https://stackoverflow.com/questions/22707195/how-to-use-instance-variable-in-where-section-of-spock-test
     static int selectionBoxLeftmostX = 75
@@ -616,15 +641,17 @@ class MiscTests extends MikeAndConquerTestBase {
         i << (1..45)
     }
 
-    def "Nod Turret should turn to aim at minigunner" () {
+    def "Nod Turret should turn counterclockwise when appropriate to aim at minigunner" () {
+        given:
+        float startingTurretFacing = 179.0
         when:
-        NodTurret nodTurret = gameClient.addNodTurret(20,12, 90.0, 0)
+        NodTurret nodTurret = gameClient.addNodTurret(17,12, startingTurretFacing, 0)
 
         then:
-        assert nodTurret.direction == 90.0
+        assert nodTurret.direction == startingTurretFacing
 
         when:
-        gameClient.addGDIMinigunnerAtMapSquare(20, 9)
+        gameClient.addGDIMinigunnerAtMapSquare(17, 8)
 
         then:
         assertNodTurretIsNearDirection(nodTurret.id, 45.0)
@@ -632,15 +659,33 @@ class MiscTests extends MikeAndConquerTestBase {
 
     }
 
+    def "Nod Turret should turn clockwise when appropriate to aim at minigunner" () {
+        given:
+        float startingTurretFacing = 1
+        when:
+        NodTurret nodTurret = gameClient.addNodTurret(20,12, startingTurretFacing, 0)
+
+        then:
+        assert nodTurret.direction == startingTurretFacing
+
+        when:
+        gameClient.addGDIMinigunnerAtMapSquare(20, 14)
+
+        then:
+        assertNodTurretIsNearDirection(nodTurret.id, 135.0)
+        assertNodTurretHasDirection(nodTurret.id, 180.0)
+
+    }
+
 
     def assertNodTurretIsNearDirection(int nodTurretId, float direction) {
-        def conditions = new PollingConditions(timeout: 20, initialDelay: 0, factor: 1.25)
+        def conditions = new PollingConditions(timeout: 20, initialDelay: 0, factor: 1.0)
         conditions.eventually {
             NodTurret nodTurret = gameClient.getNodTurretById(nodTurretId)
             float upsilon = 15.0
             float lowValue = direction - upsilon
             float highValue = direction + upsilon
-            println "Checking if nodTurret.direction: ${nodTurret.direction} is betweens ${lowValue} and ${highValue}"
+//            println "Checking if nodTurret.direction: ${nodTurret.direction} is betweens ${lowValue} and ${highValue}"
             assert (nodTurret.direction > lowValue) && (nodTurret.direction < highValue)
         }
         return true
@@ -710,6 +755,18 @@ class MiscTests extends MikeAndConquerTestBase {
         }
         return true
     }
+
+
+    def assertGdiMinigunnerHealthGoesTo(int id, int targetHealth) {
+        def conditions = new PollingConditions(timeout: 100, initialDelay: 1.5, factor: 1.25)
+        conditions.eventually {
+            def expectedDeadMinigunner = gameClient.getGdiMinigunnerById(id)
+            assert expectedDeadMinigunner.health == targetHealth
+        }
+        return true
+
+    }
+
 
 
     def assertGameStateGoesToMissionFailed() {
