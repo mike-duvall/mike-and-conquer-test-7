@@ -211,11 +211,6 @@ class BuldingPlacementTests extends MikeAndConquerTestBase {
         gameClient.addNodTurret(11,16,direction, 0)
         gameClient.addNodTurret(14,16,direction, 2)
 
-//        Minigunner minigunner = gameClient.addGDIMinigunnerAtMapSquare(18, 14)
-//
-//        gameClient.leftClickMinigunner(minigunner.id)
-//        gameClient.leftClickInMapSquareCoordinates(14,12)
-
         when: "Test scenario 1"
         int testScenarioNumber = 1
         String scenarioPrefix = 'nod-turret-placement'
