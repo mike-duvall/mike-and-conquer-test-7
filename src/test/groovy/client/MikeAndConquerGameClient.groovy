@@ -44,7 +44,10 @@ class MikeAndConquerGameClient {
     }
 
     void resetGame() {
-        ResetOptions resetOptions = new ResetOptions(false)
+        boolean showShroud = false
+        float initialMapZoom = 1
+        int gameSpeedDelayDivisor = 50
+        ResetOptions resetOptions = new ResetOptions(showShroud,initialMapZoom, gameSpeedDelayDivisor)
         resetGame(resetOptions)
     }
 

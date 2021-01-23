@@ -2,6 +2,7 @@ package main
 
 import domain.MCV
 import domain.NodTurret
+import domain.ResetOptions
 import groovyx.net.http.HttpResponseException
 import domain.Minigunner
 import domain.Point
@@ -18,63 +19,15 @@ import java.awt.image.BufferedImage
 class MiscTests extends MikeAndConquerTestBase {
 
 
-    def "top left corner of screenshot of game should match equivalent reference screenshot of real command and conquer" () {
-
-        given:
-        int screenshotCompareWidth = 162
-        int screenshotCompareHeight = 218
-
-        // move mouse out of screenshot
-        gameClient.moveMouseToWorldCoordinates(new Point(screenshotCompareWidth + 50,screenshotCompareHeight + 50))
-
-        File imageFile = new File(
-                getClass().getClassLoader().getResource("real-game-162x218-manual.png").getFile()
-        );
-        BufferedImage realGameScreenshot = ImageIO.read(imageFile)
-
-
-        when:
-        BufferedImage fullScreenShot = gameClient.getScreenshot()
-
-        then:
-        BufferedImage screenshotSubImage = fullScreenShot.getSubimage(0,0,162,218)
-
-        writeImageToFileInBuildDirectory(screenshotSubImage, "mike-and-conquer-screenshot.jpg" )
-        writeImageToFileInBuildDirectory(realGameScreenshot, "real-game-reference-screenshot.jpg" )
-
-        and:
-        assert ImageUtil.imagesAreEqual(screenshotSubImage, realGameScreenshot)
-
+    def setup() {
+        boolean showShroud = false
+        float initialMapZoom = 3
+        int gameSpeedDelayDivisor = 20
+        ResetOptions resetOptions = new ResetOptions(showShroud,initialMapZoom, gameSpeedDelayDivisor)
+        gameClient.resetGame(resetOptions)
     }
 
-    def "screenshot with trees" () {
 
-        given:
-        int screenshotCompareWidth = 480
-        int screenshotCompareHeight = 302
-
-        // move mouse out of screenshot
-        gameClient.moveMouseToWorldCoordinates(new Point(screenshotCompareWidth + 50,screenshotCompareHeight + 50))
-
-        File imageFile = new File(
-                getClass().getClassLoader().getResource("real-game-480x302-manual.png").getFile()
-        );
-        BufferedImage realGameScreenshot = ImageIO.read(imageFile)
-
-
-        when:
-        BufferedImage fullScreenShot = gameClient.getScreenshot()
-
-        then:
-        BufferedImage screenshotSubImage = fullScreenShot.getSubimage(0,0,screenshotCompareWidth,screenshotCompareHeight)
-
-        writeImageToFileInBuildDirectory(screenshotSubImage, "mike-and-conquer-screenshot-480x302.jpg" )
-        writeImageToFileInBuildDirectory(realGameScreenshot, "real-game-reference-screenshot-480x302.jpg" )
-
-        and:
-        assert ImageUtil.imagesAreEqual(screenshotSubImage, realGameScreenshot)
-
-    }
 
     def "clicking nod mingunner should not initiate attack unless gdi minigunner is selected" () {
 
@@ -318,6 +271,11 @@ class MiscTests extends MikeAndConquerTestBase {
 
         when:
         gameClient.leftClickMinigunner(gdiMinigunner.id)
+        gdiMinigunner = gameClient.getGdiMinigunnerById(gdiMinigunner.id)
+
+        then:
+        assert gdiMinigunner.selected == true
+
 
         and:
         gameClient.moveMouseToWorldCoordinates(overMapButNotOverTerrain)
