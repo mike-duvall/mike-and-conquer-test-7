@@ -60,6 +60,36 @@ class MikeAndConquerGameClient {
         assert resp.status == 204
     }
 
+
+    ResetOptions getGameOptions() {
+
+        String aPath = '/mac/resetGame'
+        def resp
+        try {
+            resp = restClient.get(path: aPath)
+        }
+        catch(HttpResponseException e) {
+            if(e.statusCode == 404) {
+                return null
+            }
+            else {
+                throw e
+            }
+        }
+        if( resp.status == 404) {
+            return null
+        }
+        assert resp.status == 200  // HTTP response code; 404 means not found, etc.
+
+        ResetOptions resetOptions = new ResetOptions()
+        resetOptions.drawShroud = resp.responseData.drawShroud
+        resetOptions.initialMapZoom = resp.responseData.initialMapZoom
+        resetOptions.gameSpeedDelayDivisor = resp.responseData.gameSpeedDelayDivisor
+        return resetOptions
+
+    }
+
+
     void leftClickInWorldCoordinates(int x, int y) {
         Point point = new Point()
         point.x = x
