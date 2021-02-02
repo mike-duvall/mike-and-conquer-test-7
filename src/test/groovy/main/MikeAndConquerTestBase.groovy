@@ -2,6 +2,7 @@ package main
 
 import client.MikeAndConquerGameClient
 import domain.GDIBarracks
+import domain.GameOptions
 import domain.MCV
 import domain.Minigunner
 import domain.Point
@@ -28,9 +29,23 @@ class MikeAndConquerTestBase extends Specification {
         boolean useTimeouts = true
 //        boolean useTimeouts = false
         gameClient = new MikeAndConquerGameClient(host, port, useTimeouts )
-        gameClient.resetGame()
+//        gameClient.setGameOptions()
         gameClient.leftClickInWorldCoordinates(1,1)  // to get mouse clicks in default state
     }
+
+    def assertGameOptionsAreSetTo(GameOptions desiredGameOptions) {
+        def conditions = new PollingConditions(timeout: 70, initialDelay: 1.5, factor: 1.25)
+        conditions.eventually {
+            GameOptions resetOptions1 = gameClient.getGameOptions()
+            assert resetOptions1.gameSpeedDelayDivisor == desiredGameOptions.gameSpeedDelayDivisor
+            assert resetOptions1.initialMapZoom == desiredGameOptions.initialMapZoom
+            assert resetOptions1.drawShroud == desiredGameOptions.drawShroud
+        }
+
+        return true
+    }
+
+
 
     void assertScreenshotMatchesWithoutMovingCursor(String scenarioPrefix, int testScenarioNumber, int startX, int startY, int screenshotCompareWidth, int screenshotCompareHeight) {
 

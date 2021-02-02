@@ -11,7 +11,7 @@ import domain.MCV
 import domain.Minigunner
 import domain.MinigunnerId
 import domain.Point
-import domain.ResetOptions
+import domain.GameOptions
 import domain.Sandbag
 import util.Util
 import org.apache.http.params.CoreConnectionPNames
@@ -31,6 +31,7 @@ class MikeAndConquerGameClient {
     private static final String GDI_CONSTRUCTION_YARD = '/mac/GDIConstructionYard'
     private static final String SIDEBAR_BASE_URL = '/mac/Sidebar'
     private static final String NOD_TURRET_BASE_URL = '/mac/NodTurret'
+    private static final String GAME_OPTIONS_URL = '/mac/gameOptions'
 
 
     MikeAndConquerGameClient(String host, int port, boolean useTimeouts = true) {
@@ -43,17 +44,17 @@ class MikeAndConquerGameClient {
         }
     }
 
-    void resetGame() {
-        boolean showShroud = false
-        float initialMapZoom = 1
-        int gameSpeedDelayDivisor = 50
-        ResetOptions resetOptions = new ResetOptions(showShroud,initialMapZoom, gameSpeedDelayDivisor)
-        resetGame(resetOptions)
-    }
+//    void setGameOptions() {
+//        boolean showShroud = false
+//        float initialMapZoom = 1
+//        int gameSpeedDelayDivisor = 50
+//        GameOptions resetOptions = new GameOptions(showShroud,initialMapZoom, gameSpeedDelayDivisor)
+//        setGameOptions(resetOptions)
+//    }
 
-    void resetGame(ResetOptions resetOptions) {
+    void setGameOptions(GameOptions resetOptions) {
         def resp = restClient.post(
-                path: '/mac/resetGame',
+                path: GAME_OPTIONS_URL,
                 body: resetOptions,
                 requestContentType: 'application/json' )
 
@@ -61,12 +62,12 @@ class MikeAndConquerGameClient {
     }
 
 
-    ResetOptions getGameOptions() {
+    GameOptions getGameOptions() {
 
-        String aPath = '/mac/resetGame'
+//        String aPath = '/mac/gameOptions'
         def resp
         try {
-            resp = restClient.get(path: aPath)
+            resp = restClient.get(path: GAME_OPTIONS_URL)
         }
         catch(HttpResponseException e) {
             if(e.statusCode == 404) {
@@ -81,7 +82,7 @@ class MikeAndConquerGameClient {
         }
         assert resp.status == 200  // HTTP response code; 404 means not found, etc.
 
-        ResetOptions resetOptions = new ResetOptions()
+        GameOptions resetOptions = new GameOptions()
         resetOptions.drawShroud = resp.responseData.drawShroud
         resetOptions.initialMapZoom = resp.responseData.initialMapZoom
         resetOptions.gameSpeedDelayDivisor = resp.responseData.gameSpeedDelayDivisor

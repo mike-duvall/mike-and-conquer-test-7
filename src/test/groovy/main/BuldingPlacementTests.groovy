@@ -1,11 +1,11 @@
 package main
 
-import domain.GDIBarracks
+
 import domain.GDIConstructionYard
 import domain.MCV
 import domain.Minigunner
 import domain.Point
-import domain.ResetOptions
+import domain.GameOptions
 import domain.Sidebar
 import util.Util
 
@@ -18,9 +18,9 @@ class BuldingPlacementTests extends MikeAndConquerTestBase {
         boolean showShroud = false
         float initialMapZoom = 1
         int gameSpeedDelayDivisor = 50
-        ResetOptions resetOptions = new ResetOptions(showShroud,initialMapZoom, gameSpeedDelayDivisor)
-
-        gameClient.resetGame(resetOptions)
+        GameOptions gameOptions = new GameOptions(showShroud,initialMapZoom, gameSpeedDelayDivisor)
+        gameClient.setGameOptions(gameOptions)
+        assertGameOptionsAreSetTo(gameOptions)
         // Add bogus minigunner to not delete so game state stays in "Playing"
         gameClient.addGDIMinigunnerAtMapSquare(4,5)
     }

@@ -2,19 +2,14 @@ package main
 
 import domain.MCV
 import domain.NodTurret
-import domain.ResetOptions
+import domain.GameOptions
 import groovyx.net.http.HttpResponseException
 import domain.Minigunner
 import domain.Point
-import util.ImageUtil
 import util.Util
 import spock.lang.Ignore
 import spock.lang.Unroll
 import spock.util.concurrent.PollingConditions
-
-import javax.imageio.ImageIO
-import java.awt.image.BufferedImage
-
 
 class MiscTests extends MikeAndConquerTestBase {
 
@@ -23,25 +18,20 @@ class MiscTests extends MikeAndConquerTestBase {
         boolean showShroud = false
         float initialMapZoom = 3
         int gameSpeedDelayDivisor = 20
-        ResetOptions resetOptions = new ResetOptions(showShroud,initialMapZoom, gameSpeedDelayDivisor)
-        gameClient.resetGame(resetOptions)
-//        sleep(300)  Fixes flaky selection cursor test because screen zoom sometimes doesn't happen fast enough
+        GameOptions gameOptions = new GameOptions(showShroud,initialMapZoom, gameSpeedDelayDivisor)
+        gameClient.setGameOptions(gameOptions)
 
-        def conditions = new PollingConditions(timeout: 70, initialDelay: 1.5, factor: 1.25)
-        conditions.eventually {
-//            Minigunner retrievedMinigunner = gameClient.getGdiMinigunnerById(createdMinigunner1.id)
-//            assertMinigunnerIsAtDesignatedDestination(retrievedMinigunner, minigunner1DestinationX, minigunner1DestinationY)
-//            assert retrievedMinigunner.health != 0
-
-            ResetOptions resetOptions1 = gameClient.getGameOptions()
-            assert resetOptions1.gameSpeedDelayDivisor == resetOptions.gameSpeedDelayDivisor
-            assert resetOptions1.initialMapZoom == resetOptions.initialMapZoom
-            assert resetOptions1.drawShroud == resetOptions.drawShroud
-        }
-
-
+        assertGameOptionsAreSetTo(gameOptions)
+//        def conditions = new PollingConditions(timeout: 70, initialDelay: 1.5, factor: 1.25)
+//        conditions.eventually {
+//            GameOptions resetOptions1 = gameClient.getGameOptions()
+//            assert resetOptions1.gameSpeedDelayDivisor == gameOptions.gameSpeedDelayDivisor
+//            assert resetOptions1.initialMapZoom == gameOptions.initialMapZoom
+//            assert resetOptions1.drawShroud == gameOptions.drawShroud
+//        }
 
     }
+
 
 
 
@@ -332,64 +322,6 @@ class MiscTests extends MikeAndConquerTestBase {
 
     }
 
-
-    def "X" () {
-
-        given:
-        Minigunner gdiMinigunner = createRandomGDIMinigunner()
-        Point overMapButNotOverTerrain = new Point(675,20)
-
-
-//        when:
-        gameClient.leftClickMinigunner(gdiMinigunner.id)
-        gdiMinigunner = gameClient.getGdiMinigunnerById(gdiMinigunner.id)
-
-//        then:
-        expect:
-        println "gdiMinigunner.x=${gdiMinigunner.x}, gdiMinigunner.y=${gdiMinigunner.y}"
-        assert gdiMinigunner.selected == true
-        println "was selected"
-
-
-//        and:
-        gameClient.moveMouseToWorldCoordinates(overMapButNotOverTerrain)
-
-        where:
-        si << (1..20)
-
-    }
-
-
-    def "X2" () {
-
-        given:
-//        Minigunner gdiMinigunner = createRandomGDIMinigunner()
-        Minigunner gdiMinigunner = gameClient.addGDIMinigunnerAtWorldCoordinates(569, 352)
-
-
-        Point overMapButNotOverTerrain = new Point(675,20)
-
-
-        when:
-        gameClient.leftClickMinigunner(gdiMinigunner.id)
-        gdiMinigunner = gameClient.getGdiMinigunnerById(gdiMinigunner.id)
-
-        then:
-//        expect:
-        println "gdiMinigunner.x={$gdiMinigunner.x}, gdiMinigunner.y=${gdiMinigunner.y}"
-        assert gdiMinigunner.selected == true
-        println "was selected"
-
-
-//        and:
-        gameClient.moveMouseToWorldCoordinates(overMapButNotOverTerrain)
-
-//        where:
-//        si << (1..10)
-
-    }
-
-
     def "should set mouse cursor correctly when unit is NOT selected" () {
 
         given:
@@ -644,7 +576,7 @@ class MiscTests extends MikeAndConquerTestBase {
         createRandomGDIMinigunner()
 
         when:
-        gameClient.resetGame()
+        gameClient.setGameOptions()
 
         then:
         true
@@ -787,6 +719,7 @@ class MiscTests extends MikeAndConquerTestBase {
         }
         return true
     }
+
 
 
     def assertGdiMinigunnerHealthGoesTo(int id, int targetHealth) {

@@ -4,7 +4,7 @@ package main
 import domain.Minigunner
 import domain.MovementDirection
 import domain.Point
-import domain.ResetOptions
+import domain.GameOptions
 
 
 class ShroudTests extends MikeAndConquerTestBase {
@@ -14,10 +14,11 @@ class ShroudTests extends MikeAndConquerTestBase {
         boolean showShroud = true
         float initialMapZoom = 1
         int gameSpeedDelayDivisor = 50
-        ResetOptions resetOptions = new ResetOptions(showShroud,initialMapZoom, gameSpeedDelayDivisor)
+        GameOptions gameOptions = new GameOptions(showShroud,initialMapZoom, gameSpeedDelayDivisor)
 
 
-        gameClient.resetGame(resetOptions)
+        gameClient.setGameOptions(gameOptions)
+        assertGameOptionsAreSetTo(gameOptions)
         // Add bogus minigunner to not delete so game state stays in "Playing"
         gameClient.addGDIMinigunnerAtMapSquare(4,5)
 

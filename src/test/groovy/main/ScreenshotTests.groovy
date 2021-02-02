@@ -1,16 +1,9 @@
 package main
 
-import domain.MCV
-import domain.Minigunner
-import domain.NodTurret
+
 import domain.Point
-import domain.ResetOptions
-import groovyx.net.http.HttpResponseException
-import spock.lang.Ignore
-import spock.lang.Unroll
-import spock.util.concurrent.PollingConditions
+import domain.GameOptions
 import util.ImageUtil
-import util.Util
 
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
@@ -22,8 +15,9 @@ class ScreenshotTests extends MikeAndConquerTestBase {
         boolean showShroud = false
         float initialMapZoom = 1
         int gameSpeedDelayDivisor = 50
-        ResetOptions resetOptions = new ResetOptions(showShroud,initialMapZoom, gameSpeedDelayDivisor)
-        gameClient.resetGame(resetOptions)
+        GameOptions gameOptions = new GameOptions(showShroud,initialMapZoom, gameSpeedDelayDivisor)
+        gameClient.setGameOptions(gameOptions)
+        assertGameOptionsAreSetTo(gameOptions)
 //        // Add bogus minigunner to not delete so game state stays in "Playing"
 //        gameClient.addGDIMinigunnerAtMapSquare(4,5)
 
