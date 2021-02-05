@@ -29,9 +29,17 @@ class MikeAndConquerTestBase extends Specification {
         boolean useTimeouts = true
 //        boolean useTimeouts = false
         gameClient = new MikeAndConquerGameClient(host, port, useTimeouts )
-//        gameClient.setGameOptions()
         gameClient.leftClickInWorldCoordinates(1,1)  // to get mouse clicks in default state
     }
+
+
+    protected void setAndAssertGameOptions(boolean showShroud, float initialMapZoom, int gameSpeedDelayDivisor) {
+        GameOptions gameOptions = new GameOptions(showShroud, initialMapZoom, gameSpeedDelayDivisor)
+        gameClient.setGameOptions(gameOptions)
+        assertGameOptionsAreSetTo(gameOptions)
+    }
+
+
 
     def assertGameOptionsAreSetTo(GameOptions desiredGameOptions) {
         def conditions = new PollingConditions(timeout: 70, initialDelay: 1.5, factor: 1.25)

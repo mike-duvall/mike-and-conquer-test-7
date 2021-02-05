@@ -2,7 +2,6 @@ package main
 
 import domain.MCV
 import domain.NodTurret
-import domain.GameOptions
 import groovyx.net.http.HttpResponseException
 import domain.Minigunner
 import domain.Point
@@ -18,20 +17,8 @@ class MiscTests extends MikeAndConquerTestBase {
         boolean showShroud = false
         float initialMapZoom = 3
         int gameSpeedDelayDivisor = 20
-        GameOptions gameOptions = new GameOptions(showShroud,initialMapZoom, gameSpeedDelayDivisor)
-        gameClient.setGameOptions(gameOptions)
-
-        assertGameOptionsAreSetTo(gameOptions)
-//        def conditions = new PollingConditions(timeout: 70, initialDelay: 1.5, factor: 1.25)
-//        conditions.eventually {
-//            GameOptions resetOptions1 = gameClient.getGameOptions()
-//            assert resetOptions1.gameSpeedDelayDivisor == gameOptions.gameSpeedDelayDivisor
-//            assert resetOptions1.initialMapZoom == gameOptions.initialMapZoom
-//            assert resetOptions1.drawShroud == gameOptions.drawShroud
-//        }
-
+        setAndAssertGameOptions(showShroud, initialMapZoom, gameSpeedDelayDivisor)
     }
-
 
 
 

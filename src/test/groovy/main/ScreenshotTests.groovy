@@ -2,7 +2,6 @@ package main
 
 
 import domain.Point
-import domain.GameOptions
 import util.ImageUtil
 
 import javax.imageio.ImageIO
@@ -15,12 +14,7 @@ class ScreenshotTests extends MikeAndConquerTestBase {
         boolean showShroud = false
         float initialMapZoom = 1
         int gameSpeedDelayDivisor = 50
-        GameOptions gameOptions = new GameOptions(showShroud,initialMapZoom, gameSpeedDelayDivisor)
-        gameClient.setGameOptions(gameOptions)
-        assertGameOptionsAreSetTo(gameOptions)
-//        // Add bogus minigunner to not delete so game state stays in "Playing"
-//        gameClient.addGDIMinigunnerAtMapSquare(4,5)
-
+        setAndAssertGameOptions(showShroud, initialMapZoom, gameSpeedDelayDivisor)
     }
 
 

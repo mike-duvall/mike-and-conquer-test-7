@@ -44,14 +44,6 @@ class MikeAndConquerGameClient {
         }
     }
 
-//    void setGameOptions() {
-//        boolean showShroud = false
-//        float initialMapZoom = 1
-//        int gameSpeedDelayDivisor = 50
-//        GameOptions resetOptions = new GameOptions(showShroud,initialMapZoom, gameSpeedDelayDivisor)
-//        setGameOptions(resetOptions)
-//    }
-
     void setGameOptions(GameOptions resetOptions) {
         def resp = restClient.post(
                 path: GAME_OPTIONS_URL,
@@ -64,7 +56,6 @@ class MikeAndConquerGameClient {
 
     GameOptions getGameOptions() {
 
-//        String aPath = '/mac/gameOptions'
         def resp
         try {
             resp = restClient.get(path: GAME_OPTIONS_URL)
