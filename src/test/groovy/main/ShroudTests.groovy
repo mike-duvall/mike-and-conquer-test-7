@@ -4,15 +4,17 @@ package main
 import domain.Minigunner
 import domain.MovementDirection
 import domain.Point
-import domain.ResetOptions
 
 
 class ShroudTests extends MikeAndConquerTestBase {
 
 
     def setup() {
-        ResetOptions resetOptions = new ResetOptions(true)
-        gameClient.resetGame(resetOptions)
+        boolean showShroud = true
+        float initialMapZoom = 1
+        int gameSpeedDelayDivisor = 50
+        setAndAssertGameOptions(showShroud, initialMapZoom, gameSpeedDelayDivisor)
+
         // Add bogus minigunner to not delete so game state stays in "Playing"
         gameClient.addGDIMinigunnerAtMapSquare(4,5)
 

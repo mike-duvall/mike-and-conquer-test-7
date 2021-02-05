@@ -11,7 +11,7 @@ import domain.MCV
 import domain.Minigunner
 import domain.MinigunnerId
 import domain.Point
-import domain.ResetOptions
+import domain.GameOptions
 import domain.Sandbag
 import util.Util
 import org.apache.http.params.CoreConnectionPNames
@@ -31,6 +31,7 @@ class MikeAndConquerGameClient {
     private static final String GDI_CONSTRUCTION_YARD = '/mac/GDIConstructionYard'
     private static final String SIDEBAR_BASE_URL = '/mac/Sidebar'
     private static final String NOD_TURRET_BASE_URL = '/mac/NodTurret'
+    private static final String GAME_OPTIONS_URL = '/mac/gameOptions'
 
 
     MikeAndConquerGameClient(String host, int port, boolean useTimeouts = true) {
@@ -43,19 +44,43 @@ class MikeAndConquerGameClient {
         }
     }
 
-    void resetGame() {
-        ResetOptions resetOptions = new ResetOptions(false)
-        resetGame(resetOptions)
-    }
-
-    void resetGame(ResetOptions resetOptions) {
+    void setGameOptions(GameOptions resetOptions) {
         def resp = restClient.post(
-                path: '/mac/resetGame',
+                path: GAME_OPTIONS_URL,
                 body: resetOptions,
                 requestContentType: 'application/json' )
 
         assert resp.status == 204
     }
+
+
+    GameOptions getGameOptions() {
+
+        def resp
+        try {
+            resp = restClient.get(path: GAME_OPTIONS_URL)
+        }
+        catch(HttpResponseException e) {
+            if(e.statusCode == 404) {
+                return null
+            }
+            else {
+                throw e
+            }
+        }
+        if( resp.status == 404) {
+            return null
+        }
+        assert resp.status == 200  // HTTP response code; 404 means not found, etc.
+
+        GameOptions resetOptions = new GameOptions()
+        resetOptions.drawShroud = resp.responseData.drawShroud
+        resetOptions.initialMapZoom = resp.responseData.initialMapZoom
+        resetOptions.gameSpeedDelayDivisor = resp.responseData.gameSpeedDelayDivisor
+        return resetOptions
+
+    }
+
 
     void leftClickInWorldCoordinates(int x, int y) {
         Point point = new Point()
