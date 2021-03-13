@@ -15,7 +15,7 @@ class MiscTests extends MikeAndConquerTestBase {
 
     def setup() {
         boolean showShroud = false
-        float initialMapZoom = 3
+        float initialMapZoom = 1
         int gameSpeedDelayDivisor = 20
         setAndAssertGameOptions(showShroud, initialMapZoom, gameSpeedDelayDivisor)
     }
@@ -29,7 +29,6 @@ class MiscTests extends MikeAndConquerTestBase {
         Minigunner nodMinigunner = createRandomNodMinigunnerWithAiTurnedOff()
 
         when:
-        gameClient.getScreenshot()
         gameClient.leftClickMinigunner(nodMinigunner.id)
 
         and:
@@ -98,6 +97,62 @@ class MiscTests extends MikeAndConquerTestBase {
         then:
         assertGdiMinigunnerDies(gdiMinigunner.id)
     }
+
+    def "Minigunner health bar and selection cursor show up correctly"() {
+        given:
+        Minigunner gdiMinigunner = createGDIMinigunnerAtLocation(420,250)
+
+        when:
+        float direction = 90.0 - 11.25
+        gameClient.addNodTurret(14,12,direction, 0)
+
+        then:
+        assertGdiMinigunnerHealthGoesTo(gdiMinigunner.id, 40)
+
+        when:
+        gameClient.leftClickMinigunner(gdiMinigunner.id)
+        int testScenarioNumber = 1
+        String scenarioPrefix = 'minigunner-selection-and-health-bar'
+
+        int startX = 414
+        int startY = 236
+        int screenshotCompareWidth = 13
+        int screenshotCompareHeight = 17
+
+        then:
+        assertScreenshotMatches(scenarioPrefix, testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
+
+    }
+
+
+    def "MCV health bar and selection cursor show up correctly"() {
+        given:
+        Point mcvLocation = new Point(17,12)
+        MCV anMCV = gameClient.addMCVAtMapSquare(mcvLocation.x, mcvLocation.y)
+
+        when:
+        float direction = 90.0 - 11.25
+        gameClient.addNodTurret(14,12,direction, 0)
+
+//        then:
+//        assertGdiMinigunnerHealthGoesTo(gdiMinigunner.id, 40)
+
+        and:
+//        gameClient.leftClickMinigunner(gdiMinigunner.id)
+        gameClient.leftClickMCV(anMCV.id)
+        int testScenarioNumber = 1
+        String scenarioPrefix = 'mcv-selection-and-health-bar'
+
+        int startX = 402
+        int startY = 282
+        int screenshotCompareWidth = 37
+        int screenshotCompareHeight = 37
+
+        then:
+        assertScreenshotMatches(scenarioPrefix, testScenarioNumber, startX , startY, screenshotCompareWidth, screenshotCompareHeight)
+
+    }
+
 
 
     // Unfortunately, these have to be static(or @Shared) to be accessible in the "where" block
@@ -605,6 +660,10 @@ class MiscTests extends MikeAndConquerTestBase {
         gameClient.addGDIMinigunnerAtMapSquare(17, 8)
 
         then:
+        // TODO:  this test sometimes fails because the turret turns to fast
+        // Once turret speed has been updated to respect game speed
+        // Consider updating this test to run at a slower game speed
+        // to hopefully prevent this intermittent failure
         assertNodTurretIsNearDirection(nodTurret.id, 45.0)
         assertNodTurretHasDirection(nodTurret.id, 0.0)
 

@@ -59,9 +59,16 @@ class MikeAndConquerTestBase extends Specification {
 
         String realGameFilename = "real-game-" + scenarioPrefix + "-" + testScenarioNumber + "-start-x" + startX + "-y" + startY + "-" + screenshotCompareWidth + "x" + screenshotCompareHeight + ".png"
 
-        File imageFile = new File(
-                getClass().getClassLoader().getResource(realGameFilename).getFile()
-        );
+        File imageFile
+
+        try {
+            imageFile = new File(
+                    getClass().getClassLoader().getResource(realGameFilename).getFile()
+            )
+        }
+        catch(Exception e) {
+            throw new RuntimeException("Unable to read file ${realGameFilename}")
+        }
 
         BufferedImage realGameScreenshot = ImageIO.read(imageFile)
 
