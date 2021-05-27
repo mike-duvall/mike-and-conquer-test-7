@@ -12,8 +12,8 @@ class ShroudTests extends MikeAndConquerTestBase {
     def setup() {
         boolean showShroud = true
         float initialMapZoom = 1
-        int gameSpeedDelayDivisor = 50
-        setAndAssertGameOptions(showShroud, initialMapZoom, gameSpeedDelayDivisor)
+
+        setAndAssertGameOptions(showShroud, initialMapZoom, GameSpeed.Fastest)
 
         // Add bogus minigunner to not delete so game state stays in "Playing"
         gameClient.addGDIMinigunnerAtMapSquare(4,5)

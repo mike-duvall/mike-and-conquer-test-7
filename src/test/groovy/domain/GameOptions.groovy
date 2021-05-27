@@ -4,13 +4,15 @@ class GameOptions {
 
     boolean drawShroud
     float initialMapZoom
-    int gameSpeedDelayDivisor
+    String gameSpeed
 
 
-    GameOptions(boolean drawShroud, float initialMapZoom, int gameSpeedDelayDivisor) {
+
+    GameOptions(boolean drawShroud, float initialMapZoom, String gameSpeed ) {
         this.drawShroud = drawShroud
         this.initialMapZoom = initialMapZoom
-        this.gameSpeedDelayDivisor = gameSpeedDelayDivisor
+//        this.gameSpeedDelayDivisor = gameSpeedDelayDivisor
+        this.gameSpeed = gameSpeed
    }
 
     GameOptions() {}

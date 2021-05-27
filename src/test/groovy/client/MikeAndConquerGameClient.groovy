@@ -2,6 +2,7 @@ package client
 
 import domain.GDIBarracks
 import domain.GDIConstructionYard
+import domain.GameHistoryEvent
 import domain.NodTurret
 import domain.Sidebar
 import domain.SidebarItem
@@ -32,6 +33,7 @@ class MikeAndConquerGameClient {
     private static final String SIDEBAR_BASE_URL = '/mac/Sidebar'
     private static final String NOD_TURRET_BASE_URL = '/mac/NodTurret'
     private static final String GAME_OPTIONS_URL = '/mac/gameOptions'
+    private static final String GAME_HISTORY_EVENTS_URL = '/mac/gameHistoryEvents'
 
 
     MikeAndConquerGameClient(String host, int port, boolean useTimeouts = true) {
@@ -76,7 +78,7 @@ class MikeAndConquerGameClient {
         GameOptions resetOptions = new GameOptions()
         resetOptions.drawShroud = resp.responseData.drawShroud
         resetOptions.initialMapZoom = resp.responseData.initialMapZoom
-        resetOptions.gameSpeedDelayDivisor = resp.responseData.gameSpeedDelayDivisor
+        resetOptions.gameSpeed = resp.responseData.gameSpeed
         return resetOptions
 
     }
@@ -243,6 +245,16 @@ class MikeAndConquerGameClient {
 
         return addGDIMinigunnerAtWorldCoordinates(worldX, worldY)
     }
+
+    Minigunner addNodMinigunnerAtMapSquare(int x, int y, boolean aiIsOn) {
+        int halfMapSquareWidth = Util.mapSquareWidth / 2
+        int worldX = (x * Util.mapSquareWidth) + halfMapSquareWidth
+        int worldY = (y * Util.mapSquareWidth) + halfMapSquareWidth
+
+        return addNodMinigunnerAtWorldCoordinates(worldX, worldY, aiIsOn)
+    }
+
+
 
     MCV addMCVAtMapSquare(int x, int y) {
         int halfMapSquareWidth = Util.mapSquareWidth / 2
@@ -482,6 +494,28 @@ class MikeAndConquerGameClient {
         }
         return allMinigunnersList
     }
+
+    List<GameHistoryEvent> getGameHistoryEvents() {
+        String aPath = GAME_HISTORY_EVENTS_URL
+        def resp
+        resp = restClient.get(path: aPath)
+
+        assert resp.status == 200  // HTTP response code; 404 means not found, etc.
+
+        int numItems = resp.responseData.size
+
+        List<GameHistoryEvent> allGameHistoryEvents = []
+        for (int i = 0; i < numItems; i++) {
+            GameHistoryEvent gameHistoryEvent = new GameHistoryEvent()
+            gameHistoryEvent.eventType = resp.responseData[i]['eventType']
+            gameHistoryEvent.unitId = resp.responseData[i]['unitId']
+            gameHistoryEvent.wallClockTime = resp.responseData[i]['wallClockTime']
+            allGameHistoryEvents.add(gameHistoryEvent)
+        }
+        return allGameHistoryEvents
+    }
+
+
 
 
     Minigunner getGdiMinigunnerAtLocation(int minigunnerX, int mingunnerY) {

@@ -13,8 +13,7 @@ class ScreenshotTests extends MikeAndConquerTestBase {
     def setup() {
         boolean showShroud = false
         float initialMapZoom = 1
-        int gameSpeedDelayDivisor = 50
-        setAndAssertGameOptions(showShroud, initialMapZoom, gameSpeedDelayDivisor)
+        setAndAssertGameOptions(showShroud, initialMapZoom,  GameSpeed.Normal)
     }
 
 

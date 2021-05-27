@@ -19,9 +19,52 @@ class MikeAndConquerTestBase extends Specification {
 
     MikeAndConquerGameClient gameClient
 
+
+//    enum GameSpeed
+//    {
+//        Slowest(250),
+//        Slower(125),
+//        Slow(85),
+//        Moderate(63),
+//        Normal(40),
+//        Fast(30),
+//        Faster(25),
+//        Fastest(24)
+//
+//        GameSpeed(int value) {
+//            this.value = value
+//        }
+//        private final int value
+//        int getValue() {
+//            value
+//        }
+//    }
+
+    enum GameSpeed
+    {
+        Slowest,
+        Slower,
+        Slow,
+        Moderate,
+        Normal,
+        Fast,
+        Faster,
+        Fastest
+
+//        GameSpeed(int value) {
+//            this.value = value
+//        }
+//        private final int value
+//        int getValue() {
+//            value
+//        }
+    }
+
+
+
     def setup() {
         String localhost = "localhost"
-        String remoteHost = "192.168.0.146"
+        String remoteHost = "192.168.0.147"
 //        String host = localhost
         String host = remoteHost
 
@@ -33,26 +76,22 @@ class MikeAndConquerTestBase extends Specification {
     }
 
 
-    protected void setAndAssertGameOptions(boolean showShroud, float initialMapZoom, int gameSpeedDelayDivisor) {
-        GameOptions gameOptions = new GameOptions(showShroud, initialMapZoom, gameSpeedDelayDivisor)
+    protected void setAndAssertGameOptions(boolean showShroud, float initialMapZoom, GameSpeed gameSpeed) {
+        GameOptions gameOptions = new GameOptions(showShroud, initialMapZoom, gameSpeed.name())
         gameClient.setGameOptions(gameOptions)
         assertGameOptionsAreSetTo(gameOptions)
     }
-
-
 
     def assertGameOptionsAreSetTo(GameOptions desiredGameOptions) {
         def conditions = new PollingConditions(timeout: 70, initialDelay: 1.5, factor: 1.25)
         conditions.eventually {
             GameOptions resetOptions1 = gameClient.getGameOptions()
-            assert resetOptions1.gameSpeedDelayDivisor == desiredGameOptions.gameSpeedDelayDivisor
+            assert resetOptions1.gameSpeed == desiredGameOptions.gameSpeed
             assert resetOptions1.initialMapZoom == desiredGameOptions.initialMapZoom
             assert resetOptions1.drawShroud == desiredGameOptions.drawShroud
         }
-
         return true
     }
-
 
 
     void assertScreenshotMatchesWithoutMovingCursor(String scenarioPrefix, int testScenarioNumber, int startX, int startY, int screenshotCompareWidth, int screenshotCompareHeight) {
@@ -174,16 +213,28 @@ class MikeAndConquerTestBase extends Specification {
         return true
     }
 
-    def assertOneMinigunnerExists() {
+
+    def assertNumberOfMinigunnersThatExist(int numMinigunners) {
         def conditions = new PollingConditions(timeout: 80, initialDelay: 1.5, factor: 1.25)
         conditions.eventually {
             List<Minigunner> minigunners = gameClient.getGdiMinigunners()
             assert minigunners != null
-            assert minigunners.size() == 1
+            assert minigunners.size() == numMinigunners
         }
         return true
 
     }
+
+//    def assertOneMinigunnerExists() {
+//        def conditions = new PollingConditions(timeout: 80, initialDelay: 1.5, factor: 1.25)
+//        conditions.eventually {
+//            List<Minigunner> minigunners = gameClient.getGdiMinigunners()
+//            assert minigunners != null
+//            assert minigunners.size() == 1
+//        }
+//        return true
+//
+//    }
 
 
 

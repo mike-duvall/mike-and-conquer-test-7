@@ -16,8 +16,7 @@ class BuldingPlacementTests extends MikeAndConquerTestBase {
 
         boolean showShroud = false
         float initialMapZoom = 1
-        int gameSpeedDelayDivisor = 50
-        setAndAssertGameOptions(showShroud, initialMapZoom, gameSpeedDelayDivisor)
+        setAndAssertGameOptions(showShroud, initialMapZoom, GameSpeed.Normal)
 
         // Add bogus minigunner to not delete so game state stays in "Playing"
         gameClient.addGDIMinigunnerAtMapSquare(4,5)
@@ -151,7 +150,94 @@ class BuldingPlacementTests extends MikeAndConquerTestBase {
         gameClient.leftClickSidebar("Minigunner")
 
         then:
-        assertOneMinigunnerExists()
+        assertNumberOfMinigunnersThatExist(2)
+
+    }
+
+
+    def "Should be able to build minigunner"() {
+        given:
+        int mcvDestinationX = 350
+        int mcvDestinationY = 150
+
+        Point mcvStartLocation = new Point(16,8)
+        gameClient.addMCVAtMapSquare(mcvStartLocation.x, mcvStartLocation.y)
+
+        when:
+        gameClient.leftClickMCV(666)
+
+        and:
+        gameClient.leftClickInWorldCoordinates(mcvDestinationX, mcvDestinationY )
+
+        and:
+        gameClient.rightClick(200,200)
+
+        then:
+        assertMCVArrivesAtDestination(mcvDestinationX, mcvDestinationY)
+        when:
+        gameClient.leftClickMCV(666)
+        gameClient.leftClickMCV(666)
+
+        then:
+        GDIConstructionYard constructionYard = gameClient.getGDIConstructionYard()
+        assert constructionYard != null
+
+        Point expectedConstructionyardMapSquareLocation = Util.convertWorldCoordinatesToMapSquareCoordinates(mcvDestinationX, mcvDestinationY)
+        Point expectedConstructionYardLocationInWorldCoordinates = Util.convertMapSquareCoordinatesToWorldCoordinates(expectedConstructionyardMapSquareLocation.x,
+                expectedConstructionyardMapSquareLocation.y)
+
+        assert expectedConstructionYardLocationInWorldCoordinates.x == constructionYard.x
+        assert expectedConstructionYardLocationInWorldCoordinates.y == constructionYard.y
+
+        when:
+        MCV anMCV = gameClient.getMCV()
+
+        then:
+        assert anMCV == null
+
+        when:
+        Sidebar sidebar = gameClient.getSidebar()
+
+        then:
+        assert sidebar != null
+        assert sidebar.buildBarracksEnabled == true
+        assert sidebar.buildMinigunnerEnabled == false
+
+        when:
+        gameClient.leftClickSidebar("Barracks")
+
+        then:
+        assertBarracksIsBuilding()
+
+        and:
+        assertBarracksIsReadyToPlace()
+
+        when:
+        gameClient.leftClickSidebar("Barracks")
+
+//        and:
+//        gameClient.moveMouseToMapSquareCoordinates( new Point(15,3))
+
+        and:
+        gameClient.leftClickInMapSquareCoordinates(16,5)
+
+        and:
+        assertGDIBarracksExists()
+
+        and:
+        sidebar = gameClient.getSidebar()
+
+        then:
+        assert sidebar != null
+        assert sidebar.buildBarracksEnabled == true
+        assert sidebar.buildMinigunnerEnabled == true
+
+        when:
+        gameClient.leftClickSidebar("Minigunner")
+
+        then:
+//        assertOneMinigunnerExists()
+        assertNumberOfMinigunnersThatExist(2)
     }
 
 

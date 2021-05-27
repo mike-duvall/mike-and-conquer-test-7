@@ -1,5 +1,6 @@
 package main
 
+import domain.GameHistoryEvent
 import domain.MCV
 import domain.NodTurret
 import groovyx.net.http.HttpResponseException
@@ -16,8 +17,7 @@ class MiscTests extends MikeAndConquerTestBase {
     def setup() {
         boolean showShroud = false
         float initialMapZoom = 1
-        int gameSpeedDelayDivisor = 20
-        setAndAssertGameOptions(showShroud, initialMapZoom, gameSpeedDelayDivisor)
+        setAndAssertGameOptions(showShroud, initialMapZoom, GameSpeed.Fastest)
     }
 
 
@@ -100,6 +100,10 @@ class MiscTests extends MikeAndConquerTestBase {
 
     def "Minigunner health bar and selection cursor show up correctly"() {
         given:
+        boolean showShroud = false
+        float initialMapZoom = 1
+        setAndAssertGameOptions(showShroud, initialMapZoom, GameSpeed.Slowest)
+
         Minigunner gdiMinigunner = createGDIMinigunnerAtLocation(420,250)
 
         when:
@@ -242,6 +246,166 @@ class MiscTests extends MikeAndConquerTestBase {
         assertNodMinigunnerDies(nodMinigunner2.id)
 
     }
+
+    def "GDI minigunner attacks Nod minigunner with correct damage and correct reload time"() {
+        given:
+        boolean showShroud = false
+        float initialMapZoom = 3
+        int expectedReloadDelayInMillseconds = 4500
+        int expectedReloadDelayCeilingInMilliseconds = expectedReloadDelayInMillseconds + 500
+        int expectedReloadDelayFloorInMilliseconds = expectedReloadDelayInMillseconds - 500
+        //  Delay for Slowest is 4.5 seconds, as measured in game
+        setAndAssertGameOptions(showShroud, initialMapZoom, GameSpeed.Slowest)
+//        gameClient.turnOnGameHistoryEvents()
+        // gameClient.clearGameHistoryEvents()
+//        turn them off in setup()
+        Minigunner gdiMinigunner = gameClient.addGDIMinigunnerAtMapSquare(15,10)
+        boolean aiIsOn = false
+        Minigunner nodMinigunner = gameClient.addNodMinigunnerAtMapSquare(17,10, aiIsOn)
+//        Time starTime = now()
+        long startTime = new Date().getTime()
+
+        when:
+        gameClient.leftClickMinigunner(gdiMinigunner.id)
+        gameClient.leftClickMinigunner(nodMinigunner.id)
+
+        then:
+        assertNodMinigunnerDies(nodMinigunner.id)
+
+        when:
+        List<GameHistoryEvent> gameHistoryEventList = gameClient.getGameHistoryEvents()
+
+        then:
+        assert gameHistoryEventList.size() == 5
+
+        when:
+        GameHistoryEvent gameHistoryEvent1 = gameHistoryEventList.get(0)
+        GameHistoryEvent gameHistoryEvent2 = gameHistoryEventList.get(1)
+        GameHistoryEvent gameHistoryEvent3 = gameHistoryEventList.get(2)
+        GameHistoryEvent gameHistoryEvent4 = gameHistoryEventList.get(3)
+        GameHistoryEvent gameHistoryEvent5 = gameHistoryEventList.get(4)
+
+        then:
+        assert gameHistoryEvent1.eventType == "FirePrimaryWeapon"
+        assert gameHistoryEvent1.unitId == gdiMinigunner.id
+        assert gameHistoryEvent1.wallClockTime > startTime
+
+        when:
+        int reloadTime1 = gameHistoryEvent2.wallClockTime - gameHistoryEvent1.wallClockTime
+        int reloadTime2 = gameHistoryEvent3.wallClockTime - gameHistoryEvent2.wallClockTime
+        int reloadTime3 = gameHistoryEvent4.wallClockTime - gameHistoryEvent3.wallClockTime
+        int reloadTime4 = gameHistoryEvent5.wallClockTime - gameHistoryEvent4.wallClockTime
+
+        then:
+        assert reloadTime1 < expectedReloadDelayCeilingInMilliseconds
+        assert reloadTime1 > expectedReloadDelayFloorInMilliseconds
+
+        assert reloadTime2 < expectedReloadDelayCeilingInMilliseconds
+        assert reloadTime2 > expectedReloadDelayFloorInMilliseconds
+
+        assert reloadTime3 < expectedReloadDelayCeilingInMilliseconds
+        assert reloadTime3 > expectedReloadDelayFloorInMilliseconds
+
+        assert reloadTime4 < expectedReloadDelayCeilingInMilliseconds
+        assert reloadTime4 > expectedReloadDelayFloorInMilliseconds
+    }
+
+    def "GDI minigunner attacks Nod minigunner with correct damage and correct reload time for Normal time"() {
+        given:
+        boolean showShroud = false
+        float initialMapZoom = 3
+        int expectedReloadDelayInMillseconds = 750
+        int expectedReloadDelayCeilingInMilliseconds = expectedReloadDelayInMillseconds + 10
+        int expectedReloadDelayFloorInMilliseconds = expectedReloadDelayInMillseconds - 10
+
+        setAndAssertGameOptions(showShroud, initialMapZoom, GameSpeed.Normal)
+        Minigunner gdiMinigunner = gameClient.addGDIMinigunnerAtMapSquare(15,10)
+        boolean aiIsOn = false
+        Minigunner nodMinigunner = gameClient.addNodMinigunnerAtMapSquare(17,10, aiIsOn)
+        long startTime = new Date().getTime()
+
+        when:
+        gameClient.leftClickMinigunner(gdiMinigunner.id)
+        gameClient.leftClickMinigunner(nodMinigunner.id)
+
+        then:
+        assertNodMinigunnerDies(nodMinigunner.id)
+
+        when:
+        List<GameHistoryEvent> gameHistoryEventList = gameClient.getGameHistoryEvents()
+
+        then:
+        assert gameHistoryEventList.size() == 5
+
+        and:
+        GameHistoryEvent previousEvent = null
+        for(GameHistoryEvent event : gameHistoryEventList) {
+            assert event.eventType == "FirePrimaryWeapon"
+            assert event.unitId == gdiMinigunner.id
+            assert event.wallClockTime > startTime
+            if(previousEvent != null) {
+                int reloadTime = event.wallClockTime - previousEvent.wallClockTime
+                assert reloadTime < expectedReloadDelayCeilingInMilliseconds
+                assert reloadTime > expectedReloadDelayFloorInMilliseconds
+
+            }
+            previousEvent = event
+        }
+
+    }
+
+
+    @Unroll
+    def "GDI minigunner attacks Nod minigunner with correct damage and correct reload time of #expectedReloadDelayInMillseconds for game speed delay #gameSpeed"() {
+        given:
+        boolean showShroud = false
+        float initialMapZoom = 3
+        int expectedReloadDelayCeilingInMilliseconds = expectedReloadDelayInMillseconds + 50
+        int expectedReloadDelayFloorInMilliseconds = expectedReloadDelayInMillseconds - 50
+
+        setAndAssertGameOptions(showShroud, initialMapZoom, gameSpeed)
+        Minigunner gdiMinigunner = gameClient.addGDIMinigunnerAtMapSquare(15,10)
+        boolean aiIsOn = false
+        Minigunner nodMinigunner = gameClient.addNodMinigunnerAtMapSquare(17,10, aiIsOn)
+        long startTime = new Date().getTime()
+
+        when:
+        gameClient.leftClickMinigunner(gdiMinigunner.id)
+        gameClient.leftClickMinigunner(nodMinigunner.id)
+
+        then:
+        assertNodMinigunnerDies(nodMinigunner.id)
+
+        when:
+        List<GameHistoryEvent> gameHistoryEventList = gameClient.getGameHistoryEvents()
+
+        then:
+        assert gameHistoryEventList.size() == 5
+
+        and:
+        GameHistoryEvent previousEvent = null
+        for(GameHistoryEvent event : gameHistoryEventList) {
+            assert event.eventType == "FirePrimaryWeapon"
+            assert event.unitId == gdiMinigunner.id
+            assert event.wallClockTime > startTime
+            if(previousEvent != null) {
+                int reloadTime = event.wallClockTime - previousEvent.wallClockTime
+                assert reloadTime < expectedReloadDelayCeilingInMilliseconds
+                assert reloadTime > expectedReloadDelayFloorInMilliseconds
+
+            }
+            previousEvent = event
+        }
+
+        where:
+        gameSpeed               | expectedReloadDelayInMillseconds
+        GameSpeed.Normal        | 750
+        GameSpeed.Slowest       | 4500
+        GameSpeed.Fastest       | 425
+
+    }
+
+
 
 
     def "should handle selecting deselecting gdi minigunner"() {
@@ -649,7 +813,13 @@ class MiscTests extends MikeAndConquerTestBase {
 
     def "Nod Turret should turn counterclockwise when appropriate to aim at minigunner" () {
         given:
+        boolean showShroud = false
+        float initialMapZoom = 1
+        setAndAssertGameOptions(showShroud, initialMapZoom, GameSpeed.Slowest)
+
+        and:
         float startingTurretFacing = 179.0
+
         when:
         NodTurret nodTurret = gameClient.addNodTurret(17,12, startingTurretFacing, 0)
 
@@ -671,7 +841,13 @@ class MiscTests extends MikeAndConquerTestBase {
 
     def "Nod Turret should turn clockwise when appropriate to aim at minigunner" () {
         given:
+        boolean showShroud = false
+        float initialMapZoom = 1
+        setAndAssertGameOptions(showShroud, initialMapZoom, GameSpeed.Slowest)
+
+        and:
         float startingTurretFacing = 1
+
         when:
         NodTurret nodTurret = gameClient.addNodTurret(20,12, startingTurretFacing, 0)
 
