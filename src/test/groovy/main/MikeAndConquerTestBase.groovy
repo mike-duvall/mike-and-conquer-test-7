@@ -2,6 +2,7 @@ package main
 
 import client.MikeAndConquerGameClient
 import domain.GDIBarracks
+import domain.GameHistoryEvent
 import domain.GameOptions
 import domain.MCV
 import domain.Minigunner
@@ -10,6 +11,7 @@ import domain.Sidebar
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 import util.ImageUtil
+import util.Util
 
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
@@ -63,6 +65,7 @@ class MikeAndConquerTestBase extends Specification {
 
 
     def setup() {
+        sleep(3000)
         String localhost = "localhost"
         String remoteHost = "192.168.0.147"
 //        String host = localhost
@@ -153,13 +156,55 @@ class MikeAndConquerTestBase extends Specification {
     }
 
 
-    def assertMCVArrivesAtDestination(int mcvDestinationX, int mcvDestinationY) {
-        def conditions = new PollingConditions(timeout: 60, initialDelay: 1.5, factor: 1.25)
+
+
+
+    def assertMCVIsAtDesignatedDestinationInMapSquareCoordinates(int mapSquareX, int mapSquareY)
+    {
+        Point worldCoordinates = Util.convertMapSquareCoordinatesToWorldCoordinates(mapSquareX, mapSquareY)
+
+        return assertMCVArrivesAtDestination(worldCoordinates.x, worldCoordinates.y)
+    }
+
+    def assertMCVIsAtDesignatedDestinationInMapSquareCoordinatesWithinTime(int mapSquareX, int mapSquareY, int seconds)
+    {
+        Point worldCoordinates = Util.convertMapSquareCoordinatesToWorldCoordinates(mapSquareX, mapSquareY)
+
+//        return assertMCVArrivesAtDestination(worldCoordinates.x, worldCoordinates.y)
+        return assertMCVArrivesAtDestinationWithinTime(worldCoordinates.x, worldCoordinates.y, seconds)
+    }
+
+
+    def assertNumberOfGameHistoryEvents(int targetNumberOfGameEvents) {
+        int timeoutInSeconds = 20
+        def conditions = new PollingConditions(timeout: timeoutInSeconds, initialDelay: 1.5, factor: 1.25)
+        conditions.eventually {
+            List<GameHistoryEvent> gameHistoryEventList = gameClient.getGameHistoryEvents()
+            assert gameHistoryEventList.size() == targetNumberOfGameEvents
+        }
+        return true
+
+    }
+
+    def assertMCVArrivesAtDestinationWithinTime(int mcvDestinationX, int mcvDestinationY,int timeoutInSeconds) {
+        def conditions = new PollingConditions(timeout: timeoutInSeconds, initialDelay: 1.5, factor: 1.25)
         conditions.eventually {
             MCV retrievedMCV = gameClient.getMCV()
             assertMCVIsAtDesignatedDestination(retrievedMCV, mcvDestinationX, mcvDestinationY)
         }
         return true
+
+    }
+
+
+    def assertMCVArrivesAtDestination(int mcvDestinationX, int mcvDestinationY) {
+//        def conditions = new PollingConditions(timeout: 60, initialDelay: 1.5, factor: 1.25)
+//        conditions.eventually {
+//            MCV retrievedMCV = gameClient.getMCV()
+//            assertMCVIsAtDesignatedDestination(retrievedMCV, mcvDestinationX, mcvDestinationY)
+//        }
+//        return true
+        return assertMCVArrivesAtDestination(mcvDestinationX, mcvDestinationY, 60)
 
     }
 

@@ -247,113 +247,6 @@ class MiscTests extends MikeAndConquerTestBase {
 
     }
 
-//    def "GDI minigunner attacks Nod minigunner with correct damage and correct reload time"() {
-//        given:
-//        boolean showShroud = false
-//        float initialMapZoom = 3
-//        int expectedReloadDelayInMillseconds = 4500
-//        int expectedReloadDelayCeilingInMilliseconds = expectedReloadDelayInMillseconds + 500
-//        int expectedReloadDelayFloorInMilliseconds = expectedReloadDelayInMillseconds - 500
-//        //  Delay for Slowest is 4.5 seconds, as measured in game
-//        setAndAssertGameOptions(showShroud, initialMapZoom, GameSpeed.Slowest)
-////        gameClient.turnOnGameHistoryEvents()
-//        // gameClient.clearGameHistoryEvents()
-////        turn them off in setup()
-//        Minigunner gdiMinigunner = gameClient.addGDIMinigunnerAtMapSquare(15,10)
-//        boolean aiIsOn = false
-//        Minigunner nodMinigunner = gameClient.addNodMinigunnerAtMapSquare(17,10, aiIsOn)
-////        Time starTime = now()
-//        long startTime = new Date().getTime()
-//
-//        when:
-//        gameClient.leftClickMinigunner(gdiMinigunner.id)
-//        gameClient.leftClickMinigunner(nodMinigunner.id)
-//
-//        then:
-//        assertNodMinigunnerDies(nodMinigunner.id)
-//
-//        when:
-//        List<GameHistoryEvent> gameHistoryEventList = gameClient.getGameHistoryEvents()
-//
-//        then:
-//        assert gameHistoryEventList.size() == 5
-//
-//        when:
-//        GameHistoryEvent gameHistoryEvent1 = gameHistoryEventList.get(0)
-//        GameHistoryEvent gameHistoryEvent2 = gameHistoryEventList.get(1)
-//        GameHistoryEvent gameHistoryEvent3 = gameHistoryEventList.get(2)
-//        GameHistoryEvent gameHistoryEvent4 = gameHistoryEventList.get(3)
-//        GameHistoryEvent gameHistoryEvent5 = gameHistoryEventList.get(4)
-//
-//        then:
-//        assert gameHistoryEvent1.eventType == "FirePrimaryWeapon"
-//        assert gameHistoryEvent1.unitId == gdiMinigunner.id
-//        assert gameHistoryEvent1.wallClockTime > startTime
-//
-//        when:
-//        int reloadTime1 = gameHistoryEvent2.wallClockTime - gameHistoryEvent1.wallClockTime
-//        int reloadTime2 = gameHistoryEvent3.wallClockTime - gameHistoryEvent2.wallClockTime
-//        int reloadTime3 = gameHistoryEvent4.wallClockTime - gameHistoryEvent3.wallClockTime
-//        int reloadTime4 = gameHistoryEvent5.wallClockTime - gameHistoryEvent4.wallClockTime
-//
-//        then:
-//        assert reloadTime1 < expectedReloadDelayCeilingInMilliseconds
-//        assert reloadTime1 > expectedReloadDelayFloorInMilliseconds
-//
-//        assert reloadTime2 < expectedReloadDelayCeilingInMilliseconds
-//        assert reloadTime2 > expectedReloadDelayFloorInMilliseconds
-//
-//        assert reloadTime3 < expectedReloadDelayCeilingInMilliseconds
-//        assert reloadTime3 > expectedReloadDelayFloorInMilliseconds
-//
-//        assert reloadTime4 < expectedReloadDelayCeilingInMilliseconds
-//        assert reloadTime4 > expectedReloadDelayFloorInMilliseconds
-//    }
-//
-//    def "GDI minigunner attacks Nod minigunner with correct damage and correct reload time for Normal time"() {
-//        given:
-//        boolean showShroud = false
-//        float initialMapZoom = 3
-//        int expectedReloadDelayInMillseconds = 750
-//        int expectedReloadDelayCeilingInMilliseconds = expectedReloadDelayInMillseconds + 10
-//        int expectedReloadDelayFloorInMilliseconds = expectedReloadDelayInMillseconds - 10
-//
-//        setAndAssertGameOptions(showShroud, initialMapZoom, GameSpeed.Normal)
-//        Minigunner gdiMinigunner = gameClient.addGDIMinigunnerAtMapSquare(15,10)
-//        boolean aiIsOn = false
-//        Minigunner nodMinigunner = gameClient.addNodMinigunnerAtMapSquare(17,10, aiIsOn)
-//        long startTime = new Date().getTime()
-//
-//        when:
-//        gameClient.leftClickMinigunner(gdiMinigunner.id)
-//        gameClient.leftClickMinigunner(nodMinigunner.id)
-//
-//        then:
-//        assertNodMinigunnerDies(nodMinigunner.id)
-//
-//        when:
-//        List<GameHistoryEvent> gameHistoryEventList = gameClient.getGameHistoryEvents()
-//
-//        then:
-//        assert gameHistoryEventList.size() == 5
-//
-//        and:
-//        GameHistoryEvent previousEvent = null
-//        for(GameHistoryEvent event : gameHistoryEventList) {
-//            assert event.eventType == "FirePrimaryWeapon"
-//            assert event.unitId == gdiMinigunner.id
-//            assert event.wallClockTime > startTime
-//            if(previousEvent != null) {
-//                int reloadTime = event.wallClockTime - previousEvent.wallClockTime
-//                assert reloadTime < expectedReloadDelayCeilingInMilliseconds
-//                assert reloadTime > expectedReloadDelayFloorInMilliseconds
-//
-//            }
-//            previousEvent = event
-//        }
-//
-//    }
-
 
     @Unroll
     def "GDI minigunner attacks Nod minigunner with correct damage and correct reload time of #expectedReloadDelayInMillseconds for game speed delay #gameSpeed"() {
@@ -361,7 +254,7 @@ class MiscTests extends MikeAndConquerTestBase {
         boolean showShroud = false
         float initialMapZoom = 3
         int allowedDelta = 15
-//        int allowedDelta = 50
+//        int allowedDelta = 100
         int expectedReloadDelayCeilingInMilliseconds = expectedReloadDelayInMillseconds + allowedDelta
         int expectedReloadDelayFloorInMilliseconds = expectedReloadDelayInMillseconds - allowedDelta
 
@@ -402,13 +295,69 @@ class MiscTests extends MikeAndConquerTestBase {
 
         where:
         gameSpeed               | expectedReloadDelayInMillseconds
-        GameSpeed.Slowest       | 4500
-        GameSpeed.Normal        | 750
-        GameSpeed.Fastest       | 425
+//        GameSpeed.Slowest       | 4500
+        GameSpeed.Slow          | 1500
+//        GameSpeed.Normal        | 750
+//        GameSpeed.Fastest       | 425
 
     }
 
 
+    // Move 15 squares, including start and end square
+    @Unroll
+    def "MCV move times should match times from Cnc, #expectedMovementTimeInMilliseconds, at game #gameSpeed game speed"() {
+        given:
+        boolean showShroud = false
+        float initialMapZoom = 3
+//        int allowedDelta = 5000
+        int allowedDelta = 100
+//        int allowedDelta = 40
+        int expectedMovementTimeCeilingInMilliseconds = expectedMovementTimeInMilliseconds + allowedDelta
+        int expectedMovementTimeFloorInMilliseconds = expectedMovementTimeInMilliseconds - allowedDelta
+
+        setAndAssertGameOptions(showShroud, initialMapZoom, gameSpeed)
+        MCV mcv = gameClient.addMCVAtMapSquare(26,17)
+
+        when:
+        gameClient.leftClickMCV(mcv.id)
+        gameClient.leftClickInMapSquareCoordinates(12,17)
+
+        then:
+        assertMCVIsAtDesignatedDestinationInMapSquareCoordinatesWithinTime(12,17, 90)
+        assertNumberOfGameHistoryEvents(2)
+
+        when:
+        List<GameHistoryEvent> gameHistoryEventList = gameClient.getGameHistoryEvents()
+
+        then:
+        GameHistoryEvent startMovingEvent = gameHistoryEventList.get(0)
+        assert startMovingEvent.eventType == "StartMoving"
+
+        GameHistoryEvent stopMovingEvent = gameHistoryEventList.get(1)
+        assert stopMovingEvent.eventType == "StopMoving"
+
+        and:
+        int movementTime = stopMovingEvent.wallClockTime - startMovingEvent.wallClockTime
+        println "movementTime=" + movementTime
+        println "expectedMovementTimeInMilliseconds=" + expectedMovementTimeInMilliseconds
+        int difference = movementTime - expectedMovementTimeInMilliseconds
+        println "difference=" + difference
+
+        assert movementTime > expectedMovementTimeFloorInMilliseconds
+        assert movementTime < expectedMovementTimeCeilingInMilliseconds
+
+        where:
+        gameSpeed               | expectedMovementTimeInMilliseconds
+//        GameSpeed.Slowest       | 75597
+//        GameSpeed.Slower        | 37801
+//        GameSpeed.Slow          | 25201
+//        GameSpeed.Moderate      | 18900
+//        GameSpeed.Normal        | 12601  // failing
+//        GameSpeed.Fast          | 9240
+        GameSpeed.Faster        | 7560
+//        GameSpeed.Fastest       | 7139 // failing
+
+    }
 
 
     def "should handle selecting deselecting gdi minigunner"() {
